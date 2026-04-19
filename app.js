@@ -220,6 +220,7 @@ function openCharacter(id, data) {
     statCha.value = attrs.cha?.base ?? 10;
 
     updateAllStats();
+    bindStatListeners();
 }
 
 // ---------------- SAVE CHARACTER ----------------
@@ -289,3 +290,15 @@ onAuthStateChanged(auth, async (user) => {
 
     loadCharacters();
 });
+
+
+function bindStatListeners() {
+    const stats = [statStr, statDex, statCon, statInt, statWis, statCha];
+
+    stats.forEach(el => {
+        el.oninput = () => {
+            updateAllStats();
+            saveCharacter();
+        };
+    });
+}
