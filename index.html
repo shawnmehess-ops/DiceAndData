@@ -167,19 +167,8 @@
                 });
         
                 // 🔽 LOAD test data (THIS is your "snap" part)
-                const snap = await getDoc(doc(db, "users", user.uid));
-        
-                if (snap.exists()) {
-                    console.log("Loaded user data:", snap.data());
-        
-                    appContentDiv.innerHTML += `
-                        <p><strong>Saved message:</strong> ${snap.data().message}</p>
-                        <p><strong>Random value:</strong> ${snap.data().randomValue}</p>
-                    `;
-                }
-
                 const docRef = doc(db, "users", user.uid);
-                snap = await getDoc(docRef);
+                const snap = await getDoc(docRef);
                 
                 if (snap.exists() && snap.data().text) {
                     testField.value = snap.data().text;
