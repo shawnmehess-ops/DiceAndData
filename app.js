@@ -235,6 +235,10 @@ async function saveCharacter() {
     editorStatus.innerText = "Saved.";
 }
 
+function getModifier(score) {
+    return Math.floor((score - 10) / 2);
+}
+
 // auto-save
 editName.addEventListener("input", saveCharacter);
 editClass.addEventListener("input", saveCharacter);
