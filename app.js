@@ -57,6 +57,9 @@ const editLevel = document.getElementById('editLevel');
 const editorTitle = document.getElementById('editorTitle');
 const editorStatus = document.getElementById('editorStatus');
 
+const characterListView = document.getElementById('characterListView');
+const backButton = document.getElementById('backButton');
+
 // ---------------- SIGN UP ----------------
 signUpButton.addEventListener('click', async () => {
     const email = emailInput.value;
@@ -108,11 +111,20 @@ signOutButton.addEventListener('click', async () => {
     passwordInput.value = '';
 });
 
+backButton.addEventListener("click", () => {
+    currentCharId = null;
+
+    editor.style.display = "none";
+    characterListView.style.display = "block";
+});
+
 // ---------------- AUTH STATE ----------------
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         authUiDiv.style.display = 'block';
         appContentDiv.style.display = 'none';
+        characterListView.style.display = "block";
+        editor.style.display = "none";
         signOutButton.style.display = 'inline';
         userStatus.innerText = 'No user signed in.';
         return;
@@ -184,6 +196,7 @@ async function loadCharacters() {
 function openCharacter(id, data) {
     currentCharId = id;
 
+    characterListView.style.display = "none";
     editor.style.display = "block";
 
     editName.value = data.name || "";
