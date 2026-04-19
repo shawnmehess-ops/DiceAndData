@@ -2,7 +2,10 @@ import {
     getFirestore,
     doc,
     setDoc,
-    getDoc
+    getDoc,
+    collection,
+    addDoc,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
@@ -30,6 +33,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // DOM refs
+let currentCharId = null;
+
 const emailInput = document.getElementById('emailInput');
 const passwordInput = document.getElementById('passwordInput');
 
@@ -44,6 +49,16 @@ const appContentDiv = document.getElementById('app-content');
 const testField = document.getElementById('testField');
 const saveButton = document.getElementById('saveButton');
 const saveStatus = document.getElementById('saveStatus');
+
+const charNameInput = document.getElementById('charNameInput');
+const createCharButton = document.getElementById('createCharButton');
+const characterList = document.getElementById('characterList');
+
+const editor = document.getElementById('editor');
+const editName = document.getElementById('editName');
+const editClass = document.getElementById('editClass');
+const editLevel = document.getElementById('editLevel');
+const editorStatus = document.getElementById('editorStatus');
 
 // ---------------- SIGN UP ----------------
 signUpButton.addEventListener('click', async () => {
@@ -118,6 +133,8 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
+    await loadCharacters();
+    
     authUiDiv.style.display = 'none';
     appContentDiv.style.display = 'block';
     signOutButton.style.display = 'inline';
@@ -137,3 +154,82 @@ onAuthStateChanged(auth, async (user) => {
         saveStatus.innerText = "No saved data yet.";
     }
 });
+
+createCharButton.addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const name = charNameInput.value.trim();
+    if (!name) return;
+
+    await addDoc(
+        collection(db, "users", user.uid, "characters"),
+        {
+            name: name,
+            class: "Unknown",
+            level: 1,
+            createdAt: Date.now()
+        }
+    );
+
+    charNameInput.value = "";
+    loadCharacters();
+});
+
+async function loadCharacters() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const snap = await getDocs(
+        collection(db, "users", user.uid, "characters")
+    );
+
+    characterList.innerHTML = "";
+
+    snap.forEach((docSnap) => {
+        const data = docSnap.data();
+
+        const li = document.createElement("li");
+        li.textContent = `${data.name} (Lv ${data.level})`;
+
+        li.addEventListener("click", () => {
+            openCharacter(docSnap.id, data);
+        });
+
+        characterList.appendChild(li);
+    });
+}
+
+function openCharacter(id, data) {
+    currentCharId = id;
+
+    editor.style.display = "block";
+
+    editName.value = data.name || "";
+    editClass.value = data.class || "";
+    editLevel.value = data.level || 1;
+
+    editorStatus.innerText = "Loaded character.";
+}
+
+async function saveCharacter() {
+    const user = auth.currentUser;
+    if (!user || !currentCharId) return;
+
+    await setDoc(
+        doc(db, "users", user.uid, "characters", currentCharId),
+        {
+            name: editName.value,
+            class: editClass.value,
+            level: parseInt(editLevel.value) || 1
+        },
+        { merge: true }
+    );
+
+    editorStatus.innerText = "Saved.";
+    loadCharacters(); // update list display
+}
+
+editName.addEventListener("input", saveCharacter);
+editClass.addEventListener("input", saveCharacter);
+editLevel.addEventListener("input", saveCharacter);
