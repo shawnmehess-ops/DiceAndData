@@ -227,7 +227,7 @@ function openCharacter(id, data) {
     statCha.value = attrs.cha?.base ?? 10;
 
     updateAllStats();
-    bindStatListeners();
+    bindAutosave();
 }
 
 // ---------------- SAVE CHARACTER ----------------
@@ -298,11 +298,20 @@ onAuthStateChanged(auth, async (user) => {
     loadCharacters();
 });
 
+function bindAutosave() {
+    const inputs = [
+        editName,
+        editClass,
+        editLevel,
+        statStr,
+        statDex,
+        statCon,
+        statInt,
+        statWis,
+        statCha
+    ];
 
-function bindStatListeners() {
-    const stats = [statStr, statDex, statCon, statInt, statWis, statCha];
-
-    stats.forEach(el => {
+    inputs.forEach(el => {
         el.oninput = () => {
             updateAllStats();
             saveCharacter();
