@@ -179,7 +179,7 @@
                 }
 
                 const docRef = doc(db, "users", user.uid);
-                const snap = await getDoc(docRef);
+                snap = await getDoc(docRef);
                 
                 if (snap.exists() && snap.data().text) {
                     testField.value = snap.data().text;
