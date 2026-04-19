@@ -46,10 +46,6 @@ const userStatus = document.getElementById('userStatus');
 const authUiDiv = document.getElementById('auth-ui');
 const appContentDiv = document.getElementById('app-content');
 
-const testField = document.getElementById('testField');
-const saveButton = document.getElementById('saveButton');
-const saveStatus = document.getElementById('saveStatus');
-
 const charNameInput = document.getElementById('charNameInput');
 const createCharButton = document.getElementById('createCharButton');
 const characterList = document.getElementById('characterList');
@@ -111,18 +107,6 @@ signOutButton.addEventListener('click', async () => {
     passwordInput.value = '';
 });
 
-// ---------------- SAVE BUTTON ----------------
-saveButton.addEventListener('click', async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    await setDoc(doc(db, "users", user.uid), {
-        text: testField.value
-    }, { merge: true });
-
-    saveStatus.innerText = "Saved!";
-});
-
 // ---------------- AUTH STATE ----------------
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -141,18 +125,6 @@ onAuthStateChanged(auth, async (user) => {
 
     userStatus.innerText =
         `Logged in: ${user.email} (UID: ${user.uid})`;
-
-    // Load user data
-    const snap = await getDoc(doc(db, "users", user.uid));
-
-    if (snap.exists()) {
-        const data = snap.data();
-        testField.value = data.text || "";
-        saveStatus.innerText = "Data loaded.";
-    } else {
-        testField.value = "";
-        saveStatus.innerText = "No saved data yet.";
-    }
 });
 
 createCharButton.addEventListener('click', async () => {
