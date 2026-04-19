@@ -24,32 +24,35 @@
         <p>Welcome! You are logged in.</p>
     </div>
 
-  <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+    <!-- Consolidated JavaScript using Modular SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js"; // IMPORT AUTH MODULE
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBYYgS04lxcbeawj7WDahEN7SbzYgVGLjE",
-    authDomain: "diceanddata-81ebe.firebaseapp.com",
-    projectId: "diceanddata-81ebe",
-    storageBucket: "diceanddata-81ebe.firebasestorage.app",
-    messagingSenderId: "547850961878",
-    appId: "1:547850961878:web:8b2a99076d66c0ab451a77",
-    measurementId: "G-LSZ59FPDTL"
-  };
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYYgS04lxcbeawj7WDahEN7SbzYgVGLjE",
+            authDomain: "diceanddata-81ebe.firebaseapp.com",
+            projectId: "diceanddata-81ebe",
+            storageBucket: "diceanddata-81ebe.firebasestorage.app",
+            messagingSenderId: "547850961878",
+            appId: "1:547850961878:web:8b2a99076d66c0ab451a77",
+            measurementId: "G-LSZ59FPDTL"
+        };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-      <!-- Firebase SDKs and your custom JavaScript will be inserted here -->
-    <!-- Your custom JavaScript will go here -->
-    <script>
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app); // Get the auth instance for the Modular SDK
+
         // Get references to our HTML elements
         const emailInput = document.getElementById('emailInput');
         const passwordInput = document.getElementById('passwordInput');
@@ -57,24 +60,22 @@
         const signInButton = document.getElementById('signInButton');
         const signOutButton = document.getElementById('signOutButton');
         const userStatus = document.getElementById('userStatus');
+        const authUiDiv = document.getElementById('auth-ui'); // Added from previous suggestion
+        const appContentDiv = document.getElementById('app-content'); // Added from previous suggestion
 
         // --- User Registration (Sign Up) ---
         signUpButton.addEventListener('click', () => {
             const email = emailInput.value;
             const password = passwordInput.value;
 
-            // Use Firebase's createUserWithEmailAndPassword method
-            auth.createUserWithEmailAndPassword(email, password)
+            createUserWithEmailAndPassword(auth, email, password) // Modular SDK syntax
                 .then((userCredential) => {
-                    // Sign-up successful! userCredential contains information about the newly created user
                     const user = userCredential.user;
                     console.log('User signed up:', user.email);
                     userStatus.innerText = `Signed up and logged in as: ${user.email}`;
-                    // You might want to clear password field here for security
                     passwordInput.value = '';
                 })
                 .catch((error) => {
-                    // Handle errors during sign-up
                     const errorMessage = error.message;
                     console.error('Sign up error:', errorMessage);
                     userStatus.innerText = `Sign Up Error: ${errorMessage}`;
@@ -86,18 +87,14 @@
             const email = emailInput.value;
             const password = passwordInput.value;
 
-            // Use Firebase's signInWithEmailAndPassword method
-            auth.signInWithEmailAndPassword(email, password)
+            signInWithEmailAndPassword(auth, email, password) // Modular SDK syntax
                 .then((userCredential) => {
-                    // Sign-in successful! userCredential contains information about the logged-in user
                     const user = userCredential.user;
                     console.log('User signed in:', user.email);
                     userStatus.innerText = `Logged in as: ${user.email}`;
-                    // You might want to clear password field here for security
                     passwordInput.value = '';
                 })
                 .catch((error) => {
-                    // Handle errors during sign-in
                     const errorMessage = error.message;
                     console.error('Sign in error:', errorMessage);
                     userStatus.innerText = `Sign In Error: ${errorMessage}`;
@@ -106,18 +103,14 @@
 
         // --- User Sign Out ---
         signOutButton.addEventListener('click', () => {
-            // Use Firebase's signOut method
-            auth.signOut()
+            signOut(auth) // Modular SDK syntax
                 .then(() => {
-                    // Sign-out successful!
                     console.log('User signed out.');
                     userStatus.innerText = 'No user signed in.';
-                    // Clear inputs if desired
                     emailInput.value = '';
                     passwordInput.value = '';
                 })
                 .catch((error) => {
-                    // Handle errors during sign-out
                     const errorMessage = error.message;
                     console.error('Sign out error:', errorMessage);
                     userStatus.innerText = `Sign Out Error: ${errorMessage}`;
@@ -125,24 +118,26 @@
         });
 
         // --- Monitor Authentication State (login/logout changes) ---
-        // This listener runs every time the user's authentication status changes
-        // (e.g., they log in, log out, or the page reloads and they're already logged in)
-        auth.onAuthStateChanged((user) => {
+        onAuthStateChanged(auth, (user) => { // Modular SDK syntax
             if (user) {
                 // User is signed in
                 console.log('Auth state changed: User is signed in', user.email);
                 userStatus.innerText = `Currently logged in: ${user.email} (UID: ${user.uid})`;
-                // You can show/hide parts of your UI based on login status here
-                signUpButton.style.display = 'none'; // Hide sign up button
-                signInButton.style.display = 'none'; // Hide sign in button
-                signOutButton.style.display = 'block'; // Show sign out button
+
+                // Show app content, hide auth UI
+                authUiDiv.style.display = 'none';
+                appContentDiv.style.display = 'block';
+                // signOutButton is already styled to be block on sign in, no need to change
+                
             } else {
                 // User is signed out
                 console.log('Auth state changed: No user is signed in');
                 userStatus.innerText = 'No user signed in.';
-                signUpButton.style.display = 'block'; // Show sign up button
-                signInButton.style.display = 'block'; // Show sign in button
-                signOutButton.style.display = 'none'; // Hide sign out button
+
+                // Show auth UI, hide app content
+                authUiDiv.style.display = 'block';
+                appContentDiv.style.display = 'none';
+                signOutButton.style.display = 'none';
             }
         });
     </script>
