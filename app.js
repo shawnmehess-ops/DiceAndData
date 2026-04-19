@@ -182,6 +182,15 @@ async function loadCharacters() {
 
 // ---------------- OPEN CHARACTER ----------------
 function openCharacter(id, data) {
+    const attrs = data.attributes || {};
+    
+    statStr.value = attrs.str?.base ?? 10;
+    statDex.value = attrs.dex?.base ?? 10;
+    statCon.value = attrs.con?.base ?? 10;
+    statInt.value = attrs.int?.base ?? 10;
+    statWis.value = attrs.wis?.base ?? 10;
+    statCha.value = attrs.cha?.base ?? 10;
+    
     currentCharId = id;
 
     characterListView.style.display = "none";
