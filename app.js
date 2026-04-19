@@ -54,6 +54,7 @@ const editor = document.getElementById('editor');
 const editName = document.getElementById('editName');
 const editClass = document.getElementById('editClass');
 const editLevel = document.getElementById('editLevel');
+const editorTitle = document.getElementById('editorTitle');
 const editorStatus = document.getElementById('editorStatus');
 
 // ---------------- SIGN UP ----------------
@@ -162,7 +163,15 @@ async function loadCharacters() {
         const data = docSnap.data();
 
         const li = document.createElement("li");
-        li.textContent = `${data.name} (Lv ${data.level})`;
+        
+        const btn = document.createElement("button");
+        btn.textContent = `${data.name} (Lv ${data.level})`;
+        
+        btn.addEventListener("click", () => {
+            openCharacter(docSnap.id, data);
+        });
+        
+        li.appendChild(btn);
 
         li.addEventListener("click", () => {
             openCharacter(docSnap.id, data);
@@ -182,6 +191,10 @@ function openCharacter(id, data) {
     editLevel.value = data.level || 1;
 
     editorStatus.innerText = "Loaded character.";
+
+    editorTitle.innerText = `Editing: ${data.name}`;
+
+    editor.scrollIntoView({ behavior: "smooth" });
 }
 
 async function saveCharacter() {
