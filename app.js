@@ -314,7 +314,20 @@ function bindAutosave() {
     inputs.forEach(el => {
         el.oninput = () => {
             updateAllStats();
-            saveCharacter();
+            debouncedSave();
         };
     });
 }
+
+function debounce(fn, delay = 500) {
+    let timeout;
+
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+    };
+}
+
+const debouncedSave = debounce(() => {
+    saveCharacter();
+}, 500);
