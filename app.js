@@ -129,9 +129,20 @@ createCharButton.addEventListener('click', async () => {
     await addDoc(
         collection(db, "users", user.uid, "characters"),
         {
-            name,
+            name: name,
             class: "Unknown",
             level: 1,
+
+            attributes: {
+                str: { base: 10 },
+                dex: { base: 10 },
+                con: { base: 10 },
+                int: { base: 10 },
+                wis: { base: 10 },
+                cha: { base: 10 }
+            },
+
+            modifiers: [],
             createdAt: Date.now()
         }
     );
