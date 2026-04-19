@@ -5,10 +5,12 @@ import {
     getDoc,
     collection,
     addDoc,
-    getDocs
+    getDocs,
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+
 import {
     getAuth,
     createUserWithEmailAndPassword,
@@ -17,7 +19,7 @@ import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
-// Firebase config
+// ---------------- FIREBASE CONFIG ----------------
 const firebaseConfig = {
     apiKey: "AIzaSyBYYgS04lxcbeawj7WDahEN7SbzYgVGLjE",
     authDomain: "diceanddata-81ebe.firebaseapp.com",
@@ -28,13 +30,15 @@ const firebaseConfig = {
     measurementId: "G-LSZ59FPDTL"
 };
 
+// ---------------- INIT ----------------
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// DOM refs
+// ---------------- STATE ----------------
 let currentCharId = null;
 
+// ---------------- DOM ----------------
 const emailInput = document.getElementById('emailInput');
 const passwordInput = document.getElementById('passwordInput');
 
@@ -43,22 +47,25 @@ const signInButton = document.getElementById('signInButton');
 const signOutButton = document.getElementById('signOutButton');
 
 const userStatus = document.getElementById('userStatus');
+
 const authUiDiv = document.getElementById('auth-ui');
 const appContentDiv = document.getElementById('app-content');
 
-const charNameInput = document.getElementById('charNameInput');
-const createCharButton = document.getElementById('createCharButton');
+const characterListView = document.getElementById('characterListView');
 const characterList = document.getElementById('characterList');
 
+const charNameInput = document.getElementById('charNameInput');
+const createCharButton = document.getElementById('createCharButton');
+
 const editor = document.getElementById('editor');
+const editorTitle = document.getElementById('editorTitle');
 const editName = document.getElementById('editName');
 const editClass = document.getElementById('editClass');
 const editLevel = document.getElementById('editLevel');
-const editorTitle = document.getElementById('editorTitle');
 const editorStatus = document.getElementById('editorStatus');
 
-const characterListView = document.getElementById('characterListView');
 const backButton = document.getElementById('backButton');
+const deleteCharButton = document.getElementById('deleteCharButton');
 
 // ---------------- SIGN UP ----------------
 signUpButton.addEventListener('click', async () => {
@@ -73,10 +80,9 @@ signUpButton.addEventListener('click', async () => {
 
         userStatus.innerText = `Signed up as: ${user.email}`;
 
-        // Create initial document (merge-safe)
         await setDoc(doc(db, "users", user.uid), {
             message: "Hello " + user.email,
-            randomValue: Math.random()
+            createdAt: Date.now()
         }, { merge: true });
 
         passwordInput.value = '';
@@ -106,40 +112,13 @@ signInButton.addEventListener('click', async () => {
 // ---------------- SIGN OUT ----------------
 signOutButton.addEventListener('click', async () => {
     await signOut(auth);
+
     userStatus.innerText = 'No user signed in.';
     emailInput.value = '';
     passwordInput.value = '';
 });
 
-backButton.addEventListener("click", () => {
-    currentCharId = null;
-
-    editor.style.display = "none";
-    characterListView.style.display = "block";
-});
-
-// ---------------- AUTH STATE ----------------
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        authUiDiv.style.display = 'block';
-        appContentDiv.style.display = 'none';
-        characterListView.style.display = "block";
-        editor.style.display = "none";
-        signOutButton.style.display = 'inline';
-        userStatus.innerText = 'No user signed in.';
-        return;
-    }
-
-    await loadCharacters();
-    
-    authUiDiv.style.display = 'none';
-    appContentDiv.style.display = 'block';
-    signOutButton.style.display = 'inline';
-
-    userStatus.innerText =
-        `Logged in: ${user.email} (UID: ${user.uid})`;
-});
-
+// ---------------- CREATE CHARACTER ----------------
 createCharButton.addEventListener('click', async () => {
     const user = auth.currentUser;
     if (!user) return;
@@ -150,7 +129,7 @@ createCharButton.addEventListener('click', async () => {
     await addDoc(
         collection(db, "users", user.uid, "characters"),
         {
-            name: name,
+            name,
             class: "Unknown",
             level: 1,
             createdAt: Date.now()
@@ -161,6 +140,7 @@ createCharButton.addEventListener('click', async () => {
     loadCharacters();
 });
 
+// ---------------- LOAD CHARACTERS ----------------
 async function loadCharacters() {
     const user = auth.currentUser;
     if (!user) return;
@@ -175,41 +155,36 @@ async function loadCharacters() {
         const data = docSnap.data();
 
         const li = document.createElement("li");
-        
+
         const btn = document.createElement("button");
         btn.textContent = `${data.name} (Lv ${data.level})`;
-        
+
         btn.addEventListener("click", () => {
             openCharacter(docSnap.id, data);
         });
-        
+
         li.appendChild(btn);
-
-        li.addEventListener("click", () => {
-            openCharacter(docSnap.id, data);
-        });
-
         characterList.appendChild(li);
     });
 }
 
+// ---------------- OPEN CHARACTER ----------------
 function openCharacter(id, data) {
     currentCharId = id;
 
     characterListView.style.display = "none";
     editor.style.display = "block";
 
+    editorTitle.innerText = `Editing: ${data.name}`;
+
     editName.value = data.name || "";
     editClass.value = data.class || "";
     editLevel.value = data.level || 1;
 
-    editorStatus.innerText = "Loaded character.";
-
-    editorTitle.innerText = `Editing: ${data.name}`;
-
-    editor.scrollIntoView({ behavior: "smooth" });
+    editorStatus.innerText = "";
 }
 
+// ---------------- SAVE CHARACTER ----------------
 async function saveCharacter() {
     const user = auth.currentUser;
     if (!user || !currentCharId) return;
@@ -225,9 +200,62 @@ async function saveCharacter() {
     );
 
     editorStatus.innerText = "Saved.";
-    loadCharacters(); // update list display
+
+    loadCharacters();
 }
 
+// auto-save
 editName.addEventListener("input", saveCharacter);
 editClass.addEventListener("input", saveCharacter);
 editLevel.addEventListener("input", saveCharacter);
+
+// ---------------- DELETE CHARACTER ----------------
+deleteCharButton.addEventListener("click", async () => {
+    const user = auth.currentUser;
+    if (!user || !currentCharId) return;
+
+    const ok = confirm("Delete this character? This cannot be undone.");
+    if (!ok) return;
+
+    await deleteDoc(
+        doc(db, "users", user.uid, "characters", currentCharId)
+    );
+
+    currentCharId = null;
+
+    editor.style.display = "none";
+    characterListView.style.display = "block";
+
+    loadCharacters();
+});
+
+// ---------------- BACK BUTTON ----------------
+backButton.addEventListener("click", () => {
+    currentCharId = null;
+
+    editor.style.display = "none";
+    characterListView.style.display = "block";
+
+    loadCharacters();
+});
+
+// ---------------- AUTH STATE ----------------
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        authUiDiv.style.display = "block";
+        appContentDiv.style.display = "none";
+        signOutButton.style.display = "none";
+        return;
+    }
+
+    authUiDiv.style.display = "none";
+    appContentDiv.style.display = "block";
+    signOutButton.style.display = "inline";
+
+    characterListView.style.display = "block";
+    editor.style.display = "none";
+
+    userStatus.innerText = `Logged in: ${user.email}`;
+
+    await loadCharacters();
+});
