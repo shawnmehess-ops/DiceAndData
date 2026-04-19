@@ -17,12 +17,12 @@
         <input type="password" id="passwordInput" placeholder="Password">
         <button id="signUpButton">Sign Up</button>
         <button id="signInButton">Sign In</button>
-        <button id="signOutButton" style="display:none;">Sign Out</button>
         <p id="userStatus">No user signed in.</p>
     </div>
 
     <div id="app-content" style="display:none;">
         <h2>Your Character Sheets</h2>
+        <button id="signOutButton" style="display:none;">Sign Out</button>
         <p>Welcome! You are logged in.</p>
 
         <textarea id="testField" placeholder="Type something to save..."></textarea>
@@ -146,7 +146,7 @@
             if (!user) {
                 authUiDiv.style.display = 'block';
                 appContentDiv.style.display = 'none';
-                signOutButton.style.display = 'none';
+                signOutButton.style.display = 'inline';
                 userStatus.innerText = 'No user signed in.';
                 return;
             }
