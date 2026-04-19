@@ -21,13 +21,32 @@
     </div>
 
     <div id="app-content" style="display:none;">
-        <h2>Your Character Sheets</h2>
-        <button id="signOutButton" style="display:none;">Sign Out</button>
-        <p>Welcome! You are logged in.</p>
-
-        <textarea id="testField" placeholder="Type something to save..."></textarea>
-        <button id="saveButton">Save</button>
-        <p id="saveStatus"></p>
+        <h2>Your Characters</h2>
+        
+        <!-- CREATE -->
+        <input id="charNameInput" placeholder="Character Name">
+        <button id="createCharButton">Create Character</button>
+        
+        <!-- LIST -->
+        <ul id="characterList"></ul>
+        
+        <hr>
+        
+        <!-- EDITOR -->
+        <div id="editor" style="display:none;">
+            <h3>Edit Character</h3>
+        
+            <label>Name:</label>
+            <input id="editName"><br>
+        
+            <label>Class:</label>
+            <input id="editClass"><br>
+        
+            <label>Level:</label>
+            <input id="editLevel" type="number" min="1"><br>
+        
+            <p id="editorStatus"></p>
+        </div>
     </div>
 
     <script type="module" src="app.js?v=1"></script></body>
