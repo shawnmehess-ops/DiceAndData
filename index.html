@@ -20,8 +20,11 @@
 
     <div id="app-content" style="display: none;">
         <h2>Your Character Sheets</h2>
-        <!-- This is where your character management UI will go later -->
         <p>Welcome! You are logged in.</p>
+
+        <textarea id="testField" placeholder="Type something to save..."></textarea>
+        <button id="saveButton">Save</button>
+        <p id="saveStatus"></p>
     </div>
 
     <!-- Consolidated JavaScript using Modular SDK -->
@@ -69,6 +72,10 @@
         const userStatus = document.getElementById('userStatus');
         const authUiDiv = document.getElementById('auth-ui'); // Added from previous suggestion
         const appContentDiv = document.getElementById('app-content'); // Added from previous suggestion
+        
+        const testField = document.getElementById('testField');
+        const saveButton = document.getElementById('saveButton');
+        const saveStatus = document.getElementById('saveStatus');
 
         // --- User Registration (Sign Up) ---
         signUpButton.addEventListener('click', async () => {
@@ -132,6 +139,17 @@
                 });
         });
 
+        saveButton.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if (!user) return;
+        
+            await setDoc(doc(db, "users", user.uid), {
+                text: testField.value
+            });
+        
+            saveStatus.innerText = "Saved!";
+        });
+        
         // --- Monitor Authentication State (login/logout changes) ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -158,6 +176,17 @@
                         <p><strong>Saved message:</strong> ${snap.data().message}</p>
                         <p><strong>Random value:</strong> ${snap.data().randomValue}</p>
                     `;
+                }
+
+                const docRef = doc(db, "users", user.uid);
+                const snap = await getDoc(docRef);
+                
+                if (snap.exists() && snap.data().text) {
+                    testField.value = snap.data().text;
+                    saveStatus.innerText = "Loaded saved data.";
+                } else {
+                    testField.value = "";
+                    saveStatus.innerText = "No saved data yet.";
                 }
         
             } else {
