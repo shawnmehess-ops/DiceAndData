@@ -34,30 +34,69 @@
         <hr>
         
         <!-- EDITOR -->
-        <div id="editor" style="display:none;">
-            <button id="backButton">⬅ Back to Characters</button>
+        <div id="editor" style="display:none;" class="sheet">
         
-            <h3 id="editorTitle">Edit Character</h3>
+            <button id="backButton">← Back to Characters</button>
         
-            <label>Name:</label>
-            <input id="editName"><br>
+            <h2 id="editorTitle">Character Sheet</h2>
         
-            <label>Class:</label>
-            <input id="editClass"><br>
+            <!-- BASIC INFO -->
+            <div class="sheet-section">
+                <h3>Basic Info</h3>
         
-            <label>Level:</label>
-            <input id="editLevel" type="number" min="1"><br>
-
-            <input id="statStr">
-            <input id="statDex">
-            <input id="statCon">
-            <input id="statInt">
-            <input id="statWis">
-            <input id="statCha">
-            
-            <p id="editorStatus"></p>
+                <label>Name</label>
+                <input id="editName">
         
-            <button id="deleteCharButton">Delete Character</button>
+                <label>Class</label>
+                <input id="editClass">
+        
+                <label>Level</label>
+                <input id="editLevel" type="number" min="1">
+            </div>
+        
+            <!-- STATS GRID -->
+            <div class="sheet-section">
+                <h3>Abilities</h3>
+        
+                <div class="stat-grid">
+                    <div class="stat">
+                        <label>STR</label>
+                        <input id="statStr" type="number">
+                    </div>
+        
+                    <div class="stat">
+                        <label>DEX</label>
+                        <input id="statDex" type="number">
+                    </div>
+        
+                    <div class="stat">
+                        <label>CON</label>
+                        <input id="statCon" type="number">
+                    </div>
+        
+                    <div class="stat">
+                        <label>INT</label>
+                        <input id="statInt" type="number">
+                    </div>
+        
+                    <div class="stat">
+                        <label>WIS</label>
+                        <input id="statWis" type="number">
+                    </div>
+        
+                    <div class="stat">
+                        <label>CHA</label>
+                        <input id="statCha" type="number">
+                    </div>
+                </div>
+            </div>
+        
+            <!-- ACTIONS -->
+            <div class="sheet-section">
+                <button id="deleteCharButton">Delete Character</button>
+                <p id="editorStatus"></p>
+            </div>
+        
         </div>
     </div>
 
