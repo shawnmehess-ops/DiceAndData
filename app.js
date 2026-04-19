@@ -215,14 +215,24 @@ async function saveCharacter() {
         {
             name: editName.value,
             class: editClass.value,
-            level: parseInt(editLevel.value) || 1
+            level: parseInt(editLevel.value) || 1,
+
+            attributes: {
+                str: { base: parseInt(statStr.value) || 10 },
+                dex: { base: parseInt(statDex.value) || 10 },
+                con: { base: parseInt(statCon.value) || 10 },
+                int: { base: parseInt(statInt.value) || 10 },
+                wis: { base: parseInt(statWis.value) || 10 },
+                cha: { base: parseInt(statCha.value) || 10 }
+            },
+
+            // reserved for future system (races, items, spells, etc.)
+            modifiers: []
         },
         { merge: true }
     );
 
     editorStatus.innerText = "Saved.";
-
-    loadCharacters();
 }
 
 // auto-save
