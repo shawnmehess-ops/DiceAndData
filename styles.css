@@ -1,3 +1,45 @@
+body {
+    font-family: "Georgia", serif;
+    background: #f3f1e7;
+    margin: 20px;
+}
+
+.sheet {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border: 2px solid #333;
+}
+
+.sheet-section {
+    border: 1px solid #999;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: #fafafa;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    background: white;
+}
+
+.stat input {
+    width: 60px;
+    text-align: center;
+    font-size: 16px;
+}
+
 .modifier {
     font-size: 14px;
     margin-top: 4px;
