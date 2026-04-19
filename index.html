@@ -71,27 +71,30 @@
         const appContentDiv = document.getElementById('app-content'); // Added from previous suggestion
 
         // --- User Registration (Sign Up) ---
-        signUpButton.addEventListener('click', () => {
+        signUpButton.addEventListener('click', async () => {
             const email = emailInput.value;
             const password = passwordInput.value;
-
-            createUserWithEmailAndPassword(auth, email, password) // Modular SDK syntax
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    console.log('User signed up:', user.email);
-                    userStatus.innerText = `Signed up and logged in as: ${user.email}`;
-                    // Save test data (only runs once per login for testing)
-                    await setDoc(doc(db, "users", user.uid), {
-                        message: "Hello " + user.email,
-                        randomValue: Math.random()
-                    });
-                    passwordInput.value = '';
-                })
-                .catch((error) => {
-                    const errorMessage = error.message;
-                    console.error('Sign up error:', errorMessage);
-                    userStatus.innerText = `Sign Up Error: ${errorMessage}`;
+        
+            try {
+                const userCredential =
+                    await createUserWithEmailAndPassword(auth, email, password);
+        
+                const user = userCredential.user;
+        
+                console.log('User signed up:', user.email);
+                userStatus.innerText =
+                    `Signed up and logged in as: ${user.email}`;
+        
+                await setDoc(doc(db, "users", user.uid), {
+                    message: "Hello " + user.email,
+                    randomValue: Math.random()
                 });
+        
+                passwordInput.value = '';
+            } catch (error) {
+                console.error(error);
+                userStatus.innerText = `Sign Up Error: ${error.message}`;
+            }
         });
 
         // --- User Login (Sign In) ---
