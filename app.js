@@ -84,19 +84,26 @@ function formatMod(score) {
 }
 
 function updateAllStats() {
-    const str = parseInt(statStr.value) || 10;
-    const dex = parseInt(statDex.value) || 10;
-    const con = parseInt(statCon.value) || 10;
-    const int = parseInt(statInt.value) || 10;
-    const wis = parseInt(statWis.value) || 10;
-    const cha = parseInt(statCha.value) || 10;
+    const stats = [
+        ["statStr", "modStr"],
+        ["statDex", "modDex"],
+        ["statCon", "modCon"],
+        ["statInt", "modInt"],
+        ["statWis", "modWis"],
+        ["statCha", "modCha"]
+    ];
 
-    document.getElementById("modStr").innerText = formatMod(str);
-    document.getElementById("modDex").innerText = formatMod(dex);
-    document.getElementById("modCon").innerText = formatMod(con);
-    document.getElementById("modInt").innerText = formatMod(int);
-    document.getElementById("modWis").innerText = formatMod(wis);
-    document.getElementById("modCha").innerText = formatMod(cha);
+    for (const [inputId, modId] of stats) {
+        const input = document.getElementById(inputId);
+        const mod = document.getElementById(modId);
+
+        if (!input || !mod) continue;
+
+        const value = parseInt(input.value) || 10;
+        const modifier = getModifier(value);
+
+        mod.innerText = modifier >= 0 ? `+${modifier}` : `${modifier}`;
+    }
 }
 
 // ---------------- AUTH ----------------
