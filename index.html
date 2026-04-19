@@ -22,19 +22,21 @@
 
     <div id="app-content" style="display:none;">
         <button id="signOutButton">Sign Out</button>
-        <h2>Your Characters</h2>
+        <div id="characterListView">
+            <h2>Your Characters</h2>
         
-        <!-- CREATE -->
-        <input id="charNameInput" placeholder="Character Name">
-        <button id="createCharButton">Create Character</button>
+            <input id="charNameInput" placeholder="Character Name">
+            <button id="createCharButton">Create Character</button>
         
-        <!-- LIST -->
-        <ul id="characterList"></ul>
+            <ul id="characterList"></ul>
+        </div>
         
         <hr>
         
         <!-- EDITOR -->
         <div id="editor" style="display:none;">
+            <button id="backButton">⬅ Back to Characters</button>
+
             <h3 id="editorTitle">Edit Character</h3>
         
             <label>Name:</label>
