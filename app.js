@@ -98,6 +98,7 @@ const newSkillStat       = document.getElementById("newSkillStat");
 const addSkillButton     = document.getElementById("addSkillButton");
 
 const savingThrowsDiv    = document.getElementById("savingThrows");  // FIX: was never declared
+const editInspiration = document.getElementById("editInspiration");
 
 const passivePerception    = document.getElementById("passivePerception");
 const passiveInvestigation = document.getElementById("passiveInvestigation");
@@ -279,7 +280,7 @@ async function saveCharacter() {
             max:     parseInt(editHPMax.value) || 0,
             temp:    parseInt(editTempHP.value) || 0
         },
-        inspiration: editInspiration.classList.contains("active"),
+        inspiration: editInspiration.checked,
         heroPoints:  parseInt(editHeroPoints.value) || 0,
         stats:       currentStats,
         skills:      currentSkills
@@ -339,8 +340,7 @@ function openCharacter(id, data) {
     editHPCurrent.value   = data.hp?.current ?? 0;
     editHPMax.value       = data.hp?.max ?? 0;
     editTempHP.value      = data.hp?.temp ?? 0;
-    if (data.inspiration) {editInspiration.classList.add("active");}
-    else {editInspiration.classList.remove("active");}
+    editInspiration.checked = !!data.inspiration;
     editHeroPoints.value  = data.heroPoints ?? 0;
 
     currentStats = Array.isArray(data.stats) && data.stats.length
@@ -360,11 +360,11 @@ function openCharacter(id, data) {
 // ---------------- AUTOSAVE ON BASIC FIELDS ----------------
 [editName, editClass, editLevel, editAC, editHPCurrent,
  editHPMax, editTempHP, editInspiration, editHeroPoints
-].forEach(el => {
-    editInspiration.onclick = () => {
-    editInspiration.classList.toggle("active");
-    debouncedSave();};
-});
+].forEach(el => {});
+
+editInspiration.onchange = () => {
+    debouncedSave();
+};
 
 // ---------------- ADD STAT ----------------
 addStatButton.onclick = () => {
