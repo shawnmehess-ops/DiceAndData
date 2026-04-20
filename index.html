@@ -4,92 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Character Sheet Manager</title>
+
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <h1>Welcome to the Character Sheet Manager TEST 2!</h1>
 
+    <!-- AUTH -->
     <div id="auth-ui">
         <h2>Sign Up or Sign In Test</h2>
+
         <input type="email" id="emailInput" placeholder="Email">
         <input type="password" id="passwordInput" placeholder="Password">
+
         <button id="signUpButton">Sign Up</button>
         <button id="signInButton">Sign In</button>
+
         <p id="userStatus">No user signed in.</p>
     </div>
 
+    <!-- APP -->
     <div id="app-content" style="display:none;">
+
         <button id="signOutButton">Sign Out</button>
+
+        <!-- CHARACTER LIST -->
         <div id="characterListView">
             <h2>Your Characters</h2>
-        
+
             <input id="charNameInput" placeholder="Character Name">
             <button id="createCharButton">Create Character</button>
-        
+
             <ul id="characterList"></ul>
         </div>
-        
+
         <hr>
-        
+
         <!-- EDITOR -->
         <div id="editor" style="display:none;" class="sheet">
-        
+
             <button id="backButton">← Back to Characters</button>
-        
+
             <h2 id="editorTitle">Character Sheet</h2>
-        
+
             <!-- BASIC INFO -->
             <div class="sheet-section">
                 <h3>Basic Info</h3>
-        
+
                 <label>Name</label>
                 <input id="editName">
-        
+
                 <label>Class</label>
                 <input id="editClass">
-        
+
                 <label>Level</label>
                 <input id="editLevel" type="number" min="1">
             </div>
-        
-            <!-- STATS GRID -->
+
+            <!-- ABILITIES -->
             <div class="sheet-section">
                 <h3>Abilities</h3>
-        
+
                 <div class="stat-grid">
                     <div class="stat">
                         <label>STR</label>
                         <input id="statStr" type="number">
                         <div id="modStr" class="modifier"></div>
                     </div>
-        
+
                     <div class="stat">
                         <label>DEX</label>
                         <input id="statDex" type="number">
                         <div id="modDex" class="modifier"></div>
                     </div>
-        
+
                     <div class="stat">
                         <label>CON</label>
                         <input id="statCon" type="number">
                         <div id="modCon" class="modifier"></div>
                     </div>
-        
+
                     <div class="stat">
                         <label>INT</label>
                         <input id="statInt" type="number">
                         <div id="modInt" class="modifier"></div>
                     </div>
-        
+
                     <div class="stat">
                         <label>WIS</label>
                         <input id="statWis" type="number">
                         <div id="modWis" class="modifier"></div>
                     </div>
-        
+
                     <div class="stat">
                         <label>CHA</label>
                         <input id="statCha" type="number">
@@ -98,56 +109,40 @@
                 </div>
             </div>
 
-            <!-- PROFICIENCIES GRID -->
+            <!-- ✅ NEW DYNAMIC SKILLS SYSTEM -->
             <div class="sheet-section">
                 <h3>Skills</h3>
-            
-                <div class="skill">
-                    <input type="checkbox" id="profAthletics">
-                    <label>Athletics (STR)</label>
-                    <span id="skillAthletics"></span>
-                </div>
-            
-                <div class="skill">
-                    <input type="checkbox" id="profStealth">
-                    <label>Stealth (DEX)</label>
-                    <span id="skillStealth"></span>
-                </div>
-            
-                <div class="skill">
-                    <input type="checkbox" id="profArcana">
-                    <label>Arcana (INT)</label>
-                    <span id="skillArcana"></span>
-                </div>
-            
-                <div class="skill">
-                    <input type="checkbox" id="profPerception">
-                    <label>Perception (WIS)</label>
-                    <span id="skillPerception"></span>
-                </div>
+
+                <!-- THIS is what your JS needs -->
+                <div id="skillsContainer"></div>
+
+                <hr>
+
+                <input id="newSkillName" placeholder="New Skill Name">
+
+                <select id="newSkillStat">
+                    <option value="str">STR</option>
+                    <option value="dex">DEX</option>
+                    <option value="con">CON</option>
+                    <option value="int">INT</option>
+                    <option value="wis">WIS</option>
+                    <option value="cha">CHA</option>
+                </select>
+
+                <button id="addSkillButton">Add Skill</button>
             </div>
 
-            <input id="newSkillName" placeholder="New Skill Name">
-
-            <select id="newSkillStat">
-                <option value="str">STR</option>
-                <option value="dex">DEX</option>
-                <option value="con">CON</option>
-                <option value="int">INT</option>
-                <option value="wis">WIS</option>
-                <option value="cha">CHA</option>
-            </select>
-            
-            <button id="addSkillButton">Add Skill</button>
-            
             <!-- ACTIONS -->
             <div class="sheet-section">
                 <button id="deleteCharButton">Delete Character</button>
                 <p id="editorStatus"></p>
             </div>
-        
+
         </div>
     </div>
 
-    <script type="module" src="app.js?v=1"></script></body>
+    <!-- IMPORTANT: script at bottom -->
+    <script type="module" src="app.js?v=2"></script>
+
+</body>
 </html>
