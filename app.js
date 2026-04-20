@@ -293,18 +293,19 @@ function bindAutosave() {
 }
 
 // ---------------- ADD SKILL ----------------
-addSkillButton.onclick = () => {
-    const name = newSkillName.value.trim();
-    const stat = newSkillStat.value;
-    if (!name) return;
+if (addSkillButton) {
+    addSkillButton.onclick = () => {
+        const name = newSkillName.value.trim();
+        const stat = newSkillStat.value;
+        if (!name) return;
 
-    currentSkills.push({ name, stat, proficient: false });
+        currentSkills.push({ name, stat, proficient: false });
 
-    newSkillName.value = "";
-
-    renderSkills();
-    debouncedSave();
-};
+        newSkillName.value = "";
+        renderSkills();
+        debouncedSave();
+    };
+}
 
 // ---------------- DELETE ----------------
 deleteCharButton.onclick = async () => {
