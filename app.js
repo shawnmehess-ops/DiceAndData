@@ -44,24 +44,24 @@ const DEFAULT_STATS = [
 ];
 
 const DEFAULT_SKILLS = [
-    { name: "Acrobatics", stat: "dex", proficient: false},
-    { name: "Animal Handling", stat: "wis", proficient: false},
-    { name: "Arcana", stat: "int", proficient: false},
-    { name: "Athletics", stat: "str", proficient: false},
-    { name: "Deception", stat: "cha", proficient: false},
-    { name: "History", stat: "int", proficient: false},
-    { name: "Insight", stat: "wis", proficient: false},
-    { name: "Intimidation", stat: "cha", proficient: false},
-    { name: "Investigation", stat: "int", proficient: false},
-    { name: "Medicine", stat: "wis", proficient: false},
-    { name: "Nature", stat: "int", proficient: false},
-    { name: "Perception", stat: "wis", proficient: false},
-    { name: "Performance", stat: "cha", proficient: false},
-    { name: "Persuasion", stat: "cha", proficient: false},
-    { name: "Religion", stat: "int", proficient: false},
-    { name: "Sleight of Hand", stat: "dex", proficient: false},
-    { name: "Stealth", stat: "dex", proficient: false},
-    { name: "Survival", stat: "wis", proficient: false}
+    { name: "Acrobatics", stat: "dex", profLevel: 0},
+    { name: "Animal Handling", stat: "wis", profLevel: 0},
+    { name: "Arcana", stat: "int", profLevel: 0},
+    { name: "Athletics", stat: "str", profLevel: 0},
+    { name: "Deception", stat: "cha", profLevel: 0},
+    { name: "History", stat: "int", profLevel: 0},
+    { name: "Insight", stat: "wis", profLevel: 0},
+    { name: "Intimidation", stat: "cha", profLevel: 0},
+    { name: "Investigation", stat: "int", profLevel: 0},
+    { name: "Medicine", stat: "wis", profLevel: 0},
+    { name: "Nature", stat: "int", profLevel: 0},
+    { name: "Perception", stat: "wis", profLevel: 0},
+    { name: "Performance", stat: "cha", profLevel: 0},
+    { name: "Persuasion", stat: "cha", profLevel: 0},
+    { name: "Religion", stat: "int", profLevel: 0},
+    { name: "Sleight of Hand", stat: "dex", profLevel: 0},
+    { name: "Stealth", stat: "dex", profLevel: 0},
+    { name: "Survival", stat: "wis", profLevel: 0}
 ];
 
 // ---------------- STATE ----------------
