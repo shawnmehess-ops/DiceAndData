@@ -19,6 +19,8 @@ body {
     background: #fafafa;
 }
 
+/* ---------------- STATS ---------------- */
+
 .stat-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -63,30 +65,119 @@ body {
     color: #c00;
 }
 
-.skill {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 0;
+/* ---------------- SKILLS ---------------- */
+
+/* header row */
+.skill-header {
+    display: grid;
+    grid-template-columns: 1fr 60px 30px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 4px;
 }
 
-/* ---------------- NEW: PROFICIENCY RADIO GROUP ---------------- */
+/* each row */
+.skill {
+    display: grid;
+    grid-template-columns: 1fr 60px 30px;
+    align-items: center;
+    padding: 6px 8px;
+}
+
+/* zebra striping */
+.skill:nth-child(even) {
+    background: #f2f2f2;
+}
+
+.skill:hover {
+    background: #eaeaea;
+}
+
+/* left side grouping */
+.skill-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* skill label */
+.skill-name {
+    white-space: nowrap;
+}
+
+/* right aligned modifier column */
+.skill-total {
+    text-align: right;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+/* delete button */
+.skill-delete {
+    font-size: 11px;
+    padding: 2px 6px;
+    background: none;
+    border: 1px solid #ccc;
+    color: #999;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.skill-delete:hover {
+    background: #fee;
+    border-color: #c00;
+    color: #c00;
+}
+
+/* ---------------- PROFICIENCY ---------------- */
 
 .prof-group {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    margin-right: 10px;
+    display: grid;
+    grid-template-columns: repeat(4, 16px);
+    gap: 4px;
 }
 
-.prof-group label {
+/* header labels */
+.prof-group.labels {
     font-size: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 2px;
+    text-align: center;
 }
 
+/* radio base */
 .prof-group input[type="radio"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #999;
     cursor: pointer;
+}
+
+/* column colors */
+.prof-group label:nth-child(1) input {
+    border-color: #bbb;
+}
+.prof-group label:nth-child(2) input {
+    border-color: #6aa6ff;
+}
+.prof-group label:nth-child(3) input {
+    border-color: #4caf50;
+}
+.prof-group label:nth-child(4) input {
+    border-color: #d4af37;
+}
+
+/* selected states */
+.prof-group label:nth-child(1) input:checked {
+    background: #bbb;
+}
+.prof-group label:nth-child(2) input:checked {
+    background: #6aa6ff;
+}
+.prof-group label:nth-child(3) input:checked {
+    background: #4caf50;
+}
+.prof-group label:nth-child(4) input:checked {
+    background: #d4af37;
 }
