@@ -196,7 +196,12 @@ createCharButton.onclick = async () => {
             wis: { base: 10 },
             cha: { base: 10 }
         },
-        skills: [],
+        skills: [
+            { name: "Athletics", stat: "str", proficient: false },
+            { name: "Stealth", stat: "dex", proficient: false },
+            { name: "Arcana", stat: "int", proficient: false },
+            { name: "Perception", stat: "wis", proficient: false }
+        ],,
         createdAt: Date.now()
     });
 
@@ -239,7 +244,7 @@ function openCharacter(id, data) {
     statWis.value = a.wis?.base ?? 10;
     statCha.value = a.cha?.base ?? 10;
 
-    currentSkills = data.skills || [];
+    currentSkills = JSON.parse(JSON.stringify(data.skills || []));
 
     updateAllStats();
     renderSkills();
