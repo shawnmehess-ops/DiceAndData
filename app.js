@@ -205,7 +205,7 @@ createCharButton.onclick = async () => {
             { name: "Stealth", stat: "dex", proficient: false },
             { name: "Arcana", stat: "int", proficient: false },
             { name: "Perception", stat: "wis", proficient: false }
-        ],,
+        ],
         createdAt: Date.now()
     });
 
