@@ -367,6 +367,12 @@ async function loadCharacters() {
     });
 }
 
+function rerenderAll() {
+    renderStats();
+    renderSkills();
+    renderPassives();
+}
+
 // ---------------- OPEN CHARACTER ----------------
 function openCharacter(id, data) {
     currentCharId = id;
