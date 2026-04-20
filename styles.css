@@ -278,3 +278,9 @@ body {
     background: #ffe082;
     border-color: #c9a227;
 }
+
+#editInspiration {
+    transform: scale(1.2);
+    cursor: pointer;
+    accent-color: #d4af37;
+}
