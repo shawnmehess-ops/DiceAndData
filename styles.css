@@ -70,17 +70,18 @@ body {
 /* header row */
 .skill-header {
     display: grid;
-    grid-template-columns: 1fr 60px 30px;
+    grid-template-columns: 220px 1fr 50px 30px;
     font-weight: bold;
     padding: 4px 8px;
     border-bottom: 1px solid #ccc;
     margin-bottom: 4px;
+    align-items: center;
 }
 
 /* each row */
 .skill {
     display: grid;
-    grid-template-columns: 1fr 60px 30px;
+    grid-template-columns: 220px 1fr 50px 30px;
     align-items: center;
     padding: 6px 8px;
 }
@@ -94,29 +95,34 @@ body {
     background: #eaeaea;
 }
 
-/* left side grouping */
-.skill-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* proficiency group (fixed width column) */
+.prof-group {
+    display: grid;
+    grid-template-columns: repeat(4, 16px);
+    gap: 4px;
+    justify-content: start;
 }
 
-/* skill label */
+/* skill name column */
 .skill-name {
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* right aligned modifier column */
+/* modifier column */
 .skill-total {
     text-align: right;
     font-weight: bold;
     font-family: monospace;
 }
 
-/* delete button */
+/* delete button column */
 .skill-delete {
-    font-size: 11px;
-    padding: 2px 6px;
+    width: 24px;
+    height: 20px;
+    padding: 0;
+    font-size: 12px;
     background: none;
     border: 1px solid #ccc;
     color: #999;
