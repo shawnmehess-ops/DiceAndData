@@ -158,3 +158,123 @@ body {
 .prof-group label:nth-child(2) input:checked { background: #6aa6ff; }
 .prof-group label:nth-child(3) input:checked { background: #4caf50; }
 .prof-group label:nth-child(4) input:checked { background: #d4af37; }
+
+/* ---------------- COMBAT & RESOURCES ---------------- */
+
+.combat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+/* individual stat cards */
+.combat-box {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    border-radius: 6px;
+    position: relative;
+}
+
+/* section labels */
+.combat-box label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #666;
+    margin-bottom: 6px;
+}
+
+/* big numeric display */
+.combat-box input,
+.combat-box .value {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: "Georgia", serif;
+}
+
+/* subtle bottom divider for inputs */
+.combat-box input {
+    border-bottom: 1px dashed #bbb;
+    outline: none;
+}
+
+/* hover emphasis */
+.combat-box:hover {
+    border-color: #888;
+    background: #fcfcfc;
+}
+
+/* ---------------- HP SPECIAL LAYOUT ---------------- */
+
+.hp-box {
+    grid-column: span 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+}
+
+/* HP segments look like a "track" */
+.hp-segment {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* current HP emphasis */
+.hp-current {
+    font-size: 26px;
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+/* temp HP styling */
+.hp-temp {
+    font-size: 18px;
+    color: #1565c0;
+}
+
+/* max HP muted */
+.hp-max {
+    font-size: 18px;
+    color: #444;
+}
+
+/* ---------------- STATUS ROW (inspiration / hero points) ---------------- */
+
+.resource-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.resource-pill {
+    flex: 1;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 6px 10px;
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.resource-pill:hover {
+    background: #f0f0f0;
+    border-color: #999;
+}
+
+.resource-pill.active {
+    background: #ffe082;
+    border-color: #c9a227;
+}
