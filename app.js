@@ -112,6 +112,8 @@ const editHeroPoints    = document.getElementById("editHeroPoints");
 
 const savingThrowsDiv   = document.getElementById("savingThrows");
 const passivePerception = document.getElementById("passivePerception");
+const passiveInvestigation = document.getElementById("passiveInvestigation");
+const passiveInsight = document.getElementById("passiveInsight");
 
 // ---------------- UTIL ----------------
 function debounce(fn, delay = 500) {
@@ -144,8 +146,14 @@ function getStatValue(key) {
 
 // ---------------- PASSIVE PERCEPTION ----------------
 function renderPassives() {
-    const wisMod = getModifier(getStatValue("wis"));
-    passivePerception.textContent = 10 + wisMod;
+    passivePerception.textContent =
+        getPassiveScore("wis", "Perception");
+
+    passiveInvestigation.textContent =
+        getPassiveScore("int", "Investigation");
+
+    passiveInsight.textContent =
+        getPassiveScore("wis", "Insight");
 }
 
 // ---------------- SAVING THROWS ----------------
@@ -434,3 +442,24 @@ onAuthStateChanged(auth, (user) => {
 
     loadCharacters();
 });
+
+function getPassiveScore(statKey, skillName = null) {
+    const statMod = getModifier(getStatValue(statKey));
+    const level = parseInt(editLevel.value) || 1;
+    const profBonus = getProficiencyBonus(level);
+
+    let prof = 0;
+
+    if (skillName) {
+        const skill = currentSkills.find(s => s.name === skillName);
+        if (skill) {
+            switch (skill.profLevel) {
+                case 1: prof = Math.floor(profBonus / 2); break;
+                case 2: prof = profBonus; break;
+                case 3: prof = profBonus * 2; break;
+            }
+        }
+    }
+
+    return 10 + statMod + prof;
+}
