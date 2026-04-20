@@ -151,10 +151,9 @@ function renderSavingThrows() {
     savingThrowsDiv.innerHTML = "";
 
     DEFAULT_STATS.forEach(stat => {
-        const mod = getModifier(getStatValue(stat.key));
         const row = document.createElement("div");
         row.className = "save-row";
-        row.innerHTML = `<span>${stat.label}</span><span>${formatMod(mod)}</span>`;
+        row.innerHTML = `<span>${stat.label}</span><span>${formatMod(getStatValue(stat.key))}</span>`;
         savingThrowsDiv.appendChild(row);
     });
 }
