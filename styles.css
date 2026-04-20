@@ -45,3 +45,10 @@ body {
     margin-top: 4px;
     font-weight: bold;
 }
+
+.skill {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+}
