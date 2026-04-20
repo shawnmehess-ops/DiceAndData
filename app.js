@@ -2,10 +2,9 @@ import {
     getFirestore,
     doc,
     setDoc,
-    getDoc,
-    collection,
-    addDoc,
     getDocs,
+    addDoc,
+    collection,
     deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
@@ -21,13 +20,9 @@ import {
 
 // ---------------- FIREBASE ----------------
 const firebaseConfig = {
-    apiKey: "AIzaSyBYYgS04lxcbeawj7WDahEN7SbzYgVGLjE",
-    authDomain: "diceanddata-81ebe.firebaseapp.com",
-    projectId: "diceanddata-81ebe",
-    storageBucket: "diceanddata-81ebe.firebasestorage.app",
-    messagingSenderId: "547850961878",
-    appId: "1:547850961878:web:8b2a99076d66c0ab451a77",
-    measurementId: "G-LSZ59FPDTL"
+    apiKey: "YOUR_KEY",
+    authDomain: "YOUR_DOMAIN",
+    projectId: "YOUR_PROJECT_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -36,44 +31,54 @@ const db = getFirestore(app);
 
 // ---------------- STATE ----------------
 let currentCharId = null;
+let currentSkills = [];
 
 // ---------------- DOM ----------------
-const emailInput = document.getElementById('emailInput');
-const passwordInput = document.getElementById('passwordInput');
+const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
+const signUpButton = document.getElementById("signUpButton");
+const signInButton = document.getElementById("signInButton");
+const signOutButton = document.getElementById("signOutButton");
 
-const signUpButton = document.getElementById('signUpButton');
-const signInButton = document.getElementById('signInButton');
-const signOutButton = document.getElementById('signOutButton');
+const authUiDiv = document.getElementById("auth-ui");
+const appContentDiv = document.getElementById("app-content");
 
-const userStatus = document.getElementById('userStatus');
+const charNameInput = document.getElementById("charNameInput");
+const createCharButton = document.getElementById("createCharButton");
+const characterList = document.getElementById("characterList");
 
-const authUiDiv = document.getElementById('auth-ui');
-const appContentDiv = document.getElementById('app-content');
+const editor = document.getElementById("editor");
+const editName = document.getElementById("editName");
+const editClass = document.getElementById("editClass");
+const editLevel = document.getElementById("editLevel");
 
-const charNameInput = document.getElementById('charNameInput');
-const createCharButton = document.getElementById('createCharButton');
-const characterList = document.getElementById('characterList');
+const statStr = document.getElementById("statStr");
+const statDex = document.getElementById("statDex");
+const statCon = document.getElementById("statCon");
+const statInt = document.getElementById("statInt");
+const statWis = document.getElementById("statWis");
+const statCha = document.getElementById("statCha");
 
-const editor = document.getElementById('editor');
-const editorTitle = document.getElementById('editorTitle');
+const skillsContainer = document.getElementById("skillsContainer");
 
-const editName = document.getElementById('editName');
-const editClass = document.getElementById('editClass');
-const editLevel = document.getElementById('editLevel');
+const newSkillName = document.getElementById("newSkillName");
+const newSkillStat = document.getElementById("newSkillStat");
+const addSkillButton = document.getElementById("addSkillButton");
 
-const statStr = document.getElementById('statStr');
-const statDex = document.getElementById('statDex');
-const statCon = document.getElementById('statCon');
-const statInt = document.getElementById('statInt');
-const statWis = document.getElementById('statWis');
-const statCha = document.getElementById('statCha');
+const backButton = document.getElementById("backButton");
+const deleteCharButton = document.getElementById("deleteCharButton");
 
-const editorStatus = document.getElementById('editorStatus');
+// ---------------- UTIL ----------------
+function debounce(fn, delay = 500) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+    };
+}
 
-const backButton = document.getElementById('backButton');
-const deleteCharButton = document.getElementById('deleteCharButton');
+const debouncedSave = debounce(() => saveCharacter(), 500);
 
-// ---------------- MODIFIER ENGINE ----------------
 function getModifier(score) {
     return Math.floor((score - 10) / 2);
 }
@@ -83,8 +88,25 @@ function formatMod(score) {
     return mod >= 0 ? `+${mod}` : `${mod}`;
 }
 
+function getProficiencyBonus(level) {
+    return Math.floor((level - 1) / 4) + 2;
+}
+
+function getStatValue(stat) {
+    switch (stat) {
+        case "str": return parseInt(statStr.value) || 10;
+        case "dex": return parseInt(statDex.value) || 10;
+        case "con": return parseInt(statCon.value) || 10;
+        case "int": return parseInt(statInt.value) || 10;
+        case "wis": return parseInt(statWis.value) || 10;
+        case "cha": return parseInt(statCha.value) || 10;
+        default: return 10;
+    }
+}
+
+// ---------------- MODIFIERS ----------------
 function updateAllStats() {
-    const stats = [
+    const map = [
         ["statStr", "modStr"],
         ["statDex", "modDex"],
         ["statCon", "modCon"],
@@ -93,75 +115,79 @@ function updateAllStats() {
         ["statCha", "modCha"]
     ];
 
-    for (const [inputId, modId] of stats) {
+    map.forEach(([inputId, modId]) => {
         const input = document.getElementById(inputId);
         const mod = document.getElementById(modId);
+        if (!input || !mod) return;
 
-        if (!input || !mod) continue;
+        const val = parseInt(input.value) || 10;
+        mod.innerText = formatMod(val);
+    });
+}
 
-        const value = parseInt(input.value) || 10;
-        const modifier = getModifier(value);
+// ---------------- SKILLS ----------------
+function renderSkills() {
+    skillsContainer.innerHTML = "";
 
-        mod.innerText = modifier >= 0 ? `+${modifier}` : `${modifier}`;
-    }
+    const level = parseInt(editLevel.value) || 1;
+    const profBonus = getProficiencyBonus(level);
+
+    currentSkills.forEach((skill, index) => {
+        const statVal = getStatValue(skill.stat);
+        const base = getModifier(statVal);
+        const total = skill.proficient ? base + profBonus : base;
+
+        const row = document.createElement("div");
+        row.className = "skill";
+
+        row.innerHTML = `
+            <input type="checkbox" ${skill.proficient ? "checked" : ""}>
+            <span>${skill.name} (${skill.stat.toUpperCase()})</span>
+            <span>${total >= 0 ? "+" + total : total}</span>
+            <button>X</button>
+        `;
+
+        const checkbox = row.children[0];
+        const deleteBtn = row.children[3];
+
+        checkbox.onchange = () => {
+            currentSkills[index].proficient = checkbox.checked;
+            renderSkills();
+            debouncedSave();
+        };
+
+        deleteBtn.onclick = () => {
+            currentSkills.splice(index, 1);
+            renderSkills();
+            debouncedSave();
+        };
+
+        skillsContainer.appendChild(row);
+    });
 }
 
 // ---------------- AUTH ----------------
-signUpButton.addEventListener('click', async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
+signUpButton.onclick = async () => {
+    await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+};
 
-    try {
-        const userCredential =
-            await createUserWithEmailAndPassword(auth, email, password);
+signInButton.onclick = async () => {
+    await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+};
 
-        const user = userCredential.user;
-
-        userStatus.innerText = `Signed up as: ${user.email}`;
-
-        await setDoc(doc(db, "users", user.uid), {
-            createdAt: Date.now()
-        }, { merge: true });
-
-        passwordInput.value = '';
-    } catch (err) {
-        userStatus.innerText = `Sign Up Error: ${err.message}`;
-    }
-});
-
-signInButton.addEventListener('click', async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
-
-    try {
-        const userCredential =
-            await signInWithEmailAndPassword(auth, email, password);
-
-        userStatus.innerText = `Logged in as: ${userCredential.user.email}`;
-        passwordInput.value = '';
-    } catch (err) {
-        userStatus.innerText = `Sign In Error: ${err.message}`;
-    }
-});
-
-signOutButton.addEventListener('click', async () => {
+signOutButton.onclick = async () => {
     await signOut(auth);
-    userStatus.innerText = 'No user signed in.';
-});
+};
 
-// ---------------- CREATE CHARACTER ----------------
-createCharButton.addEventListener('click', async () => {
+// ---------------- CHARACTER CRUD ----------------
+createCharButton.onclick = async () => {
     const user = auth.currentUser;
     if (!user) return;
 
-    const name = charNameInput.value.trim();
-    if (!name) return;
-
     await addDoc(collection(db, "users", user.uid, "characters"), {
-        name,
+        name: charNameInput.value,
         class: "Unknown",
         level: 1,
-
         attributes: {
             str: { base: 10 },
             dex: { base: 10 },
@@ -170,16 +196,13 @@ createCharButton.addEventListener('click', async () => {
             wis: { base: 10 },
             cha: { base: 10 }
         },
-
-        modifiers: [],
+        skills: [],
         createdAt: Date.now()
     });
 
-    charNameInput.value = "";
     loadCharacters();
-});
+};
 
-// ---------------- LOAD CHARACTERS ----------------
 async function loadCharacters() {
     const user = auth.currentUser;
     if (!user) return;
@@ -188,49 +211,42 @@ async function loadCharacters() {
 
     characterList.innerHTML = "";
 
-    snap.forEach((docSnap) => {
+    snap.forEach(docSnap => {
         const data = docSnap.data();
 
-        const li = document.createElement("li");
         const btn = document.createElement("button");
+        btn.innerText = `${data.name} (Lv ${data.level})`;
 
-        btn.textContent = `${data.name} (Lv ${data.level})`;
+        btn.onclick = () => openCharacter(docSnap.id, data);
 
-        btn.addEventListener("click", () => {
-            openCharacter(docSnap.id, data);
-        });
-
-        li.appendChild(btn);
-        characterList.appendChild(li);
+        characterList.appendChild(btn);
     });
 }
 
-// ---------------- OPEN CHARACTER ----------------
 function openCharacter(id, data) {
     currentCharId = id;
 
-    editor.style.display = "block";
+    editName.value = data.name;
+    editClass.value = data.class;
+    editLevel.value = data.level;
 
-    editorTitle.innerText = `Editing: ${data.name}`;
+    const a = data.attributes || {};
 
-    editName.value = data.name || "";
-    editClass.value = data.class || "";
-    editLevel.value = data.level || 1;
+    statStr.value = a.str?.base ?? 10;
+    statDex.value = a.dex?.base ?? 10;
+    statCon.value = a.con?.base ?? 10;
+    statInt.value = a.int?.base ?? 10;
+    statWis.value = a.wis?.base ?? 10;
+    statCha.value = a.cha?.base ?? 10;
 
-    const attrs = data.attributes || {};
-
-    statStr.value = attrs.str?.base ?? 10;
-    statDex.value = attrs.dex?.base ?? 10;
-    statCon.value = attrs.con?.base ?? 10;
-    statInt.value = attrs.int?.base ?? 10;
-    statWis.value = attrs.wis?.base ?? 10;
-    statCha.value = attrs.cha?.base ?? 10;
+    currentSkills = data.skills || [];
 
     updateAllStats();
+    renderSkills();
     bindAutosave();
 }
 
-// ---------------- SAVE CHARACTER ----------------
+// ---------------- SAVE ----------------
 async function saveCharacter() {
     const user = auth.currentUser;
     if (!user || !currentCharId) return;
@@ -239,7 +255,6 @@ async function saveCharacter() {
         name: editName.value,
         class: editClass.value,
         level: parseInt(editLevel.value) || 1,
-
         attributes: {
             str: { base: parseInt(statStr.value) || 10 },
             dex: { base: parseInt(statDex.value) || 10 },
@@ -248,44 +263,58 @@ async function saveCharacter() {
             wis: { base: parseInt(statWis.value) || 10 },
             cha: { base: parseInt(statCha.value) || 10 }
         },
-
-        modifiers: []
+        skills: currentSkills
     }, { merge: true });
-
-    editorStatus.innerText = "Saved.";
 }
 
-// auto-save stats
-[statStr, statDex, statCon, statInt, statWis, statCha]
-    .forEach(el => el.addEventListener("input", () => {
-        updateAllStats();
-        saveCharacter();
-    }));
+// ---------------- AUTOSAVE ----------------
+function bindAutosave() {
+    const inputs = [
+        editName, editClass, editLevel,
+        statStr, statDex, statCon, statInt, statWis, statCha
+    ];
+
+    inputs.forEach(el => {
+        el.oninput = () => {
+            updateAllStats();
+            renderSkills();
+            debouncedSave();
+        };
+    });
+}
+
+// ---------------- ADD SKILL ----------------
+addSkillButton.onclick = () => {
+    const name = newSkillName.value.trim();
+    const stat = newSkillStat.value;
+    if (!name) return;
+
+    currentSkills.push({ name, stat, proficient: false });
+
+    newSkillName.value = "";
+
+    renderSkills();
+    debouncedSave();
+};
 
 // ---------------- DELETE ----------------
-deleteCharButton.addEventListener('click', async () => {
+deleteCharButton.onclick = async () => {
     const user = auth.currentUser;
     if (!user || !currentCharId) return;
 
-    if (!confirm("Delete this character?")) return;
-
     await deleteDoc(doc(db, "users", user.uid, "characters", currentCharId));
 
-    currentCharId = null;
-
     editor.style.display = "none";
     loadCharacters();
-});
+};
 
-// ---------------- BACK ----------------
-backButton.addEventListener('click', () => {
-    currentCharId = null;
+// ---------------- NAV ----------------
+backButton.onclick = () => {
     editor.style.display = "none";
-    loadCharacters();
-});
+};
 
 // ---------------- AUTH STATE ----------------
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, (user) => {
     if (!user) {
         authUiDiv.style.display = "block";
         appContentDiv.style.display = "none";
@@ -297,37 +326,3 @@ onAuthStateChanged(auth, async (user) => {
 
     loadCharacters();
 });
-
-function bindAutosave() {
-    const inputs = [
-        editName,
-        editClass,
-        editLevel,
-        statStr,
-        statDex,
-        statCon,
-        statInt,
-        statWis,
-        statCha
-    ];
-
-    inputs.forEach(el => {
-        el.oninput = () => {
-            updateAllStats();
-            debouncedSave();
-        };
-    });
-}
-
-function debounce(fn, delay = 500) {
-    let timeout;
-
-    return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn(...args), delay);
-    };
-}
-
-const debouncedSave = debounce(() => {
-    saveCharacter();
-}, 500);
