@@ -20,9 +20,13 @@ import {
 
 // ---------------- FIREBASE ----------------
 const firebaseConfig = {
-    apiKey: "YOUR_KEY",
-    authDomain: "YOUR_DOMAIN",
-    projectId: "YOUR_PROJECT_ID"
+    apiKey: "AIzaSyBYYgS04lxcbeawj7WDahEN7SbzYgVGLjE",
+    authDomain: "diceanddata-81ebe.firebaseapp.com",
+    projectId: "diceanddata-81ebe",
+    storageBucket: "diceanddata-81ebe.firebasestorage.app",
+    messagingSenderId: "547850961878",
+    appId: "1:547850961878:web:8b2a99076d66c0ab451a77",
+    measurementId: "G-LSZ59FPDTL"
 };
 
 const app = initializeApp(firebaseConfig);
