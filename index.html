@@ -69,29 +69,66 @@
             <!-- COMBAT & RESOURCES -->
             <div class="sheet-section">
                 <h3>Combat & Resources</h3>
-
-                <label>Armor Class (AC)</label>
-                <input id="editAC" type="number">
-
-                <label>Hit Points</label>
-                <div class="hp-row">
-                    <input id="editHPCurrent" type="number" placeholder="Current">
-                    /
-                    <input id="editHPMax" type="number" placeholder="Max">
+            
+                <div class="combat-grid">
+            
+                    <!-- AC -->
+                    <div class="combat-box">
+                        <label>Armor Class</label>
+                        <input id="editAC" type="number" min="0">
+                    </div>
+            
+                    <!-- Initiative (optional but usually present in sheets) -->
+                    <div class="combat-box">
+                        <label>Initiative</label>
+                        <div class="value" id="initiativeValue">+0</div>
+                    </div>
+            
+                    <!-- Speed (optional but useful) -->
+                    <div class="combat-box">
+                        <label>Speed</label>
+                        <input id="editSpeed" type="number" min="0">
+                    </div>
+            
+                    <!-- HP block (special layout) -->
+                    <div class="combat-box hp-box">
+            
+                        <div class="hp-segment">
+                            <label>Current HP</label>
+                            <input id="editHPCurrent" type="number" min="0">
+                        </div>
+            
+                        <div class="hp-segment">
+                            <label>Temporary HP</label>
+                            <input id="editTempHP" type="number" min="0">
+                        </div>
+            
+                        <div class="hp-segment">
+                            <label>Max HP</label>
+                            <input id="editHPMax" type="number" min="1">
+                        </div>
+            
+                    </div>
+            
+                    <!-- Inspiration -->
+                    <div class="combat-box">
+                        <label>Inspiration</label>
+                        <div class="resource-row">
+                            <div class="resource-pill" id="editInspiration">
+                                Toggle
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Hero Points -->
+                    <div class="combat-box">
+                        <label>Hero Points</label>
+                        <input id="editHeroPoints" type="number" min="0">
+                    </div>
+            
                 </div>
-
-                <label>Temporary HP</label>
-                <input id="editTempHP" type="number">
-
-                <label>
-                    <input id="editInspiration" type="checkbox">
-                    Inspiration
-                </label>
-
-                <label>Hero Points</label>
-                <input id="editHeroPoints" type="number" min="0">
             </div>
-
+            
             <!-- SAVING THROWS -->
             <div class="sheet-section">
                 <h3>Saving Throws</h3>
