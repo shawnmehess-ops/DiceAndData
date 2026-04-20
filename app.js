@@ -217,17 +217,22 @@ function renderSkills() {
 
         const row = document.createElement("div");
         row.className = "skill";
-
+        
         row.innerHTML = `
-            <div class="prof-group">
-                <label title="No proficiency"><input type="radio" name="prof-${index}" value="0" ${skill.profLevel === 0 ? "checked" : ""}>—</label>
-                <label title="Half proficiency"><input type="radio" name="prof-${index}" value="1" ${skill.profLevel === 1 ? "checked" : ""}>½</label>
-                <label title="Proficient"><input type="radio" name="prof-${index}" value="2" ${skill.profLevel === 2 ? "checked" : ""}>✓</label>
-                <label title="Expertise"><input type="radio" name="prof-${index}" value="3" ${skill.profLevel === 3 ? "checked" : ""}>★</label>
+            <div class="skill-left">
+                <div class="prof-group">
+                    <label title="No proficiency"><input type="radio" name="prof-${index}" value="0" ${skill.profLevel === 0 ? "checked" : ""}></label>
+                    <label title="Half proficiency"><input type="radio" name="prof-${index}" value="1" ${skill.profLevel === 1 ? "checked" : ""}></label>
+                    <label title="Proficient"><input type="radio" name="prof-${index}" value="2" ${skill.profLevel === 2 ? "checked" : ""}></label>
+                    <label title="Expertise"><input type="radio" name="prof-${index}" value="3" ${skill.profLevel === 3 ? "checked" : ""}></label>
+                </div>
+        
+                <span class="skill-name">${skill.name} (${statLabel})</span>
             </div>
-            <span>${skill.name} (${statLabel})</span>
-            <span>${total >= 0 ? "+" + total : total}</span>
-            <button>✕</button>
+        
+            <span class="skill-total">${total >= 0 ? "+" + total : total}</span>
+        
+            <button class="skill-delete">✕</button>
         `;
 
         const radios = row.querySelectorAll("input[type=radio]");
