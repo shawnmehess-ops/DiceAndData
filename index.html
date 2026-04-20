@@ -66,6 +66,47 @@
                 <input id="editLevel" type="number" min="1">
             </div>
 
+            <!-- COMBAT & RESOURCES -->
+            <div class="sheet-section">
+                <h3>Combat & Resources</h3>
+
+                <label>Armor Class (AC)</label>
+                <input id="editAC" type="number">
+
+                <label>Hit Points</label>
+                <div class="hp-row">
+                    <input id="editHPCurrent" type="number" placeholder="Current">
+                    /
+                    <input id="editHPMax" type="number" placeholder="Max">
+                </div>
+
+                <label>Temporary HP</label>
+                <input id="editTempHP" type="number">
+
+                <label>
+                    <input id="editInspiration" type="checkbox">
+                    Inspiration
+                </label>
+
+                <label>Hero Points</label>
+                <input id="editHeroPoints" type="number" min="0">
+            </div>
+
+            <!-- SAVING THROWS -->
+            <div class="sheet-section">
+                <h3>Saving Throws</h3>
+                <div id="savingThrows"></div>
+            </div>
+
+            <!-- PASSIVE SCORES -->
+            <div class="sheet-section">
+                <h3>Passive Scores</h3>
+                <div>
+                    Passive Perception:
+                    <span id="passivePerception"></span>
+                </div>
+            </div>
+
             <!-- ABILITIES (dynamic) -->
             <div class="sheet-section">
                 <h3>Abilities</h3>
