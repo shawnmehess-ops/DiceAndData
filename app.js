@@ -102,7 +102,6 @@ const addSkillButton    = document.getElementById("addSkillButton");
 const backButton        = document.getElementById("backButton");
 const deleteCharButton  = document.getElementById("deleteCharButton");
 
-// ---------------- NEW DOM (COMBAT / DERIVED STATS) ----------------
 const editAC            = document.getElementById("editAC");
 const editHPCurrent     = document.getElementById("editHPCurrent");
 const editHPMax         = document.getElementById("editHPMax");
@@ -110,10 +109,9 @@ const editTempHP        = document.getElementById("editTempHP");
 const editInspiration   = document.getElementById("editInspiration");
 const editHeroPoints    = document.getElementById("editHeroPoints");
 
-const savingThrowsDiv   = document.getElementById("savingThrows");
-const passivePerception = document.getElementById("passivePerception");
+const passivePerception   = document.getElementById("passivePerception");
 const passiveInvestigation = document.getElementById("passiveInvestigation");
-const passiveInsight = document.getElementById("passiveInsight");
+const passiveInsight      = document.getElementById("passiveInsight");
 
 // ---------------- UTIL ----------------
 function debounce(fn, delay = 500) {
@@ -144,7 +142,27 @@ function getStatValue(key) {
     return stat ? (parseInt(stat.base) || 10) : 10;
 }
 
-// ---------------- PASSIVE PERCEPTION ----------------
+// ---------------- PASSIVES (UPDATED) ----------------
+function getPassiveScore(statKey, skillName) {
+    const statMod = getModifier(getStatValue(statKey));
+    const level = parseInt(editLevel.value) || 1;
+    const profBonus = getProficiencyBonus(level);
+
+    const skill = currentSkills.find(s => s.name === skillName);
+
+    let prof = 0;
+
+    if (skill) {
+        switch (skill.profLevel) {
+            case 1: prof = Math.floor(profBonus / 2); break;
+            case 2: prof = profBonus; break;
+            case 3: prof = profBonus * 2; break;
+        }
+    }
+
+    return 10 + statMod + prof;
+}
+
 function renderPassives() {
     passivePerception.textContent =
         getPassiveScore("wis", "Perception");
@@ -193,17 +211,17 @@ function renderStats() {
             <button class="stat-delete">✕</button>
         `;
 
-        const input     = cell.querySelector("input");
-        const modDiv    = cell.querySelector(".modifier");
+        const input = cell.querySelector("input");
+        const modDiv = cell.querySelector(".modifier");
         const deleteBtn = cell.querySelector(".stat-delete");
 
         input.oninput = () => {
             const newVal = parseInt(input.value) || 10;
             currentStats[index].base = newVal;
+
             modDiv.innerText = formatMod(newVal);
 
             renderSkills();
-            renderSavingThrows();
             renderPassives();
 
             debouncedSave();
@@ -213,7 +231,6 @@ function renderStats() {
             currentStats.splice(index, 1);
             renderStats();
             renderSkills();
-            renderSavingThrows();
             renderPassives();
             debouncedSave();
         };
@@ -222,29 +239,10 @@ function renderStats() {
     });
 
     updateSkillStatDropdown();
-    renderSavingThrows();
     renderPassives();
 }
 
-// ---------------- SKILL DROPDOWN ----------------
-function updateSkillStatDropdown() {
-    const previous = newSkillStat.value;
-
-    newSkillStat.innerHTML = "";
-
-    currentStats.forEach(stat => {
-        const opt = document.createElement("option");
-        opt.value = stat.key;
-        opt.textContent = stat.label;
-        newSkillStat.appendChild(opt);
-    });
-
-    if ([...newSkillStat.options].some(o => o.value === previous)) {
-        newSkillStat.value = previous;
-    }
-}
-
-// ---------------- RENDER SKILLS ----------------
+// ---------------- SKILLS ----------------
 function renderSkills() {
     skillsContainer.innerHTML = "";
 
@@ -288,6 +286,7 @@ function renderSkills() {
             radio.onchange = () => {
                 currentSkills[index].profLevel = parseInt(radio.value);
                 renderSkills();
+                renderPassives();
                 debouncedSave();
             };
         });
@@ -295,6 +294,7 @@ function renderSkills() {
         row.querySelector(".skill-delete").onclick = () => {
             currentSkills.splice(index, 1);
             renderSkills();
+            renderPassives();
             debouncedSave();
         };
 
@@ -324,142 +324,4 @@ async function saveCharacter() {
         stats: currentStats,
         skills: currentSkills
     }, { merge: true });
-}
-
-// ---------------- AUTOSAVE ----------------
-[
-    editName, editClass, editLevel,
-    editAC, editHPCurrent, editHPMax,
-    editTempHP, editInspiration, editHeroPoints
-].forEach(el => {
-    el.oninput = () => {
-        renderSkills();
-        renderSavingThrows();
-        renderPassives();
-        debouncedSave();
-    };
-});
-
-// ---------------- AUTH + CHARACTER LOGIC (UNCHANGED) ----------------
-// (kept exactly as your original file)
-
-signUpButton.onclick = async () => {
-    try {
-        await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-        userStatus.textContent = "";
-    } catch (err) {
-        userStatus.textContent = `Sign up failed: ${err.message}`;
-    }
-};
-
-signInButton.onclick = async () => {
-    try {
-        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-        userStatus.textContent = "";
-    } catch (err) {
-        userStatus.textContent = `Sign in failed: ${err.message}`;
-    }
-};
-
-signOutButton.onclick = async () => {
-    await signOut(auth);
-};
-
-createCharButton.onclick = async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const name = charNameInput.value.trim();
-    if (!name) return;
-
-    await addDoc(collection(db, "users", user.uid, "characters"), {
-        name,
-        class: "Unknown",
-        level: 1,
-        stats: JSON.parse(JSON.stringify(DEFAULT_STATS)),
-        skills: JSON.parse(JSON.stringify(DEFAULT_SKILLS)),
-        createdAt: Date.now()
-    });
-
-    charNameInput.value = "";
-    loadCharacters();
-};
-
-async function loadCharacters() {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const snap = await getDocs(collection(db, "users", user.uid, "characters"));
-
-    characterList.innerHTML = "";
-
-    snap.forEach(docSnap => {
-        const data = docSnap.data();
-
-        const btn = document.createElement("button");
-        btn.innerText = `${data.name} (Lv ${data.level})`;
-        btn.onclick = () => openCharacter(docSnap.id, data);
-
-        characterList.appendChild(btn);
-    });
-}
-
-function openCharacter(id, data) {
-    currentCharId = id;
-
-    characterListView.style.display = "none";
-    editor.style.display = "block";
-
-    editName.value  = data.name;
-    editClass.value = data.class;
-    editLevel.value = data.level;
-
-    editAC.value = data.ac ?? 10;
-    editHPCurrent.value = data.hp?.current ?? 10;
-    editHPMax.value = data.hp?.max ?? 10;
-    editTempHP.value = data.hp?.temp ?? 0;
-    editInspiration.checked = data.inspiration ?? false;
-    editHeroPoints.value = data.heroPoints ?? 0;
-
-    currentStats = JSON.parse(JSON.stringify(data.stats || DEFAULT_STATS));
-    currentSkills = JSON.parse(JSON.stringify(data.skills || DEFAULT_SKILLS));
-
-    renderStats();
-    renderSkills();
-    renderSavingThrows();
-    renderPassives();
-}
-
-onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        authUiDiv.style.display = "block";
-        appContentDiv.style.display = "none";
-        return;
-    }
-
-    authUiDiv.style.display = "none";
-    appContentDiv.style.display = "block";
-
-    loadCharacters();
-});
-
-function getPassiveScore(statKey, skillName = null) {
-    const statMod = getModifier(getStatValue(statKey));
-    const level = parseInt(editLevel.value) || 1;
-    const profBonus = getProficiencyBonus(level);
-
-    let prof = 0;
-
-    if (skillName) {
-        const skill = currentSkills.find(s => s.name === skillName);
-        if (skill) {
-            switch (skill.profLevel) {
-                case 1: prof = Math.floor(profBonus / 2); break;
-                case 2: prof = profBonus; break;
-                case 3: prof = profBonus * 2; break;
-            }
-        }
-    }
-
-    return 10 + statMod + prof;
 }
