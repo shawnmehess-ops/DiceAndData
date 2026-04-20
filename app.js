@@ -33,9 +33,27 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// ---------------- DEFAULTS ----------------
+const DEFAULT_STATS = [
+    { key: "str", label: "STR", base: 10 },
+    { key: "dex", label: "DEX", base: 10 },
+    { key: "con", label: "CON", base: 10 },
+    { key: "int", label: "INT", base: 10 },
+    { key: "wis", label: "WIS", base: 10 },
+    { key: "cha", label: "CHA", base: 10 }
+];
+
+const DEFAULT_SKILLS = [
+    { name: "Athletics",  stat: "str", proficient: false },
+    { name: "Stealth",    stat: "dex", proficient: false },
+    { name: "Arcana",     stat: "int", proficient: false },
+    { name: "Perception", stat: "wis", proficient: false }
+];
+
 // ---------------- STATE ----------------
 let currentCharId = null;
-let currentSkills = [];
+let currentStats  = [];   // [{ key, label, base }]
+let currentSkills = [];   // [{ name, stat, proficient }]
 
 // ---------------- DOM ----------------
 const emailInput        = document.getElementById("emailInput");
@@ -58,12 +76,9 @@ const editName          = document.getElementById("editName");
 const editClass         = document.getElementById("editClass");
 const editLevel         = document.getElementById("editLevel");
 
-const statStr           = document.getElementById("statStr");
-const statDex           = document.getElementById("statDex");
-const statCon           = document.getElementById("statCon");
-const statInt           = document.getElementById("statInt");
-const statWis           = document.getElementById("statWis");
-const statCha           = document.getElementById("statCha");
+const statsContainer    = document.getElementById("statsContainer");
+const newStatName       = document.getElementById("newStatName");
+const addStatButton     = document.getElementById("addStatButton");
 
 const skillsContainer   = document.getElementById("skillsContainer");
 const newSkillName      = document.getElementById("newSkillName");
@@ -97,32 +112,75 @@ function getProficiencyBonus(level) {
     return Math.floor((level - 1) / 4) + 2;
 }
 
-const statElements = { str: statStr, dex: statDex, con: statCon, int: statInt, wis: statWis, cha: statCha };
-
-function getStatValue(stat) {
-    return parseInt(statElements[stat]?.value) || 10;
+function getStatValue(key) {
+    const stat = currentStats.find(s => s.key === key);
+    return stat ? (parseInt(stat.base) || 10) : 10;
 }
 
-// ---------------- MODIFIERS ----------------
-const statModMap = [
-    [statStr, "modStr"],
-    [statDex, "modDex"],
-    [statCon, "modCon"],
-    [statInt, "modInt"],
-    [statWis, "modWis"],
-    [statCha, "modCha"]
-];
+// ---------------- RENDER STATS ----------------
+function renderStats() {
+    statsContainer.innerHTML = "";
 
-function updateAllStats() {
-    statModMap.forEach(([input, modId]) => {
-        const mod = document.getElementById(modId);
-        if (!mod) return;
-        const val = parseInt(input.value) || 10;
-        mod.innerText = formatMod(val);
+    currentStats.forEach((stat, index) => {
+        const val = parseInt(stat.base) || 10;
+
+        const cell = document.createElement("div");
+        cell.className = "stat";
+
+        cell.innerHTML = `
+            <label>${stat.label}</label>
+            <input type="number" value="${val}">
+            <div class="modifier">${formatMod(val)}</div>
+            <button class="stat-delete">✕</button>
+        `;
+
+        const input     = cell.querySelector("input");
+        const modDiv    = cell.querySelector(".modifier");
+        const deleteBtn = cell.querySelector(".stat-delete");
+
+        input.oninput = () => {
+            const newVal = parseInt(input.value) || 10;
+            currentStats[index].base = newVal;
+            modDiv.innerText = formatMod(newVal);
+            renderSkills(); // skill totals depend on stat values
+            debouncedSave();
+        };
+
+        deleteBtn.onclick = () => {
+            currentStats.splice(index, 1);
+            renderStats();
+            updateSkillStatDropdown();
+            renderSkills();
+            debouncedSave();
+        };
+
+        statsContainer.appendChild(cell);
     });
+
+    updateSkillStatDropdown();
 }
 
-// ---------------- SKILLS ----------------
+// ---------------- SKILL STAT DROPDOWN ----------------
+// Keeps the "Add Skill" dropdown in sync with currentStats at all times.
+function updateSkillStatDropdown() {
+    const previous = newSkillStat.value;
+
+    newSkillStat.innerHTML = "";
+
+    currentStats.forEach(stat => {
+        const opt = document.createElement("option");
+        opt.value = stat.key;
+        opt.textContent = stat.label;
+        newSkillStat.appendChild(opt);
+    });
+
+    // Restore previous selection if it still exists
+    if ([...newSkillStat.options].some(o => o.value === previous)) {
+        newSkillStat.value = previous;
+    }
+}
+
+// ---------------- RENDER SKILLS ----------------
 function renderSkills() {
     skillsContainer.innerHTML = "";
 
@@ -134,14 +192,18 @@ function renderSkills() {
         const base = getModifier(statVal);
         const total = skill.proficient ? base + profBonus : base;
 
+        // Find the display label for this skill's stat key
+        const statEntry = currentStats.find(s => s.key === skill.stat);
+        const statLabel = statEntry ? statEntry.label : skill.stat.toUpperCase();
+
         const row = document.createElement("div");
         row.className = "skill";
 
         row.innerHTML = `
             <input type="checkbox" ${skill.proficient ? "checked" : ""}>
-            <span>${skill.name} (${skill.stat.toUpperCase()})</span>
+            <span>${skill.name} (${statLabel})</span>
             <span>${total >= 0 ? "+" + total : total}</span>
-            <button>X</button>
+            <button>✕</button>
         `;
 
         row.children[0].onchange = (e) => {
@@ -195,20 +257,8 @@ createCharButton.onclick = async () => {
         name,
         class: "Unknown",
         level: 1,
-        attributes: {
-            str: { base: 10 },
-            dex: { base: 10 },
-            con: { base: 10 },
-            int: { base: 10 },
-            wis: { base: 10 },
-            cha: { base: 10 }
-        },
-        skills: [
-            { name: "Athletics",  stat: "str", proficient: false },
-            { name: "Stealth",    stat: "dex", proficient: false },
-            { name: "Arcana",     stat: "int", proficient: false },
-            { name: "Perception", stat: "wis", proficient: false }
-        ],
+        stats:  JSON.parse(JSON.stringify(DEFAULT_STATS)),
+        skills: JSON.parse(JSON.stringify(DEFAULT_SKILLS)),
         createdAt: Date.now()
     });
 
@@ -245,17 +295,23 @@ function openCharacter(id, data) {
     editClass.value = data.class;
     editLevel.value = data.level;
 
-    const a = data.attributes || {};
-    statStr.value = a.str?.base ?? 10;
-    statDex.value = a.dex?.base ?? 10;
-    statCon.value = a.con?.base ?? 10;
-    statInt.value = a.int?.base ?? 10;
-    statWis.value = a.wis?.base ?? 10;
-    statCha.value = a.cha?.base ?? 10;
+    // Support both the new `stats` array and the old `attributes` object
+    // so existing characters in Firestore don't break.
+    if (data.stats && Array.isArray(data.stats)) {
+        currentStats = JSON.parse(JSON.stringify(data.stats));
+    } else {
+        // Migrate legacy attributes object → stats array on first open
+        const a = data.attributes || {};
+        currentStats = DEFAULT_STATS.map(s => ({
+            key:   s.key,
+            label: s.label,
+            base:  a[s.key]?.base ?? 10
+        }));
+    }
 
     currentSkills = JSON.parse(JSON.stringify(data.skills || []));
 
-    updateAllStats();
+    renderStats();
     renderSkills();
 }
 
@@ -265,35 +321,47 @@ async function saveCharacter() {
     if (!user || !currentCharId) return;
 
     await setDoc(doc(db, "users", user.uid, "characters", currentCharId), {
-        name:  editName.value,
-        class: editClass.value,
-        level: parseInt(editLevel.value) || 1,
-        attributes: {
-            str: { base: parseInt(statStr.value) || 10 },
-            dex: { base: parseInt(statDex.value) || 10 },
-            con: { base: parseInt(statCon.value) || 10 },
-            int: { base: parseInt(statInt.value) || 10 },
-            wis: { base: parseInt(statWis.value) || 10 },
-            cha: { base: parseInt(statCha.value) || 10 }
-        },
+        name:   editName.value,
+        class:  editClass.value,
+        level:  parseInt(editLevel.value) || 1,
+        stats:  currentStats,
         skills: currentSkills
     }, { merge: true });
 }
 
 // ---------------- AUTOSAVE (wired once at startup) ----------------
-[editName, editClass, editLevel, statStr, statDex, statCon, statInt, statWis, statCha].forEach(el => {
+[editName, editClass, editLevel].forEach(el => {
     el.oninput = () => {
-        updateAllStats();
-        renderSkills();
+        renderSkills(); // level change affects proficiency bonus display
         debouncedSave();
     };
 });
+
+// ---------------- ADD STAT ----------------
+addStatButton.onclick = () => {
+    const raw = newStatName.value.trim();
+    if (!raw) return;
+
+    const label = raw.toUpperCase().slice(0, 6);
+    const key   = raw.toLowerCase().replace(/\s+/g, "_").slice(0, 20);
+
+    if (currentStats.some(s => s.key === key)) {
+        alert(`A stat with the key "${key}" already exists.`);
+        return;
+    }
+
+    currentStats.push({ key, label, base: 10 });
+    newStatName.value = "";
+
+    renderStats();
+    debouncedSave();
+};
 
 // ---------------- ADD SKILL ----------------
 addSkillButton.onclick = () => {
     const name = newSkillName.value.trim();
     const stat = newSkillStat.value;
-    if (!name) return;
+    if (!name || !stat) return;
 
     currentSkills.push({ name, stat, proficient: false });
 
@@ -302,7 +370,7 @@ addSkillButton.onclick = () => {
     debouncedSave();
 };
 
-// ---------------- DELETE ----------------
+// ---------------- DELETE CHARACTER ----------------
 deleteCharButton.onclick = async () => {
     const user = auth.currentUser;
     if (!user || !currentCharId) return;
