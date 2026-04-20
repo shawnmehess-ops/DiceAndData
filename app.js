@@ -44,30 +44,16 @@ const DEFAULT_STATS = [
 ];
 
 const DEFAULT_SKILLS = [
-    { name: "Acrobatics", stat: "dex", proficient: false},
-    { name: "Animal Handling", stat: "wis", proficient: false},
-    { name: "Arcana", stat: "int", proficient: false},
-    { name: "Athletics", stat: "str", proficient: false},
-    { name: "Deception", stat: "cha", proficient: false},
-    { name: "History", stat: "int", proficient: false},
-    { name: "Insight", stat: "wis", proficient: false},
-    { name: "Intimidation", stat: "cha", proficient: false},
-    { name: "Investigation", stat: "int", proficient: false},
-    { name: "Medicine", stat: "wis", proficient: false},
-    { name: "Nature", stat: "int", proficient: false},
-    { name: "Perception", stat: "wis", proficient: false},
-    { name: "Performance", stat: "cha", proficient: false},
-    { name: "Persuasion", stat: "cha", proficient: false},
-    { name: "Religion", stat: "int", proficient: false},
-    { name: "Sleight of Hand", stat: "dex", proficient: false},
-    { name: "Stealth", stat: "dex", proficient: false},
-    { name: "Survival", stat: "wis", proficient: false}
+    { name: "Athletics",  stat: "str", profLevel: 0 },
+    { name: "Stealth",    stat: "dex", profLevel: 0 },
+    { name: "Arcana",     stat: "int", profLevel: 0 },
+    { name: "Perception", stat: "wis", profLevel: 0 }
 ];
 
 // ---------------- STATE ----------------
 let currentCharId = null;
-let currentStats  = [];   // [{ key, label, base }]
-let currentSkills = [];   // [{ name, stat, proficient }]
+let currentStats  = [];
+let currentSkills = [];
 
 // ---------------- DOM ----------------
 const emailInput        = document.getElementById("emailInput");
@@ -142,7 +128,7 @@ function renderStats() {
         cell.className = "stat";
 
         cell.innerHTML = `
-            <label>${stat.label}</label>
+            <label>${stat.label || "STAT"}</label>
             <input type="number" value="${val}">
             <div class="modifier">${formatMod(val)}</div>
             <button class="stat-delete">✕</button>
@@ -156,7 +142,7 @@ function renderStats() {
             const newVal = parseInt(input.value) || 10;
             currentStats[index].base = newVal;
             modDiv.innerText = formatMod(newVal);
-            renderSkills(); // skill totals depend on stat values
+            renderSkills();
             debouncedSave();
         };
 
@@ -174,8 +160,7 @@ function renderStats() {
     updateSkillStatDropdown();
 }
 
-// ---------------- SKILL STAT DROPDOWN ----------------
-// Keeps the "Add Skill" dropdown in sync with currentStats at all times.
+// ---------------- SKILL DROPDOWN ----------------
 function updateSkillStatDropdown() {
     const previous = newSkillStat.value;
 
@@ -188,7 +173,6 @@ function updateSkillStatDropdown() {
         newSkillStat.appendChild(opt);
     });
 
-    // Restore previous selection if it still exists
     if ([...newSkillStat.options].some(o => o.value === previous)) {
         newSkillStat.value = previous;
     }
@@ -204,9 +188,16 @@ function renderSkills() {
     currentSkills.forEach((skill, index) => {
         const statVal = getStatValue(skill.stat);
         const base = getModifier(statVal);
-        const total = skill.proficient ? base + profBonus : base;
 
-        // Find the display label for this skill's stat key
+        let prof = 0;
+        switch (skill.profLevel) {
+            case 1: prof = Math.floor(profBonus / 2); break;
+            case 2: prof = profBonus; break;
+            case 3: prof = profBonus * 2; break;
+        }
+
+        const total = base + prof;
+
         const statEntry = currentStats.find(s => s.key === skill.stat);
         const statLabel = statEntry ? statEntry.label : skill.stat.toUpperCase();
 
@@ -214,17 +205,25 @@ function renderSkills() {
         row.className = "skill";
 
         row.innerHTML = `
-            <input type="checkbox" ${skill.proficient ? "checked" : ""}>
+            <div class="prof-group">
+                <label title="No proficiency"><input type="radio" name="prof-${index}" value="0" ${skill.profLevel === 0 ? "checked" : ""}>—</label>
+                <label title="Half proficiency"><input type="radio" name="prof-${index}" value="1" ${skill.profLevel === 1 ? "checked" : ""}>½</label>
+                <label title="Proficient"><input type="radio" name="prof-${index}" value="2" ${skill.profLevel === 2 ? "checked" : ""}>✓</label>
+                <label title="Expertise"><input type="radio" name="prof-${index}" value="3" ${skill.profLevel === 3 ? "checked" : ""}>★</label>
+            </div>
             <span>${skill.name} (${statLabel})</span>
             <span>${total >= 0 ? "+" + total : total}</span>
             <button>✕</button>
         `;
 
-        row.children[0].onchange = (e) => {
-            currentSkills[index].proficient = e.target.checked;
-            renderSkills();
-            debouncedSave();
-        };
+        const radios = row.querySelectorAll("input[type=radio]");
+        radios.forEach(radio => {
+            radio.onchange = () => {
+                currentSkills[index].profLevel = parseInt(radio.value);
+                renderSkills();
+                debouncedSave();
+            };
+        });
 
         row.children[3].onclick = () => {
             currentSkills.splice(index, 1);
@@ -271,7 +270,7 @@ createCharButton.onclick = async () => {
         name,
         class: "Unknown",
         level: 1,
-        stats:  JSON.parse(JSON.stringify(DEFAULT_STATS)),
+        stats: JSON.parse(JSON.stringify(DEFAULT_STATS)),
         skills: JSON.parse(JSON.stringify(DEFAULT_SKILLS)),
         createdAt: Date.now()
     });
@@ -309,21 +308,33 @@ function openCharacter(id, data) {
     editClass.value = data.class;
     editLevel.value = data.level;
 
-    // Support both the new `stats` array and the old `attributes` object
-    // so existing characters in Firestore don't break.
     if (data.stats && Array.isArray(data.stats)) {
         currentStats = JSON.parse(JSON.stringify(data.stats));
     } else {
-        // Migrate legacy attributes object → stats array on first open
         const a = data.attributes || {};
         currentStats = DEFAULT_STATS.map(s => ({
-            key:   s.key,
+            key: s.key,
             label: s.label,
-            base:  a[s.key]?.base ?? 10
+            base: a[s.key]?.base ?? 10
         }));
     }
 
-    currentSkills = JSON.parse(JSON.stringify(data.skills || []));
+    // ✅ MIGRATION LOGIC
+    currentSkills = (data.skills || []).map(s => {
+        if (typeof s.proficient === "boolean") {
+            return {
+                name: s.name,
+                stat: s.stat,
+                profLevel: s.proficient ? 2 : 0
+            };
+        }
+
+        return {
+            name: s.name,
+            stat: s.stat,
+            profLevel: s.profLevel ?? 0
+        };
+    });
 
     renderStats();
     renderSkills();
@@ -335,18 +346,18 @@ async function saveCharacter() {
     if (!user || !currentCharId) return;
 
     await setDoc(doc(db, "users", user.uid, "characters", currentCharId), {
-        name:   editName.value,
-        class:  editClass.value,
-        level:  parseInt(editLevel.value) || 1,
-        stats:  currentStats,
+        name: editName.value,
+        class: editClass.value,
+        level: parseInt(editLevel.value) || 1,
+        stats: currentStats,
         skills: currentSkills
     }, { merge: true });
 }
 
-// ---------------- AUTOSAVE (wired once at startup) ----------------
+// ---------------- AUTOSAVE ----------------
 [editName, editClass, editLevel].forEach(el => {
     el.oninput = () => {
-        renderSkills(); // level change affects proficiency bonus display
+        renderSkills();
         debouncedSave();
     };
 });
@@ -377,7 +388,7 @@ addSkillButton.onclick = () => {
     const stat = newSkillStat.value;
     if (!name || !stat) return;
 
-    currentSkills.push({ name, stat, proficient: false });
+    currentSkills.push({ name, stat, profLevel: 0 });
 
     newSkillName.value = "";
     renderSkills();
