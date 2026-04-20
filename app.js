@@ -325,3 +325,170 @@ async function saveCharacter() {
         skills: currentSkills
     }, { merge: true });
 }
+
+
+// ---------------- CHARACTER CRUD ----------------
+createCharButton.onclick = async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const name = charNameInput.value.trim();
+    if (!name) return;
+
+    await addDoc(collection(db, "users", user.uid, "characters"), {
+        name,
+        class: "Unknown",
+        level: 1,
+        stats: JSON.parse(JSON.stringify(DEFAULT_STATS)),
+        skills: JSON.parse(JSON.stringify(DEFAULT_SKILLS)),
+        createdAt: Date.now()
+    });
+
+    charNameInput.value = "";
+    loadCharacters();
+};
+
+async function loadCharacters() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const snap = await getDocs(collection(db, "users", user.uid, "characters"));
+
+    characterList.innerHTML = "";
+
+    snap.forEach(docSnap => {
+        const data = docSnap.data();
+
+        const btn = document.createElement("button");
+        btn.innerText = `${data.name} (Lv ${data.level})`;
+        btn.onclick = () => openCharacter(docSnap.id, data);
+
+        characterList.appendChild(btn);
+    });
+}
+
+// ---------------- OPEN CHARACTER ----------------
+function openCharacter(id, data) {
+    currentCharId = id;
+
+    characterListView.style.display = "none";
+    editor.style.display = "block";
+
+    editName.value  = data.name;
+    editClass.value = data.class;
+    editLevel.value = data.level;
+
+    if (data.stats && Array.isArray(data.stats)) {
+        currentStats = JSON.parse(JSON.stringify(data.stats));
+    } else {
+        const a = data.attributes || {};
+        currentStats = DEFAULT_STATS.map(s => ({
+            key: s.key,
+            label: s.label,
+            base: a[s.key]?.base ?? 10
+        }));
+    }
+
+    currentSkills = (data.skills || []).map(s => {
+        if (typeof s.proficient === "boolean") {
+            return {
+                name: s.name,
+                stat: s.stat,
+                profLevel: s.proficient ? 2 : 0
+            };
+        }
+
+        return {
+            name: s.name,
+            stat: s.stat,
+            profLevel: s.profLevel ?? 0
+        };
+    });
+
+    rerenderAll();
+}
+
+// ---------------- AUTOSAVE ----------------
+[
+    editName,
+    editClass,
+    editLevel,
+    editAC,
+    editHPCurrent,
+    editHPMax,
+    editTempHP,
+    editInspiration,
+    editHeroPoints
+].forEach(el => {
+    el.oninput = () => {
+        rerenderAll();
+        debouncedSave();
+    };
+});
+
+// ---------------- ADD STAT ----------------
+addStatButton.onclick = () => {
+    const raw = newStatName.value.trim();
+    if (!raw) return;
+
+    const label = raw.toUpperCase().slice(0, 6);
+    const key   = raw.toLowerCase().replace(/\s+/g, "_").slice(0, 20);
+
+    if (currentStats.some(s => s.key === key)) {
+        alert(`A stat with the key "${key}" already exists.`);
+        return;
+    }
+
+    currentStats.push({ key, label, base: 10 });
+    newStatName.value = "";
+
+    rerenderAll();
+    debouncedSave();
+};
+
+// ---------------- ADD SKILL ----------------
+addSkillButton.onclick = () => {
+    const name = newSkillName.value.trim();
+    const stat = newSkillStat.value;
+    if (!name || !stat) return;
+
+    currentSkills.push({ name, stat, profLevel: 0 });
+
+    newSkillName.value = "";
+    rerenderAll();
+    debouncedSave();
+};
+
+// ---------------- DELETE CHARACTER ----------------
+deleteCharButton.onclick = async () => {
+    const user = auth.currentUser;
+    if (!user || !currentCharId) return;
+
+    await deleteDoc(doc(db, "users", user.uid, "characters", currentCharId));
+
+    currentCharId = null;
+    editor.style.display = "none";
+    characterListView.style.display = "block";
+
+    loadCharacters();
+};
+
+// ---------------- NAVIGATION ----------------
+backButton.onclick = () => {
+    editor.style.display = "none";
+    characterListView.style.display = "block";
+};
+
+// ---------------- AUTH STATE ----------------
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        authUiDiv.style.display = "block";
+        appContentDiv.style.display = "none";
+        return;
+    }
+
+    authUiDiv.style.display = "none";
+    appContentDiv.style.display = "block";
+
+    loadCharacters();
+});
