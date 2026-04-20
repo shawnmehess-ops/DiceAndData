@@ -20,7 +20,7 @@ import {
 
 // ---------------- FIREBASE ----------------
 const firebaseConfig = {
-    apiKey: "AIzaSyBYYgS04lxcbeawj7WDahEN7SbzYVGLjE",
+    apiKey: "AIzaSyBYYgS04lxcbeawj7WDahEN7SbzYgVGLjE",
     authDomain: "diceanddata-81ebe.firebaseapp.com",
     projectId: "diceanddata-81ebe",
     storageBucket: "diceanddata-81ebe.firebasestorage.app",
