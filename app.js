@@ -86,7 +86,6 @@ const editAC             = document.getElementById("editAC");
 const editHPCurrent      = document.getElementById("editHPCurrent");
 const editHPMax          = document.getElementById("editHPMax");
 const editTempHP         = document.getElementById("editTempHP");
-const editInspiration    = document.getElementById("editInspiration");
 const editHeroPoints     = document.getElementById("editHeroPoints");
 
 const statsContainer     = document.getElementById("statsContainer");
@@ -280,7 +279,7 @@ async function saveCharacter() {
             max:     parseInt(editHPMax.value) || 0,
             temp:    parseInt(editTempHP.value) || 0
         },
-        inspiration: editInspiration.checked,
+        inspiration: editInspiration.classList.contains("active"),
         heroPoints:  parseInt(editHeroPoints.value) || 0,
         stats:       currentStats,
         skills:      currentSkills
@@ -340,7 +339,8 @@ function openCharacter(id, data) {
     editHPCurrent.value   = data.hp?.current ?? 0;
     editHPMax.value       = data.hp?.max ?? 0;
     editTempHP.value      = data.hp?.temp ?? 0;
-    editInspiration.checked = data.inspiration ?? false;
+    if (data.inspiration) {editInspiration.classList.add("active");}
+    else {editInspiration.classList.remove("active");}
     editHeroPoints.value  = data.heroPoints ?? 0;
 
     currentStats = Array.isArray(data.stats) && data.stats.length
@@ -361,7 +361,9 @@ function openCharacter(id, data) {
 [editName, editClass, editLevel, editAC, editHPCurrent,
  editHPMax, editTempHP, editInspiration, editHeroPoints
 ].forEach(el => {
-    el.oninput = () => { rerenderAll(); debouncedSave(); };
+    editInspiration.onclick = () => {
+    editInspiration.classList.toggle("active");
+    debouncedSave();};
 });
 
 // ---------------- ADD STAT ----------------
