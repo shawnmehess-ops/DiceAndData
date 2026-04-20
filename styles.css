@@ -69,3 +69,24 @@ body {
     align-items: center;
     padding: 4px 0;
 }
+
+/* ---------------- NEW: PROFICIENCY RADIO GROUP ---------------- */
+
+.prof-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.prof-group label {
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.prof-group input[type="radio"] {
+    cursor: pointer;
+}
