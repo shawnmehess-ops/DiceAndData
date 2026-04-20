@@ -242,12 +242,14 @@ function renderSkills() {
             };
         });
 
-        row.children[3].onclick = () => {
+        const deleteBtn = row.querySelector(".skill-delete");
+        
+        deleteBtn.onclick = () => {
             currentSkills.splice(index, 1);
             renderSkills();
             debouncedSave();
         };
-
+        
         skillsContainer.appendChild(row);
     });
 }
