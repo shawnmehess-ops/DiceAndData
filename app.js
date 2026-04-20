@@ -44,10 +44,24 @@ const DEFAULT_STATS = [
 ];
 
 const DEFAULT_SKILLS = [
-    { name: "Athletics",  stat: "str", profLevel: 0 },
-    { name: "Stealth",    stat: "dex", profLevel: 0 },
-    { name: "Arcana",     stat: "int", profLevel: 0 },
-    { name: "Perception", stat: "wis", profLevel: 0 }
+    { name: "Acrobatics", stat: "dex", proficient: false},
+    { name: "Animal Handling", stat: "wis", proficient: false},
+    { name: "Arcana", stat: "int", proficient: false},
+    { name: "Athletics", stat: "str", proficient: false},
+    { name: "Deception", stat: "cha", proficient: false},
+    { name: "History", stat: "int", proficient: false},
+    { name: "Insight", stat: "wis", proficient: false},
+    { name: "Intimidation", stat: "cha", proficient: false},
+    { name: "Investigation", stat: "int", proficient: false},
+    { name: "Medicine", stat: "wis", proficient: false},
+    { name: "Nature", stat: "int", proficient: false},
+    { name: "Perception", stat: "wis", proficient: false},
+    { name: "Performance", stat: "cha", proficient: false},
+    { name: "Persuasion", stat: "cha", proficient: false},
+    { name: "Religion", stat: "int", proficient: false},
+    { name: "Sleight of Hand", stat: "dex", proficient: false},
+    { name: "Stealth", stat: "dex", proficient: false},
+    { name: "Survival", stat: "wis", proficient: false}
 ];
 
 // ---------------- STATE ----------------
