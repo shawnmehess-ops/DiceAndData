@@ -225,7 +225,7 @@ async function loadCharacters() {
 
         const btn = document.createElement("button");
         btn.innerText = `${data.name} (Lv ${data.level})`;
-
+        
         btn.onclick = () => openCharacter(docSnap.id, data);
 
         characterList.appendChild(btn);
@@ -233,8 +233,15 @@ async function loadCharacters() {
 }
 
 function openCharacter(id, data) {
+    console.log("Opening character:", data.name);
+
     currentCharId = id;
 
+    // 🔥 SHOW editor, HIDE list
+    document.getElementById("characterListView").style.display = "none";
+    editor.style.display = "block";
+
+    // Populate fields
     editName.value = data.name;
     editClass.value = data.class;
     editLevel.value = data.level;
@@ -248,6 +255,7 @@ function openCharacter(id, data) {
     statWis.value = a.wis?.base ?? 10;
     statCha.value = a.cha?.base ?? 10;
 
+    // ✅ IMPORTANT: deep copy skills
     currentSkills = JSON.parse(JSON.stringify(data.skills || []));
 
     updateAllStats();
@@ -321,6 +329,7 @@ deleteCharButton.onclick = async () => {
 // ---------------- NAV ----------------
 backButton.onclick = () => {
     editor.style.display = "none";
+    document.getElementById("characterListView").style.display = "block";
 };
 
 // ---------------- AUTH STATE ----------------
