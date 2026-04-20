@@ -13,11 +13,11 @@
 </head>
 
 <body>
-    <h1>Welcome to the Character Sheet Manager TEST 2!</h1>
+    <h1>Welcome to the Character Sheet Manager!</h1>
 
     <!-- AUTH -->
     <div id="auth-ui">
-        <h2>Sign Up or Sign In Test</h2>
+        <h2>Sign Up or Sign In</h2>
 
         <input type="email" id="emailInput" placeholder="Email">
         <input type="password" id="passwordInput" placeholder="Password">
@@ -66,68 +66,30 @@
                 <input id="editLevel" type="number" min="1">
             </div>
 
-            <!-- ABILITIES -->
+            <!-- ABILITIES (dynamic) -->
             <div class="sheet-section">
                 <h3>Abilities</h3>
 
-                <div class="stat-grid">
-                    <div class="stat">
-                        <label>STR</label>
-                        <input id="statStr" type="number">
-                        <div id="modStr" class="modifier"></div>
-                    </div>
+                <div id="statsContainer" class="stat-grid"></div>
 
-                    <div class="stat">
-                        <label>DEX</label>
-                        <input id="statDex" type="number">
-                        <div id="modDex" class="modifier"></div>
-                    </div>
+                <hr>
 
-                    <div class="stat">
-                        <label>CON</label>
-                        <input id="statCon" type="number">
-                        <div id="modCon" class="modifier"></div>
-                    </div>
-
-                    <div class="stat">
-                        <label>INT</label>
-                        <input id="statInt" type="number">
-                        <div id="modInt" class="modifier"></div>
-                    </div>
-
-                    <div class="stat">
-                        <label>WIS</label>
-                        <input id="statWis" type="number">
-                        <div id="modWis" class="modifier"></div>
-                    </div>
-
-                    <div class="stat">
-                        <label>CHA</label>
-                        <input id="statCha" type="number">
-                        <div id="modCha" class="modifier"></div>
-                    </div>
-                </div>
+                <input id="newStatName" placeholder="New Stat Name (e.g. LCK)">
+                <button id="addStatButton">Add Stat</button>
             </div>
 
-            <!-- ✅ NEW DYNAMIC SKILLS SYSTEM -->
+            <!-- SKILLS (dynamic) -->
             <div class="sheet-section">
                 <h3>Skills</h3>
 
-                <!-- THIS is what your JS needs -->
                 <div id="skillsContainer"></div>
 
                 <hr>
 
                 <input id="newSkillName" placeholder="New Skill Name">
 
-                <select id="newSkillStat">
-                    <option value="str">STR</option>
-                    <option value="dex">DEX</option>
-                    <option value="con">CON</option>
-                    <option value="int">INT</option>
-                    <option value="wis">WIS</option>
-                    <option value="cha">CHA</option>
-                </select>
+                <!-- Populated dynamically from currentStats -->
+                <select id="newSkillStat"></select>
 
                 <button id="addSkillButton">Add Skill</button>
             </div>
@@ -142,7 +104,7 @@
     </div>
 
     <!-- IMPORTANT: script at bottom -->
-    <script type="module" src="app.js?v=2"></script>
+    <script type="module" src="app.js?v=3"></script>
 
 </body>
 </html>
