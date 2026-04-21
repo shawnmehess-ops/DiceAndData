@@ -356,6 +356,110 @@ body {
 #deathSaveSuccesses .death-save-check { accent-color: #2e7d32; }
 #deathSaveFailures  .death-save-check { accent-color: #c62828; }
 
+/* ---------------- SYSTEM TESTS ---------------- */
+
+#systemTestsSection {
+    background: #1e1e1e;
+    border-color: #444;
+    color: #d4d4d4;
+}
+
+#systemTestsSection h3 {
+    color: #9cdcfe;
+    margin-top: 0;
+}
+
+.test-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+#runAllTests {
+    background: #0e639c;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    font-family: monospace;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+#runAllTests:hover {
+    background: #1177bb;
+}
+
+.test-auto-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #888;
+    cursor: pointer;
+}
+
+#testResults {
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.test-group-header {
+    color: #569cd6;
+    margin-top: 8px;
+    margin-bottom: 2px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.test-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 1px 0;
+}
+
+.test-badge {
+    font-size: 10px;
+    font-weight: bold;
+    padding: 1px 5px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+}
+
+.test-badge.pass {
+    background: #1e3a1e;
+    color: #4ec94e;
+    border: 1px solid #2d5a2d;
+}
+
+.test-badge.fail {
+    background: #3a1e1e;
+    color: #f44;
+    border: 1px solid #5a2d2d;
+}
+
+.test-name  { color: #d4d4d4; }
+.test-msg   { color: #888; font-size: 11px; }
+
+.test-summary {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid #333;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.test-summary.all-pass { color: #4ec94e; }
+.test-summary.has-fail { color: #f44; }
+
 /* ---------------- SKILLS ---------------- */
 
 /* FIX: column order is now name | prof | total | delete */
