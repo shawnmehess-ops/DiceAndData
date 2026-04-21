@@ -55,6 +55,21 @@ const DEFAULT_SKILLS = [
     { name: "Survival",       stat: "wis", profLevel: 0 }
 ];
 
+const DEFAULT_ITEMS = [
+    { id: "di_1",  name: "Longsword",       type: "weapon",     data: { stat: "str", damage: "1d8", proficient: true  } },
+    { id: "di_2",  name: "Shortbow",        type: "weapon",     data: { stat: "dex", damage: "1d6", proficient: true  } },
+    { id: "di_3",  name: "Dagger",          type: "weapon",     data: { stat: "dex", damage: "1d4", proficient: false } },
+    { id: "di_4",  name: "Leather Armor",   type: "armor",      data: { baseAC: 11, dexCap: null } },
+    { id: "di_5",  name: "Chain Shirt",     type: "armor",      data: { baseAC: 13, dexCap: 2    } },
+    { id: "di_6",  name: "Plate Armor",     type: "armor",      data: { baseAC: 18, dexCap: 0    } },
+    { id: "di_7",  name: "Healing Potion",  type: "consumable", data: { effect: "Restores HP"       } },
+    { id: "di_8",  name: "Antidote",        type: "consumable", data: { effect: "Cures poison"      } },
+    { id: "di_9",  name: "Energy Drink",    type: "consumable", data: { effect: "Temporary boost"   } },
+    { id: "di_10", name: "Rope (50 ft)",    type: "misc",       data: { description: "50 ft of hempen rope" } },
+    { id: "di_11", name: "Torch",           type: "misc",       data: { description: "Burns for 1 hour"    } },
+    { id: "di_12", name: "Strange Key",     type: "misc",       data: { description: "Unknown origin"      } }
+];
+
 // ---------------- STATE ----------------
 let currentCharId = null;
 let currentStats  = [];
@@ -71,6 +86,8 @@ let currentDeathSaves = {
     success: [false, false, false],
     failure: [false, false, false]
 };
+
+let currentItems = [];
 
 // ---------------- DOM ----------------
 const emailInput         = document.getElementById("emailInput");
@@ -109,6 +126,11 @@ const skillsContainer    = document.getElementById("skillsContainer");
 const newSkillName       = document.getElementById("newSkillName");
 const newSkillStat       = document.getElementById("newSkillStat");
 const addSkillButton     = document.getElementById("addSkillButton");
+
+const inventoryContainer = document.getElementById("inventoryContainer");
+const newItemName        = document.getElementById("newItemName");
+const newItemType        = document.getElementById("newItemType");
+const addItemButton      = document.getElementById("addItemButton");
 
 const savingThrowsDiv    = document.getElementById("savingThrows");  // FIX: was never declared
 const editInspiration = document.getElementById("editInspiration");
@@ -320,14 +342,74 @@ function renderSkills() {
 }
 
 // ---------------- RERENDER ALL ----------------
-// MODIFIED: added renderDerivedCombat and renderDeathSaves
+// MODIFIED: added renderDerivedCombat, renderDeathSaves, renderInventory
 function rerenderAll() {
     renderStats();
     renderSkills();
     renderSavingThrows();
     renderPassives();
-    renderDerivedCombat();  // NEW
-    renderDeathSaves();     // NEW
+    renderDerivedCombat();
+    renderDeathSaves();
+    renderInventory();
+}
+
+// ---------------- INVENTORY ----------------
+function itemSummary(item) {
+    switch (item.type) {
+        case "weapon":     return `${item.data.damage ?? "—"}, ${(item.data.stat ?? "str").toUpperCase()}${item.data.proficient ? ", proficient" : ""}`;
+        case "armor":      return `AC ${item.data.baseAC ?? "—"}${item.data.dexCap != null ? `, Dex cap ${item.data.dexCap}` : ""}`;
+        case "consumable": return item.data.effect ?? "";
+        case "misc":       return item.data.description ?? "";
+        default:           return "";
+    }
+}
+
+function defaultItemData(type) {
+    switch (type) {
+        case "weapon":     return { stat: "str", damage: "1d4", proficient: false };
+        case "armor":      return { baseAC: 10, dexCap: null };
+        case "consumable": return { effect: "" };
+        case "misc":       return { description: "" };
+        default:           return {};
+    }
+}
+
+function renderInventory() {
+    inventoryContainer.innerHTML = "";
+
+    const TYPE_ORDER  = ["weapon", "armor", "consumable", "misc"];
+    const TYPE_LABELS = { weapon: "Weapons", armor: "Armor", consumable: "Consumables", misc: "Misc" };
+
+    TYPE_ORDER.forEach(type => {
+        const group = currentItems.filter(i => i.type === type);
+        if (!group.length) return;
+
+        const heading = document.createElement("div");
+        heading.className = "inventory-group-heading";
+        heading.textContent = TYPE_LABELS[type];
+        inventoryContainer.appendChild(heading);
+
+        group.forEach(item => {
+            const row = document.createElement("div");
+            row.className = "inventory-item";
+
+            const summary = itemSummary(item);
+
+            row.innerHTML = `
+                <span class="inventory-item-name">${item.name}</span>
+                <span class="inventory-item-summary">${summary}</span>
+                <button class="inventory-delete">✕</button>
+            `;
+
+            row.querySelector(".inventory-delete").onclick = () => {
+                currentItems = currentItems.filter(i => i.id !== item.id);
+                rerenderAll();
+                debouncedSave();
+            };
+
+            inventoryContainer.appendChild(row);
+        });
+    });
 }
 
 // ---------------- SAVE ----------------
@@ -350,8 +432,9 @@ async function saveCharacter() {
         heroPoints:  parseInt(editHeroPoints.value) || 0,
         stats:       currentStats,
         skills:      currentSkills,
-        savingThrows: currentSavingThrows,   // NEW
-        deathSaves:   currentDeathSaves      // NEW
+        savingThrows: currentSavingThrows,
+        deathSaves:   currentDeathSaves,
+        items:        currentItems
     }, { merge: true });
 }
 
@@ -369,6 +452,7 @@ createCharButton.onclick = async () => {
         level: 1,
         stats:  JSON.parse(JSON.stringify(DEFAULT_STATS)),
         skills: JSON.parse(JSON.stringify(DEFAULT_SKILLS)),
+        items:  JSON.parse(JSON.stringify(DEFAULT_ITEMS)),
         createdAt: Date.now()
     });
 
@@ -520,6 +604,8 @@ function openCharacter(id, data) {
         failure: [0, 1, 2].map(i => !!(data.deathSaves?.failure?.[i]))
     };
 
+    currentItems = data.items || [];
+
     rerenderAll();
 }
 
@@ -576,6 +662,24 @@ addSkillButton.onclick = () => {
 
     currentSkills.push({ name, stat, profLevel: 0 });
     newSkillName.value = "";
+    rerenderAll();
+    debouncedSave();
+};
+
+// ---------------- ADD ITEM ----------------
+addItemButton.onclick = () => {
+    const name = newItemName.value.trim();
+    const type = newItemType.value;
+    if (!name) return;
+
+    currentItems.push({
+        id:   `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        name,
+        type,
+        data: defaultItemData(type)
+    });
+
+    newItemName.value = "";
     rerenderAll();
     debouncedSave();
 };
