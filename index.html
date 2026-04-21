@@ -37,10 +37,12 @@
         <div id="characterListView">
             <h2>Your Characters</h2>
 
-            <input id="charNameInput" placeholder="Character Name">
-            <button id="createCharButton">Create Character</button>
+            <div class="create-char-row">
+                <input id="charNameInput" placeholder="Character Name">
+                <button id="createCharButton">Create Character</button>
+            </div>
 
-            <ul id="characterList"></ul>
+            <div id="characterList" class="char-card-grid"></div>
         </div>
 
         <hr>
@@ -58,6 +60,9 @@
 
                 <label>Name</label>
                 <input id="editName">
+
+                <label>Race</label>
+                <input id="editRace">
 
                 <label>Class</label>
                 <input id="editClass">
@@ -125,19 +130,19 @@
                 </div>
             </div>
             
-            <!-- SAVING THROWS -->
-            <div class="sheet-section">
-                <h3>Saving Throws</h3>
-                <div id="savingThrows"></div>
-            </div>
+            <!-- SAVING THROWS + PASSIVE SCORES (side by side) -->
+            <div class="two-col-row">
+                <div class="sheet-section">
+                    <h3>Saving Throws</h3>
+                    <div id="savingThrows"></div>
+                </div>
 
-            <!-- PASSIVE SCORES -->
-            <div class="sheet-section">
-                <h3>Passive Scores</h3>
-            
-                <div>Passive Perception: <span id="passivePerception"></span></div>
-                <div>Passive Investigation: <span id="passiveInvestigation"></span></div>
-                <div>Passive Insight: <span id="passiveInsight"></span></div>
+                <div class="sheet-section">
+                    <h3>Passive Scores</h3>
+                    <div>Passive Perception: <span id="passivePerception"></span></div>
+                    <div>Passive Investigation: <span id="passiveInvestigation"></span></div>
+                    <div>Passive Insight: <span id="passiveInsight"></span></div>
+                </div>
             </div>
             
             <!-- ABILITIES (dynamic) -->
@@ -170,7 +175,6 @@
 
             <!-- ACTIONS -->
             <div class="sheet-section">
-                <button id="deleteCharButton">Delete Character</button>
                 <p id="editorStatus"></p>
             </div>
 
