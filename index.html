@@ -94,6 +94,12 @@
                         <label>Speed</label>
                         <input id="editSpeed" type="number" min="0">
                     </div>
+
+                    <!-- NEW: Proficiency Bonus (display only) -->
+                    <div class="combat-box">
+                        <label>Proficiency Bonus</label>
+                        <div class="value" id="proficiencyBonus">+2</div>
+                    </div>
             
                     <!-- HP block (special layout) -->
                     <div class="combat-box hp-box">
@@ -130,7 +136,28 @@
                 </div>
             </div>
             
-            <!-- SAVING THROWS + PASSIVE SCORES (side by side) -->
+            <!-- DEATH SAVES (NEW) -->
+            <div class="sheet-section">
+                <h3>Death Saves</h3>
+                <div class="death-saves">
+                    <div class="death-save-row">
+                        <span class="death-save-label">Successes</span>
+                        <span class="death-save-boxes" id="deathSaveSuccesses">
+                            <input type="checkbox" class="death-save-check" data-type="success" data-index="0">
+                            <input type="checkbox" class="death-save-check" data-type="success" data-index="1">
+                            <input type="checkbox" class="death-save-check" data-type="success" data-index="2">
+                        </span>
+                    </div>
+                    <div class="death-save-row">
+                        <span class="death-save-label">Failures</span>
+                        <span class="death-save-boxes" id="deathSaveFailures">
+                            <input type="checkbox" class="death-save-check" data-type="failure" data-index="0">
+                            <input type="checkbox" class="death-save-check" data-type="failure" data-index="1">
+                            <input type="checkbox" class="death-save-check" data-type="failure" data-index="2">
+                        </span>
+                    </div>
+                </div>
+            </div>
             <div class="two-col-row">
                 <div class="sheet-section">
                     <h3>Saving Throws</h3>
