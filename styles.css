@@ -228,12 +228,71 @@
 
 /* ---------------- SAVING THROWS ---------------- */
 
+/* MODIFIED: row now has checkbox + label on left, total on right */
 .save-row {
     display: flex;
     justify-content: space-between;
-    padding: 2px 8px;
+    align-items: center;
+    padding: 3px 8px;
     font-family: monospace;
 }
+
+.save-prof-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-family: "Georgia", serif;
+    font-size: 13px;
+}
+
+.save-prof-check {
+    accent-color: #4caf50;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.save-total {
+    font-weight: bold;
+    min-width: 32px;
+    text-align: right;
+}
+
+/* ---------------- DEATH SAVES (NEW) ---------------- */
+
+.death-saves {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.death-save-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.death-save-label {
+    font-size: 13px;
+    font-family: "Georgia", serif;
+    width: 75px;
+}
+
+.death-save-boxes {
+    display: flex;
+    gap: 10px;
+}
+
+.death-save-check {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* success = green, failure = red */
+#deathSaveSuccesses .death-save-check { accent-color: #2e7d32; }
+#deathSaveFailures  .death-save-check { accent-color: #c62828; }
 
 /* ---------------- SKILLS ---------------- */
 
