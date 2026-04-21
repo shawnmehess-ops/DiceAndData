@@ -60,6 +60,18 @@ let currentCharId = null;
 let currentStats  = [];
 let currentSkills = [];
 
+// NEW: saving throw proficiency state (keyed by stat key)
+let currentSavingThrows = {
+    str: false, dex: false, con: false,
+    int: false, wis: false, cha: false
+};
+
+// NEW: death save state
+let currentDeathSaves = {
+    success: [false, false, false],
+    failure: [false, false, false]
+};
+
 // ---------------- DOM ----------------
 const emailInput         = document.getElementById("emailInput");
 const passwordInput      = document.getElementById("passwordInput");
@@ -100,6 +112,10 @@ const addSkillButton     = document.getElementById("addSkillButton");
 
 const savingThrowsDiv    = document.getElementById("savingThrows");  // FIX: was never declared
 const editInspiration = document.getElementById("editInspiration");
+
+// NEW DOM refs
+const proficiencyBonusEl   = document.getElementById("proficiencyBonus");
+const initiativeValueEl    = document.getElementById("initiativeValue");
 
 const passivePerception    = document.getElementById("passivePerception");
 const passiveInvestigation = document.getElementById("passiveInvestigation");
@@ -146,15 +162,61 @@ function updateSkillStatDropdown() {
     });
 }
 
+// NEW: saving throw total (stat mod + prof bonus if proficient)
+function getSavingThrow(statKey) {
+    const mod  = getModifier(getStatValue(statKey));
+    const prof = currentSavingThrows[statKey] ? getProfBonus(currentLevel()) : 0;
+    return mod + prof;
+}
+
 // ---------------- SAVING THROWS ----------------
+// MODIFIED: now includes proficiency checkbox and calculated total
 function renderSavingThrows() {
     savingThrowsDiv.innerHTML = "";
 
     DEFAULT_STATS.forEach(stat => {
+        const total     = getSavingThrow(stat.key);
+        const formatted = total >= 0 ? `+${total}` : `${total}`;
+        const isProf    = !!currentSavingThrows[stat.key];
+
         const row = document.createElement("div");
         row.className = "save-row";
-        row.innerHTML = `<span>${stat.label}</span><span>${formatMod(getStatValue(stat.key))}</span>`;
+        row.innerHTML = `
+            <label class="save-prof-label">
+                <input type="checkbox" class="save-prof-check" data-key="${stat.key}" ${isProf ? "checked" : ""}>
+                <span>${stat.label}</span>
+            </label>
+            <span class="save-total">${formatted}</span>
+        `;
+
+        row.querySelector(".save-prof-check").onchange = (e) => {
+            currentSavingThrows[stat.key] = e.target.checked;
+            rerenderAll();
+            debouncedSave();
+        };
+
         savingThrowsDiv.appendChild(row);
+    });
+}
+
+// NEW: render proficiency bonus and initiative displays
+function renderDerivedCombat() {
+    const pb  = getProfBonus(currentLevel());
+    proficiencyBonusEl.textContent = pb >= 0 ? `+${pb}` : `${pb}`;
+
+    const initMod = getModifier(getStatValue("dex"));
+    initiativeValueEl.textContent = initMod >= 0 ? `+${initMod}` : `${initMod}`;
+}
+
+// NEW: render death save checkboxes from state
+function renderDeathSaves() {
+    ["success", "failure"].forEach(type => {
+        const containerId = type === "success" ? "deathSaveSuccesses" : "deathSaveFailures";
+        const container   = document.getElementById(containerId);
+        if (!container) return;
+        container.querySelectorAll(".death-save-check").forEach((cb, i) => {
+            cb.checked = currentDeathSaves[type][i] ?? false;
+        });
     });
 }
 
@@ -258,11 +320,14 @@ function renderSkills() {
 }
 
 // ---------------- RERENDER ALL ----------------
+// MODIFIED: added renderDerivedCombat and renderDeathSaves
 function rerenderAll() {
     renderStats();
     renderSkills();
-    renderSavingThrows();  // FIX: was never called
+    renderSavingThrows();
     renderPassives();
+    renderDerivedCombat();  // NEW
+    renderDeathSaves();     // NEW
 }
 
 // ---------------- SAVE ----------------
@@ -284,7 +349,9 @@ async function saveCharacter() {
         inspiration: editInspiration.checked,
         heroPoints:  parseInt(editHeroPoints.value) || 0,
         stats:       currentStats,
-        skills:      currentSkills
+        skills:      currentSkills,
+        savingThrows: currentSavingThrows,   // NEW
+        deathSaves:   currentDeathSaves      // NEW
     }, { merge: true });
 }
 
@@ -437,6 +504,22 @@ function openCharacter(id, data) {
         profLevel: typeof s.proficient === "boolean" ? (s.proficient ? 2 : 0) : (s.profLevel ?? 0)
     }));
 
+    // NEW: load saving throw proficiencies (default all false)
+    currentSavingThrows = {
+        str: !!data.savingThrows?.str,
+        dex: !!data.savingThrows?.dex,
+        con: !!data.savingThrows?.con,
+        int: !!data.savingThrows?.int,
+        wis: !!data.savingThrows?.wis,
+        cha: !!data.savingThrows?.cha
+    };
+
+    // NEW: load death saves (default all false)
+    currentDeathSaves = {
+        success: [0, 1, 2].map(i => !!(data.deathSaves?.success?.[i])),
+        failure: [0, 1, 2].map(i => !!(data.deathSaves?.failure?.[i]))
+    };
+
     rerenderAll();
 }
 
@@ -446,6 +529,20 @@ function openCharacter(id, data) {
 ].forEach(el => {});
 
 editInspiration.onchange = () => {
+    debouncedSave();
+};
+
+// NEW: death save checkbox listeners (static HTML elements, wired once)
+document.querySelectorAll(".death-save-check").forEach(cb => {
+    cb.onchange = () => {
+        const type  = cb.dataset.type;
+        const index = parseInt(cb.dataset.index);
+        currentDeathSaves[type][index] = cb.checked;
+        debouncedSave();
+    };
+});
+    renderDerivedCombat();
+    renderSavingThrows();
     debouncedSave();
 };
 
