@@ -532,6 +532,13 @@ editInspiration.onchange = () => {
     debouncedSave();
 };
 
+// NEW: update derived displays when level changes
+editLevel.oninput = () => {
+    renderDerivedCombat();
+    renderSavingThrows();
+    debouncedSave();
+};
+
 // NEW: death save checkbox listeners (static HTML elements, wired once)
 document.querySelectorAll(".death-save-check").forEach(cb => {
     cb.onchange = () => {
@@ -541,10 +548,6 @@ document.querySelectorAll(".death-save-check").forEach(cb => {
         debouncedSave();
     };
 });
-    renderDerivedCombat();
-    renderSavingThrows();
-    debouncedSave();
-};
 
 // ---------------- ADD STAT ----------------
 addStatButton.onclick = () => {
