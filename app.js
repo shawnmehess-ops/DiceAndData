@@ -79,6 +79,7 @@ const characterListView  = document.getElementById("characterListView");
 const editor             = document.getElementById("editor");
 const editorTitle        = document.getElementById("editorTitle");
 const editName           = document.getElementById("editName");
+const editRace           = document.getElementById("editRace");
 const editClass          = document.getElementById("editClass");
 const editLevel          = document.getElementById("editLevel");
 
@@ -105,7 +106,6 @@ const passiveInvestigation = document.getElementById("passiveInvestigation");
 const passiveInsight       = document.getElementById("passiveInsight");
 
 const backButton         = document.getElementById("backButton");
-const deleteCharButton   = document.getElementById("deleteCharButton");
 
 // ---------------- UTIL ----------------
 function debounce(fn, delay = 500) {
@@ -272,6 +272,7 @@ async function saveCharacter() {
 
     await setDoc(doc(db, "users", user.uid, "characters", currentCharId), {
         name:       editName.value,
+        race:       editRace.value,
         class:      editClass.value,
         level:      parseInt(editLevel.value) || 1,
         ac:         parseInt(editAC.value) || 10,
@@ -317,10 +318,91 @@ async function loadCharacters() {
 
     snap.forEach(docSnap => {
         const data = docSnap.data();
-        const btn  = document.createElement("button");
-        btn.textContent = `${data.name} (Lv ${data.level})`;
-        btn.onclick = () => openCharacter(docSnap.id, data);
-        characterList.appendChild(btn);
+        const id   = docSnap.id;
+
+        const card = document.createElement("div");
+        card.className = "char-card";
+
+        // Portrait area
+        const portrait = document.createElement("div");
+        portrait.className = "char-card-portrait";
+
+        const portraitKey = `portrait_${id}`;
+        const savedPortrait = localStorage.getItem(portraitKey);
+
+        if (savedPortrait) {
+            const img = document.createElement("img");
+            img.src = savedPortrait;
+            portrait.appendChild(img);
+        } else {
+            portrait.textContent = "🧙";
+        }
+
+        // Upload overlay
+        const uploadLabel = document.createElement("label");
+        uploadLabel.className = "char-card-portrait-upload";
+        uploadLabel.textContent = "📷 Upload";
+        uploadLabel.title = "Upload portrait";
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.onclick = e => e.stopPropagation();
+        fileInput.onchange = e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                localStorage.setItem(portraitKey, ev.target.result);
+                loadCharacters();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        uploadLabel.appendChild(fileInput);
+        portrait.appendChild(uploadLabel);
+
+        // Click portrait (outside upload) to open character
+        portrait.onclick = (e) => {
+            if (e.target === fileInput || uploadLabel.contains(e.target)) return;
+            openCharacter(id, data);
+        };
+
+        // Info block
+        const info = document.createElement("div");
+        info.className = "char-card-info";
+        info.onclick = () => openCharacter(id, data);
+
+        const racePart  = data.race  ? ` · ${data.race}`  : "";
+        const classPart = data.class ? ` · ${data.class}` : "";
+
+        info.innerHTML = `
+            <div class="char-card-name">${data.name || "Unnamed"}</div>
+            <div class="char-card-meta">
+                Level ${data.level ?? 1}${racePart}${classPart}
+            </div>
+        `;
+
+        // Footer with delete
+        const footer = document.createElement("div");
+        footer.className = "char-card-footer";
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "char-card-delete";
+        delBtn.textContent = "Delete";
+        delBtn.onclick = async (e) => {
+            e.stopPropagation();
+            if (!confirm(`Delete "${data.name || "this character"}"? This cannot be undone.`)) return;
+            await deleteDoc(doc(db, "users", user.uid, "characters", id));
+            localStorage.removeItem(portraitKey);
+            loadCharacters();
+        };
+
+        footer.appendChild(delBtn);
+        card.appendChild(portrait);
+        card.appendChild(info);
+        card.appendChild(footer);
+        characterList.appendChild(card);
     });
 }
 
@@ -332,6 +414,7 @@ function openCharacter(id, data) {
     editor.style.display = "block";
 
     editName.value  = data.name  ?? "";
+    editRace.value  = data.race  ?? "";
     editClass.value = data.class ?? "";
     editLevel.value = data.level ?? 1;
 
@@ -358,7 +441,7 @@ function openCharacter(id, data) {
 }
 
 // ---------------- AUTOSAVE ON BASIC FIELDS ----------------
-[editName, editClass, editLevel, editAC, editHPCurrent,
+[editName, editRace, editClass, editLevel, editAC, editHPCurrent,
  editHPMax, editTempHP, editInspiration, editHeroPoints
 ].forEach(el => {});
 
@@ -395,21 +478,6 @@ addSkillButton.onclick = () => {
     newSkillName.value = "";
     rerenderAll();
     debouncedSave();
-};
-
-// ---------------- DELETE CHARACTER ----------------
-deleteCharButton.onclick = async () => {
-    const user = auth.currentUser;
-    if (!user || !currentCharId) return;
-
-    if (!confirm("Delete this character? This cannot be undone.")) return;
-
-    await deleteDoc(doc(db, "users", user.uid, "characters", currentCharId));
-
-    currentCharId = null;
-    editor.style.display = "none";
-    characterListView.style.display = "block";
-    loadCharacters();
 };
 
 // ---------------- NAVIGATION ----------------
