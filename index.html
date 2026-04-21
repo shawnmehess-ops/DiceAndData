@@ -73,7 +73,7 @@
 
             <!-- COMBAT & RESOURCES -->
             <div class="sheet-section">
-                <h3>Combat & Resources UPDATED</h3>
+                <h3>Combat & Resources</h3>
             
                 <div class="combat-grid">
             
@@ -200,12 +200,30 @@
                 <button id="addSkillButton">Add Skill</button>
             </div>
 
+            <!-- INVENTORY -->
+            <div class="sheet-section">
+                <h3>Inventory</h3>
+
+                <div id="inventoryContainer"></div>
+
+                <hr>
+
+                <input id="newItemName" placeholder="Item Name">
+
+                <select id="newItemType">
+                    <option value="weapon">Weapon</option>
+                    <option value="armor">Armor</option>
+                    <option value="consumable">Consumable</option>
+                    <option value="misc">Misc</option>
+                </select>
+
+                <button id="addItemButton">Add Item</button>
+            </div>
+
             <!-- ACTIONS -->
             <div class="sheet-section">
                 <p id="editorStatus"></p>
-            </div>
-
-        </div>
+            </div>        </div>
     </div>
 
     <!-- IMPORTANT: script at bottom -->
