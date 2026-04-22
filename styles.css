@@ -28,7 +28,7 @@
     --shadow-deep: rgba(26,17,8,0.38);
     --green-hp:    #2d6a3f;
     --blue-temp:   #1a4a7a;
-    --section-head-bg: linear-gradient(135deg, #2a1808 0%, #3d200e 60%, #2a1808 100%);
+    --section-head-bg: url("images/SectionHeaderBackground.png");
 }
 
 /* ---- RESET & BASE ---- */
@@ -38,9 +38,9 @@ body {
     font-family: 'Crimson Text', Georgia, serif;
     font-size: 16px;
     background-color: #1a1108;
-    background-image:
-        radial-gradient(ellipse at 20% 20%, rgba(90,40,10,0.35) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 80%, rgba(60,20,10,0.3) 0%, transparent 55%);
+    background-image: url("images/PageBackgroundTexture.png");
+    background-repeat: repeat;
+    background-size: auto;
     color: var(--ink);
     min-height: 100vh;
     margin: 0;
@@ -51,7 +51,12 @@ body {
    SITE HEADER
    ============================================================ */
 .site-header {
-    background: linear-gradient(180deg, #0d0803 0%, #1e1008 40%, #2a1808 100%);
+    background-color: #0d0803;
+    background-image:
+        linear-gradient(180deg, rgba(13,8,3,0.92) 0%, rgba(30,16,8,0.85) 40%, rgba(42,24,8,0.82) 100%),
+        url("images/PageBackgroundTexture.png");
+    background-repeat: repeat;
+    background-size: auto;
     border-bottom: 2px solid var(--gold-dark);
     padding: 28px 40px 20px;
     text-align: center;
@@ -483,7 +488,10 @@ button {
    CHARACTER SHEET (editor)
    ============================================================ */
 .sheet {
-    background: var(--parchment);
+    background-color: var(--parchment);
+    background-image: url("images/SheetInnerParchment.png");
+    background-repeat: repeat;
+    background-size: auto;
     max-width: 780px;
     margin: 0 auto;
     border: 1px solid var(--border-dark);
@@ -495,22 +503,29 @@ button {
     position: relative;
 }
 
-.sheet::before, .sheet::after {
-    content: '';
+.sheet::before, .sheet::after { content: none; }
+
+/* Corner ornament images — added via HTML */
+.corner-ornament {
     position: absolute;
-    width: 20px;
-    height: 20px;
-    border-color: var(--gold-dark);
-    border-style: solid;
+    width: 72px;
+    height: 72px;
     pointer-events: none;
-    z-index: 2;
+    z-index: 3;
+    opacity: 0.85;
 }
-.sheet::before { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
-.sheet::after  { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+.corner-ornament.top-left     { top: 0;    left: 0;    transform: rotate(0deg); }
+.corner-ornament.top-right    { top: 0;    right: 0;   transform: rotate(90deg); }
+.corner-ornament.bottom-left  { bottom: 0; left: 0;    transform: rotate(270deg); }
+.corner-ornament.bottom-right { bottom: 0; right: 0;   transform: rotate(180deg); }
 
 /* sheet header bar */
 .sheet-header-bar {
     background: var(--section-head-bg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     padding: 20px 32px 16px;
     display: flex;
     align-items: center;
@@ -551,7 +566,10 @@ button {
 .sheet-section {
     margin: 18px 0 0;
     border: 1px solid var(--border-light);
-    background: var(--vellum);
+    background-color: var(--vellum);
+    background-image: url("images/SheetInnerParchment.png");
+    background-repeat: repeat;
+    background-size: auto;
     overflow: hidden;
 }
 
@@ -565,6 +583,9 @@ button {
     text-transform: uppercase;
     color: var(--gold-light);
     background: var(--section-head-bg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     margin: 0;
     padding: 7px 14px;
     border-bottom: 1px solid var(--gold-dark);
@@ -1255,6 +1276,19 @@ button {
 
 .test-summary.all-pass { color: #5aaa5a; }
 .test-summary.has-fail { color: #e05050; }
+
+/* ============================================================
+   SECTION DIVIDER IMAGE
+   ============================================================ */
+.section-divider-img {
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    margin: 10px auto 0;
+    opacity: 0.7;
+    pointer-events: none;
+    user-select: none;
+}
 
 /* ============================================================
    EDITOR STATUS
