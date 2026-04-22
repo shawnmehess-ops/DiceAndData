@@ -8,6 +8,27 @@ export const DEFAULT_STATS = [
     { key: "cha", label: "CHA", base: 10 }
 ];
 
+// Dynamic combat fields.
+// type: "manual"   — user types a number directly
+// type: "derived"  — value computed from a formula
+// formula options: "stat_mod", "stat_mod_plus_prof", "stat_value", "prof_bonus", "level"
+// stat: which stat key to base the formula on (for stat_* formulas)
+export const DEFAULT_COMBAT_FIELDS = [
+    { id: "cf_ac",    label: "Armor Class",      type: "manual",  value: 10 },
+    { id: "cf_speed", label: "Speed",             type: "manual",  value: 30 },
+    { id: "cf_init",  label: "Initiative",        type: "derived", formula: "stat_mod",          stat: "dex" },
+    { id: "cf_pb",    label: "Proficiency Bonus", type: "derived", formula: "prof_bonus",         stat: null  },
+    { id: "cf_hero",  label: "Hero Points",       type: "manual",  value: 0  }
+];
+
+// Dynamic passive scores — each derives from a skill name.
+// formula: "passive_skill" means 10 + skill total (mod + prof)
+export const DEFAULT_PASSIVES = [
+    { id: "ps_perc", label: "Perception",    skillName: "Perception"    },
+    { id: "ps_inv",  label: "Investigation", skillName: "Investigation" },
+    { id: "ps_ins",  label: "Insight",       skillName: "Insight"       }
+];
+
 export const DEFAULT_SKILLS = [
     { name: "Acrobatics",     stat: "dex", profLevel: 0 },
     { name: "Animal Handling",stat: "wis", profLevel: 0 },
@@ -45,7 +66,6 @@ export const DEFAULT_ITEMS = [
 ];
 
 // ---------------- SHARED MUTABLE STATE ----------------
-// These are exported as a single object so modules can mutate them by reference.
 export const state = {
     currentCharId: null,
     currentStats:  [],
@@ -58,5 +78,7 @@ export const state = {
         success: [false, false, false],
         failure: [false, false, false]
     },
-    currentItems: []
+    currentItems:        [],
+    currentCombatFields: [],
+    currentPassives:     []
 };
