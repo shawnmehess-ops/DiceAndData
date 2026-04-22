@@ -1,6 +1,5 @@
 import { state, DEFAULT_STATS }  from "./state.js";
 import { skillsContainer, newSkillName, newSkillStat, addSkillButton,
-         passivePerception, passiveInvestigation, passiveInsight,
          savingThrowsDiv, editLevel }        from "./ui.js";
 import { rerenderAll }                       from "./ui.js";
 import { getModifier, getStatValue, getProfBonus,
@@ -47,6 +46,7 @@ export function renderSavingThrows() {
 }
 
 // ---------------- PASSIVES ----------------
+// getPassiveScore is kept as a utility used by combat.js
 export function getPassiveScore(statKey, skillName) {
     const statMod = getModifier(getStatValue(statKey));
     const skill   = state.currentSkills.find(s => s.name === skillName);
@@ -54,11 +54,9 @@ export function getPassiveScore(statKey, skillName) {
     return 10 + statMod + prof;
 }
 
-export function renderPassives() {
-    passivePerception.textContent    = getPassiveScore("wis", "Perception");
-    passiveInvestigation.textContent = getPassiveScore("int", "Investigation");
-    passiveInsight.textContent       = getPassiveScore("wis", "Insight");
-}
+// renderPassives is now handled by combat.js (dynamic passive scores)
+// This stub keeps app.js registration working during the transition
+export function renderPassives() {}
 
 // ---------------- RENDER SKILLS ----------------
 export function renderSkills() {
@@ -103,6 +101,9 @@ export function renderSkills() {
 
         skillsContainer.appendChild(row);
     });
+
+    // Keep passive score skill datalist in sync
+    import("./combat.js").then(m => m.updatePassiveSkillList());
 }
 
 // ---------------- DEATH SAVES ----------------
