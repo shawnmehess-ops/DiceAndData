@@ -30,11 +30,9 @@ export const editRace           = document.getElementById("editRace");
 export const editClass          = document.getElementById("editClass");
 export const editLevel          = document.getElementById("editLevel");
 
-export const editAC             = document.getElementById("editAC");
 export const editHPCurrent      = document.getElementById("editHPCurrent");
 export const editHPMax          = document.getElementById("editHPMax");
 export const editTempHP         = document.getElementById("editTempHP");
-export const editHeroPoints     = document.getElementById("editHeroPoints");
 
 export const statsContainer     = document.getElementById("statsContainer");
 export const newStatName        = document.getElementById("newStatName");
@@ -53,14 +51,7 @@ export const addItemButton      = document.getElementById("addItemButton");
 export const savingThrowsDiv    = document.getElementById("savingThrows");
 export const editInspiration    = document.getElementById("editInspiration");
 
-export const proficiencyBonusEl   = document.getElementById("proficiencyBonus");
-export const initiativeValueEl    = document.getElementById("initiativeValue");
-
-export const passivePerception    = document.getElementById("passivePerception");
-export const passiveInvestigation = document.getElementById("passiveInvestigation");
-export const passiveInsight       = document.getElementById("passiveInsight");
-
-export const backButton           = document.getElementById("backButton");
+export const backButton         = document.getElementById("backButton");
 
 // ---------------- RERENDER REGISTRY ----------------
 // Individual render functions are registered here by their modules
