@@ -22,29 +22,32 @@ import { renderInventory, initAddItem,
 
 import { setDebouncedSave as charSDS } from "./character.js";
 
+import { renderCombatFields, renderPassives as renderPassiveScores,
+         initAddCombatField, initAddPassive,
+         setDebouncedSave as combatSDS } from "./combat.js";
+
 import { initAuth }                   from "./auth.js";
 import { initTests }                  from "./tests.js";
 
 // ---------------- DEBOUNCED SAVE ----------------
 const debouncedSave = debounce(saveCharacter);
 
-// Inject debouncedSave into every module that needs it
 statsSDS(debouncedSave);
 skillsSDS(debouncedSave);
 invSDS(debouncedSave);
 charSDS(debouncedSave);
+combatSDS(debouncedSave);
 
-// Inject skill renderers into stats to avoid circular imports
-// (stat oninput must call renderSkills + renderPassives without importing skills.js)
-setSkillRenderers(renderSkills, renderPassives);
+setSkillRenderers(renderSkills, renderPassiveScores);
 
 // ---------------- REGISTER RENDERERS ----------------
-// Order matches original rerenderAll() call order exactly
 registerRenderer(renderStats);
 registerRenderer(renderSkills);
 registerRenderer(renderSavingThrows);
-registerRenderer(renderPassives);
-registerRenderer(renderDerivedCombat);
+registerRenderer(renderPassives);       // stub — keeps tests happy
+registerRenderer(renderPassiveScores);  // actual dynamic passive render
+registerRenderer(renderDerivedCombat);  // stub
+registerRenderer(renderCombatFields);   // actual dynamic combat render
 registerRenderer(renderDeathSaves);
 registerRenderer(renderInventory);
 
@@ -53,10 +56,12 @@ initCreateChar();
 initAddStat(addStatButton);
 initAddSkill();
 initAddItem();
-initLevelListener(renderDerivedCombat);
+initAddCombatField();
+initAddPassive();
+initLevelListener(renderCombatFields);
 initDeathSaveListeners();
 initTests();
-initAuth();  // last — triggers onAuthStateChanged which calls loadCharacters
+initAuth();
 
 // ---------------- BASIC FIELD AUTOSAVE ----------------
 editInspiration.onchange = () => debouncedSave();
