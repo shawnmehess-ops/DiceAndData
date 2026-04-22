@@ -3,12 +3,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import { auth, db }                from "./firebase.js";
-import { state, DEFAULT_STATS, DEFAULT_SKILLS, DEFAULT_ITEMS } from "./state.js";
+import { state, DEFAULT_STATS, DEFAULT_SKILLS, DEFAULT_ITEMS,
+         DEFAULT_COMBAT_FIELDS, DEFAULT_PASSIVES } from "./state.js";
 import {
     characterList, characterListView, charNameInput,
     editor, editName, editRace, editClass, editLevel,
-    editAC, editHPCurrent, editHPMax, editTempHP,
-    editInspiration, editHeroPoints
+    editHPCurrent, editHPMax, editTempHP,
+    editInspiration
 } from "./ui.js";
 import { rerenderAll }             from "./ui.js";
 
@@ -26,19 +27,19 @@ export async function saveCharacter() {
         race:       editRace.value,
         class:      editClass.value,
         level:      parseInt(editLevel.value) || 1,
-        ac:         parseInt(editAC.value) || 10,
         hp: {
             current: parseInt(editHPCurrent.value) || 0,
             max:     parseInt(editHPMax.value) || 0,
             temp:    parseInt(editTempHP.value) || 0
         },
-        inspiration: editInspiration.checked,
-        heroPoints:  parseInt(editHeroPoints.value) || 0,
-        stats:       state.currentStats,
-        skills:      state.currentSkills,
+        inspiration:  editInspiration.checked,
+        stats:        state.currentStats,
+        skills:       state.currentSkills,
         savingThrows: state.currentSavingThrows,
         deathSaves:   state.currentDeathSaves,
-        items:        state.currentItems
+        items:        state.currentItems,
+        combatFields: state.currentCombatFields,
+        passives:     state.currentPassives
     }, { merge: true });
 }
 
@@ -55,9 +56,11 @@ export function initCreateChar() {
             name,
             class: "Unknown",
             level: 1,
-            stats:  JSON.parse(JSON.stringify(DEFAULT_STATS)),
-            skills: JSON.parse(JSON.stringify(DEFAULT_SKILLS)),
-            items:  JSON.parse(JSON.stringify(DEFAULT_ITEMS)),
+            stats:        JSON.parse(JSON.stringify(DEFAULT_STATS)),
+            skills:       JSON.parse(JSON.stringify(DEFAULT_SKILLS)),
+            items:        JSON.parse(JSON.stringify(DEFAULT_ITEMS)),
+            combatFields: JSON.parse(JSON.stringify(DEFAULT_COMBAT_FIELDS)),
+            passives:     JSON.parse(JSON.stringify(DEFAULT_PASSIVES)),
             createdAt: Date.now()
         });
 
@@ -182,12 +185,10 @@ export function openCharacter(id, data) {
     editClass.value = data.class ?? "";
     editLevel.value = data.level ?? 1;
 
-    editAC.value            = data.ac ?? 10;
     editHPCurrent.value     = data.hp?.current ?? 0;
     editHPMax.value         = data.hp?.max ?? 0;
     editTempHP.value        = data.hp?.temp ?? 0;
     editInspiration.checked = !!data.inspiration;
-    editHeroPoints.value    = data.heroPoints ?? 0;
 
     state.currentStats = Array.isArray(data.stats) && data.stats.length
         ? JSON.parse(JSON.stringify(data.stats))
@@ -214,6 +215,16 @@ export function openCharacter(id, data) {
     };
 
     state.currentItems = data.items || [];
+
+    // Load dynamic combat fields — fall back to defaults for older characters
+    state.currentCombatFields = Array.isArray(data.combatFields) && data.combatFields.length
+        ? JSON.parse(JSON.stringify(data.combatFields))
+        : JSON.parse(JSON.stringify(DEFAULT_COMBAT_FIELDS));
+
+    // Load dynamic passives — fall back to defaults for older characters
+    state.currentPassives = Array.isArray(data.passives) && data.passives.length
+        ? JSON.parse(JSON.stringify(data.passives))
+        : JSON.parse(JSON.stringify(DEFAULT_PASSIVES));
 
     rerenderAll();
 }
