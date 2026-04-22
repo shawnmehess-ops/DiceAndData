@@ -1,7 +1,7 @@
 import { state, DEFAULT_STATS }  from "./state.js";
 import {
     statsContainer, newStatName, newSkillStat,
-    editLevel, proficiencyBonusEl, initiativeValueEl
+    editLevel
 } from "./ui.js";
 import { rerenderAll } from "./ui.js";
 
@@ -46,13 +46,9 @@ export function updateSkillStatDropdown() {
 }
 
 // ---------------- RENDER DERIVED COMBAT ----------------
-export function renderDerivedCombat() {
-    const pb  = getProfBonus(currentLevel());
-    proficiencyBonusEl.textContent = pb >= 0 ? `+${pb}` : `${pb}`;
-
-    const initMod = getModifier(getStatValue("dex"));
-    initiativeValueEl.textContent = initMod >= 0 ? `+${initMod}` : `${initMod}`;
-}
+// Initiative and Proficiency Bonus are now dynamic combat fields rendered
+// by combat.js. This stub satisfies existing registrations in app.js.
+export function renderDerivedCombat() {}
 
 // ---------------- RENDER STATS ----------------
 export function renderStats() {
@@ -92,6 +88,8 @@ export function renderStats() {
     });
 
     updateSkillStatDropdown();
+    // Keep the combat-field add-row stat dropdown in sync
+    import("./combat.js").then(m => m.updateCombatStatDropdown());
 }
 
 // ---------------- ADD STAT ----------------
