@@ -1311,3 +1311,148 @@ button {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.45); }
+
+/* ============================================================
+   DYNAMIC COMBAT FIELDS
+   ============================================================ */
+
+.combat-grid-dynamic {
+    padding: 14px;
+    border-top: 1px solid var(--border-light);
+}
+
+.combat-box-dynamic {
+    position: relative;
+}
+
+.combat-field-delete {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    font-size: 10px;
+    background: none;
+    border: 1px solid transparent;
+    color: transparent;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.15s;
+    line-height: 16px;
+    text-align: center;
+}
+
+.combat-box-dynamic:hover .combat-field-delete {
+    color: #ccc;
+    border-color: #ddd;
+}
+
+.combat-field-delete:hover {
+    background: rgba(122,28,46,0.1) !important;
+    border-color: var(--crimson-soft) !important;
+    color: var(--crimson) !important;
+}
+
+.combat-formula-hint {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.08em;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+/* Add combat field row */
+.combat-add-row {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.combat-add-row select {
+    flex: 0 0 auto;
+    padding: 5px 8px;
+    background: var(--vellum);
+    border: 1px solid var(--border-light);
+    font-family: 'Crimson Text', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    outline: none;
+    border-radius: 1px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.combat-add-row select:focus { border-color: var(--gold-dark); }
+
+#derivedOptions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
+   DYNAMIC PASSIVE SCORES
+   ============================================================ */
+
+/* Override passive-row to add a skill hint and delete button */
+#passivesContainer .passive-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 8px;
+    align-items: center;
+    padding: 5px 14px;
+    border-bottom: 1px dotted var(--border-light);
+    transition: background 0.12s;
+}
+
+#passivesContainer .passive-row:last-child { border-bottom: none; }
+#passivesContainer .passive-row:hover { background: rgba(201,168,76,0.06); }
+
+.passive-skill-hint {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.78rem;
+    font-style: italic;
+    color: var(--ink-muted);
+    opacity: 0.7;
+    white-space: nowrap;
+}
+
+.passive-delete {
+    width: 20px;
+    height: 18px;
+    padding: 0;
+    font-size: 10px;
+    background: none;
+    border: 1px solid transparent;
+    color: transparent;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.15s;
+}
+
+#passivesContainer .passive-row:hover .passive-delete {
+    color: #ccc;
+    border-color: #ddd;
+}
+
+.passive-delete:hover {
+    background: rgba(122,28,46,0.08) !important;
+    border-color: var(--crimson-soft) !important;
+    color: var(--crimson) !important;
+}
+
+/* Passive scores add-row sits inside the two-col-row panel */
+.two-col-row .section-add-row {
+    flex-wrap: wrap;
+    padding: 8px 10px;
+}
+
+.two-col-row .section-add-row input {
+    min-width: 0;
+    flex: 1 1 80px;
+    font-size: 0.82rem;
+    padding: 4px 8px;
+}
