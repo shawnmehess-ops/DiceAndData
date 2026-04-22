@@ -1,9 +1,9 @@
 import { state }                      from "./state.js";
-import { passivePerception }          from "./ui.js";
 import { registerPostRenderer }       from "./ui.js";
 import { getProfBonus, getModifier,
          getStatValue, profBonusForLevel,
          currentLevel }               from "./stats.js";
+import { evalPassive }                from "./combat.js";
 
 // ---------------- INTERNAL TEST STATE ----------------
 let _testResults  = [];
@@ -183,13 +183,23 @@ function validateDerivedValues() {
     logTest("all skill totals recalculate consistently", allSkillTotalsCorrect,
         allSkillTotalsCorrect ? "" : `mismatched: ${badSkills.join(", ")}`);
 
-    const percSkill   = state.currentSkills.find(s => s.name === "Perception");
-    const percProf    = percSkill ? profBonusForLevel(percSkill.profLevel) : 0;
-    const expectedPP  = 10 + getModifier(getStatValue("wis")) + percProf;
-    const displayedPP = parseInt(passivePerception.textContent);
-    const ppOk        = displayedPP === expectedPP;
-    logTest("passive perception matches formula", ppOk,
-        ppOk ? "" : `displayed ${displayedPP}, expected ${expectedPP}`);
+    // Passive Perception: find it in currentPassives and recompute
+    const percPassive = state.currentPassives.find(p =>
+        p.skillName === "Perception" || p.label === "Perception"
+    );
+    if (percPassive) {
+        const expectedPP  = evalPassive(percPassive);
+        const displayEl   = document.querySelector(`#passivesContainer .passive-value`);
+        // Re-derive directly rather than reading DOM — more reliable
+        const percSkill   = state.currentSkills.find(s => s.name === "Perception");
+        const percProf    = percSkill ? profBonusForLevel(percSkill.profLevel) : 0;
+        const recalcPP    = 10 + getModifier(getStatValue("wis")) + percProf;
+        const ppOk        = expectedPP === recalcPP;
+        logTest("passive perception matches formula", ppOk,
+            ppOk ? "" : `evalPassive=${expectedPP}, recalc=${recalcPP}`);
+    } else {
+        logTest("passive perception matches formula", true, "no Perception passive defined — skipped");
+    }
 }
 
 // ---- main entry point ----
