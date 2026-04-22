@@ -114,29 +114,9 @@
                     <!-- COMBAT & RESOURCES -->
                     <div class="sheet-section">
                         <h3>Combat &amp; Resources</h3>
+
+                        <!-- Fixed fields: HP and Inspiration stay hardcoded -->
                         <div class="combat-grid">
-
-                            <div class="combat-box">
-                                <label>Armor Class</label>
-                                <input id="editAC" type="number" min="0">
-                            </div>
-
-                            <div class="combat-box">
-                                <label>Initiative</label>
-                                <div class="value" id="initiativeValue">+0</div>
-                            </div>
-
-                            <div class="combat-box">
-                                <label>Speed</label>
-                                <input id="editSpeed" type="number" min="0">
-                            </div>
-
-                            <div class="combat-box">
-                                <label>Proficiency Bonus</label>
-                                <div class="value" id="proficiencyBonus">+2</div>
-                            </div>
-
-                            <!-- HP spans full width -->
                             <div class="combat-box hp-box">
                                 <div class="hp-segment">
                                     <label>Current HP</label>
@@ -151,17 +131,33 @@
                                     <input id="editHPMax" type="number" min="1">
                                 </div>
                             </div>
-
                             <div class="combat-box">
                                 <label>Inspiration</label>
                                 <input type="checkbox" id="editInspiration">
                             </div>
+                        </div>
 
-                            <div class="combat-box">
-                                <label>Hero Points</label>
-                                <input id="editHeroPoints" type="number" min="0">
-                            </div>
+                        <!-- Dynamic combat fields rendered here -->
+                        <div id="combatFieldsContainer" class="combat-grid combat-grid-dynamic"></div>
 
+                        <!-- Add new combat field -->
+                        <div class="section-add-row combat-add-row">
+                            <input id="newCombatLabel" placeholder="Field name (e.g. Stamina)">
+                            <select id="newCombatType">
+                                <option value="manual">Manual number</option>
+                                <option value="derived">Derived (formula)</option>
+                            </select>
+                            <span id="derivedOptions" style="display:none; gap:6px; align-items:center;">
+                                <select id="newCombatFormula">
+                                    <option value="stat_mod">Stat modifier</option>
+                                    <option value="stat_mod_plus_prof">Stat mod + Prof bonus</option>
+                                    <option value="stat_value">Stat score</option>
+                                    <option value="prof_bonus">Proficiency bonus</option>
+                                    <option value="level">Character level</option>
+                                </select>
+                                <select id="newCombatStat" title="Which stat to use"></select>
+                            </span>
+                            <button id="addCombatFieldBtn" class="btn-primary">+ Add</button>
                         </div>
                     </div>
 
@@ -198,19 +194,12 @@
                         </div>
                         <div class="sheet-section">
                             <h3>Passive Scores</h3>
-                            <div class="passive-scores">
-                                <div class="passive-row">
-                                    <span class="passive-label">Perception</span>
-                                    <span class="passive-value" id="passivePerception">—</span>
-                                </div>
-                                <div class="passive-row">
-                                    <span class="passive-label">Investigation</span>
-                                    <span class="passive-value" id="passiveInvestigation">—</span>
-                                </div>
-                                <div class="passive-row">
-                                    <span class="passive-label">Insight</span>
-                                    <span class="passive-value" id="passiveInsight">—</span>
-                                </div>
+                            <div id="passivesContainer"></div>
+                            <div class="section-add-row">
+                                <input id="newPassiveLabel" placeholder="Label (e.g. Perception)">
+                                <input id="newPassiveSkill" placeholder="Skill name" list="passiveSkillList">
+                                <datalist id="passiveSkillList"></datalist>
+                                <button id="addPassiveBtn" class="btn-primary">+ Add</button>
                             </div>
                         </div>
                     </div>
