@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Character Sheet Manager UPDATED</title>
+    <title>Grimoire — Character Sheet Manager</title>
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
@@ -13,232 +13,261 @@
 </head>
 
 <body>
-    <h1>Welcome to the Character Sheet Manager!</h1>
 
-    <!-- AUTH -->
+    <!-- ===================== SITE HEADER ===================== -->
+    <header class="site-header">
+        <h1>Grimoire</h1>
+        <p class="subtitle">Character Sheet Manager</p>
+        <div class="header-ornament">
+            <div class="line"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="line right"></div>
+        </div>
+        <div class="header-user-bar">
+            <button id="signOutButton">Sign Out</button>
+        </div>
+    </header>
+
+    <!-- ===================== AUTH PAGE ===================== -->
     <div id="auth-ui">
-        <h2>Sign Up or Sign In</h2>
+        <h2>Enter the Grimoire</h2>
 
-        <input type="email" id="emailInput" placeholder="Email">
-        <input type="password" id="passwordInput" placeholder="Password">
-
-        <button id="signUpButton">Sign Up</button>
-        <button id="signInButton">Sign In</button>
-
-        <p id="userStatus">No user signed in.</p>
-    </div>
-
-    <!-- APP -->
-    <div id="app-content" style="display:none;">
-
-        <button id="signOutButton">Sign Out</button>
-
-        <!-- CHARACTER LIST -->
-        <div id="characterListView">
-            <h2>Your Characters</h2>
-
-            <div class="create-char-row">
-                <input id="charNameInput" placeholder="Character Name">
-                <button id="createCharButton">Create Character</button>
-            </div>
-
-            <div id="characterList" class="char-card-grid"></div>
+        <div class="auth-field">
+            <label>Email</label>
+            <input type="email" id="emailInput" placeholder="your@email.com">
         </div>
 
-        <hr>
+        <div class="auth-field">
+            <label>Password</label>
+            <input type="password" id="passwordInput" placeholder="••••••••">
+        </div>
 
-        <!-- EDITOR -->
-        <div id="editor" style="display:none;" class="sheet">
+        <div class="auth-buttons">
+            <button id="signUpButton" class="btn-secondary">Create Account</button>
+            <button id="signInButton" class="btn-primary">Sign In</button>
+        </div>
 
-            <button id="backButton">← Back to Characters</button>
-
-            <h2 id="editorTitle">Character Sheet</h2>
-
-            <!-- BASIC INFO -->
-            <div class="sheet-section">
-                <h3>Basic Info</h3>
-
-                <label>Name</label>
-                <input id="editName">
-
-                <label>Race</label>
-                <input id="editRace">
-
-                <label>Class</label>
-                <input id="editClass">
-
-                <label>Level</label>
-                <input id="editLevel" type="number" min="1">
-            </div>
-
-            <!-- COMBAT & RESOURCES -->
-            <div class="sheet-section">
-                <h3>Combat & Resources</h3>
-            
-                <div class="combat-grid">
-            
-                    <!-- AC -->
-                    <div class="combat-box">
-                        <label>Armor Class</label>
-                        <input id="editAC" type="number" min="0">
-                    </div>
-            
-                    <!-- Initiative (optional but usually present in sheets) -->
-                    <div class="combat-box">
-                        <label>Initiative</label>
-                        <div class="value" id="initiativeValue">+0</div>
-                    </div>
-            
-                    <!-- Speed (optional but useful) -->
-                    <div class="combat-box">
-                        <label>Speed</label>
-                        <input id="editSpeed" type="number" min="0">
-                    </div>
-
-                    <!-- NEW: Proficiency Bonus (display only) -->
-                    <div class="combat-box">
-                        <label>Proficiency Bonus</label>
-                        <div class="value" id="proficiencyBonus">+2</div>
-                    </div>
-            
-                    <!-- HP block (special layout) -->
-                    <div class="combat-box hp-box">
-            
-                        <div class="hp-segment">
-                            <label>Current HP</label>
-                            <input id="editHPCurrent" type="number" min="0">
-                        </div>
-            
-                        <div class="hp-segment">
-                            <label>Temporary HP</label>
-                            <input id="editTempHP" type="number" min="0">
-                        </div>
-            
-                        <div class="hp-segment">
-                            <label>Max HP</label>
-                            <input id="editHPMax" type="number" min="1">
-                        </div>
-            
-                    </div>
-            
-                    <!-- Inspiration -->
-                    <div class="combat-box">
-                        <label>Inspiration</label>
-                        <input type="checkbox" id="editInspiration">
-                    </div>
-                    
-                    <!-- Hero Points -->
-                    <div class="combat-box">
-                        <label>Hero Points</label>
-                        <input id="editHeroPoints" type="number" min="0">
-                    </div>
-            
-                </div>
-            </div>
-            
-            <!-- DEATH SAVES (NEW) -->
-            <div class="sheet-section">
-                <h3>Death Saves</h3>
-                <div class="death-saves">
-                    <div class="death-save-row">
-                        <span class="death-save-label">Successes</span>
-                        <span class="death-save-boxes" id="deathSaveSuccesses">
-                            <input type="checkbox" class="death-save-check" data-type="success" data-index="0">
-                            <input type="checkbox" class="death-save-check" data-type="success" data-index="1">
-                            <input type="checkbox" class="death-save-check" data-type="success" data-index="2">
-                        </span>
-                    </div>
-                    <div class="death-save-row">
-                        <span class="death-save-label">Failures</span>
-                        <span class="death-save-boxes" id="deathSaveFailures">
-                            <input type="checkbox" class="death-save-check" data-type="failure" data-index="0">
-                            <input type="checkbox" class="death-save-check" data-type="failure" data-index="1">
-                            <input type="checkbox" class="death-save-check" data-type="failure" data-index="2">
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="two-col-row">
-                <div class="sheet-section">
-                    <h3>Saving Throws</h3>
-                    <div id="savingThrows"></div>
-                </div>
-
-                <div class="sheet-section">
-                    <h3>Passive Scores</h3>
-                    <div>Passive Perception: <span id="passivePerception"></span></div>
-                    <div>Passive Investigation: <span id="passiveInvestigation"></span></div>
-                    <div>Passive Insight: <span id="passiveInsight"></span></div>
-                </div>
-            </div>
-            
-            <!-- ABILITIES (dynamic) -->
-            <div class="sheet-section">
-                <h3>Abilities</h3>
-
-                <div id="statsContainer" class="stat-grid"></div>
-
-                <hr>
-
-                <input id="newStatName" placeholder="New Stat Name (e.g. LCK)">
-                <button id="addStatButton">Add Stat</button>
-            </div>
-
-            <!-- SKILLS (dynamic) -->
-            <div class="sheet-section">
-                <h3>Skills</h3>
-
-                <div id="skillsContainer"></div>
-
-                <hr>
-
-                <input id="newSkillName" placeholder="New Skill Name">
-
-                <!-- Populated dynamically from currentStats -->
-                <select id="newSkillStat"></select>
-
-                <button id="addSkillButton">Add Skill</button>
-            </div>
-
-            <!-- INVENTORY -->
-            <div class="sheet-section">
-                <h3>Inventory</h3>
-
-                <div id="inventoryContainer"></div>
-
-                <hr>
-
-                <input id="newItemName" placeholder="Item Name">
-
-                <select id="newItemType">
-                    <option value="weapon">Weapon</option>
-                    <option value="armor">Armor</option>
-                    <option value="consumable">Consumable</option>
-                    <option value="misc">Misc</option>
-                </select>
-
-                <button id="addItemButton">Add Item</button>
-            </div>
-
-            <!-- SYSTEM TESTS -->
-            <div class="sheet-section" id="systemTestsSection">
-                <h3>System Tests</h3>
-                <div class="test-controls">
-                    <button id="runAllTests">▶ Run All Tests</button>
-                    <label class="test-auto-label">
-                        <input type="checkbox" id="autoRunTests"> Auto-run after rerender
-                    </label>
-                </div>
-                <div id="testResults"></div>
-            </div>
-
-            <!-- ACTIONS -->
-            <div class="sheet-section">
-                <p id="editorStatus"></p>
-            </div>        </div>
+        <p id="userStatus"></p>
     </div>
 
-    <!-- IMPORTANT: script at bottom -->
+    <!-- ===================== APP CONTENT ===================== -->
+    <div id="app-content" style="display:none;">
+        <div class="page-wrap">
+
+            <!-- ---- CHARACTER ROSTER ---- -->
+            <div id="characterListView">
+
+                <div class="roster-header">
+                    <h2>Your Characters</h2>
+                    <div class="create-char-row">
+                        <input id="charNameInput" placeholder="New character name…">
+                        <button id="createCharButton" class="btn-primary">+ Create</button>
+                    </div>
+                </div>
+
+                <div id="characterList" class="char-card-grid"></div>
+
+            </div>
+
+            <!-- ===================== CHARACTER SHEET EDITOR ===================== -->
+            <div id="editor" style="display:none;" class="sheet">
+
+                <!-- Header bar -->
+                <div class="sheet-header-bar">
+                    <button id="backButton">← Roster</button>
+                    <h2 id="editorTitle">Character Sheet</h2>
+                    <div style="width:80px;"></div><!-- spacer for centering -->
+                </div>
+
+                <div class="sheet-inner">
+
+                    <!-- BASIC INFO -->
+                    <div class="sheet-section">
+                        <h3>Basic Info</h3>
+                        <div class="basic-info-grid">
+                            <div class="field-group">
+                                <label>Name</label>
+                                <input id="editName" placeholder="Character name">
+                            </div>
+                            <div class="field-group">
+                                <label>Race</label>
+                                <input id="editRace" placeholder="Human">
+                            </div>
+                            <div class="field-group">
+                                <label>Class</label>
+                                <input id="editClass" placeholder="Wizard">
+                            </div>
+                            <div class="field-group">
+                                <label>Level</label>
+                                <input id="editLevel" type="number" min="1" placeholder="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COMBAT & RESOURCES -->
+                    <div class="sheet-section">
+                        <h3>Combat &amp; Resources</h3>
+                        <div class="combat-grid">
+
+                            <div class="combat-box">
+                                <label>Armor Class</label>
+                                <input id="editAC" type="number" min="0">
+                            </div>
+
+                            <div class="combat-box">
+                                <label>Initiative</label>
+                                <div class="value" id="initiativeValue">+0</div>
+                            </div>
+
+                            <div class="combat-box">
+                                <label>Speed</label>
+                                <input id="editSpeed" type="number" min="0">
+                            </div>
+
+                            <div class="combat-box">
+                                <label>Proficiency Bonus</label>
+                                <div class="value" id="proficiencyBonus">+2</div>
+                            </div>
+
+                            <!-- HP spans full width -->
+                            <div class="combat-box hp-box">
+                                <div class="hp-segment">
+                                    <label>Current HP</label>
+                                    <input id="editHPCurrent" type="number" min="0">
+                                </div>
+                                <div class="hp-segment">
+                                    <label>Temporary HP</label>
+                                    <input id="editTempHP" type="number" min="0">
+                                </div>
+                                <div class="hp-segment">
+                                    <label>Max HP</label>
+                                    <input id="editHPMax" type="number" min="1">
+                                </div>
+                            </div>
+
+                            <div class="combat-box">
+                                <label>Inspiration</label>
+                                <input type="checkbox" id="editInspiration">
+                            </div>
+
+                            <div class="combat-box">
+                                <label>Hero Points</label>
+                                <input id="editHeroPoints" type="number" min="0">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- DEATH SAVES -->
+                    <div class="sheet-section">
+                        <h3>Death Saves</h3>
+                        <div class="death-saves">
+                            <div class="death-save-row">
+                                <span class="death-save-label">Successes</span>
+                                <span class="death-save-boxes" id="deathSaveSuccesses">
+                                    <input type="checkbox" class="death-save-check" data-type="success" data-index="0">
+                                    <input type="checkbox" class="death-save-check" data-type="success" data-index="1">
+                                    <input type="checkbox" class="death-save-check" data-type="success" data-index="2">
+                                </span>
+                            </div>
+                            <div class="death-save-row">
+                                <span class="death-save-label">Failures</span>
+                                <span class="death-save-boxes" id="deathSaveFailures">
+                                    <input type="checkbox" class="death-save-check" data-type="failure" data-index="0">
+                                    <input type="checkbox" class="death-save-check" data-type="failure" data-index="1">
+                                    <input type="checkbox" class="death-save-check" data-type="failure" data-index="2">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SAVING THROWS + PASSIVE SCORES side by side -->
+                    <div class="two-col-row">
+                        <div class="sheet-section">
+                            <h3>Saving Throws</h3>
+                            <div id="savingThrows"></div>
+                        </div>
+                        <div class="sheet-section">
+                            <h3>Passive Scores</h3>
+                            <div class="passive-scores">
+                                <div class="passive-row">
+                                    <span class="passive-label">Perception</span>
+                                    <span class="passive-value" id="passivePerception">—</span>
+                                </div>
+                                <div class="passive-row">
+                                    <span class="passive-label">Investigation</span>
+                                    <span class="passive-value" id="passiveInvestigation">—</span>
+                                </div>
+                                <div class="passive-row">
+                                    <span class="passive-label">Insight</span>
+                                    <span class="passive-value" id="passiveInsight">—</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABILITIES -->
+                    <div class="sheet-section">
+                        <h3>Ability Scores</h3>
+                        <div id="statsContainer" class="stat-grid"></div>
+                        <div class="section-add-row">
+                            <input id="newStatName" placeholder="New stat (e.g. LCK)">
+                            <button id="addStatButton" class="btn-primary">+ Add</button>
+                        </div>
+                    </div>
+
+                    <!-- SKILLS -->
+                    <div class="sheet-section">
+                        <h3>Skills</h3>
+                        <div id="skillsContainer"></div>
+                        <div class="section-add-row">
+                            <input id="newSkillName" placeholder="New skill name">
+                            <select id="newSkillStat"></select>
+                            <button id="addSkillButton" class="btn-primary">+ Add</button>
+                        </div>
+                    </div>
+
+                    <!-- INVENTORY -->
+                    <div class="sheet-section">
+                        <h3>Inventory</h3>
+                        <div id="inventoryContainer"></div>
+                        <div class="section-add-row">
+                            <input id="newItemName" placeholder="Item name">
+                            <select id="newItemType">
+                                <option value="weapon">Weapon</option>
+                                <option value="armor">Armor</option>
+                                <option value="consumable">Consumable</option>
+                                <option value="misc">Misc</option>
+                            </select>
+                            <button id="addItemButton" class="btn-primary">+ Add</button>
+                        </div>
+                    </div>
+
+                    <!-- SYSTEM TESTS -->
+                    <div class="sheet-section" id="systemTestsSection">
+                        <h3>System Tests</h3>
+                        <div class="test-controls">
+                            <button id="runAllTests">▶ Run All Tests</button>
+                            <label class="test-auto-label">
+                                <input type="checkbox" id="autoRunTests"> Auto-run after rerender
+                            </label>
+                        </div>
+                        <div id="testResults"></div>
+                    </div>
+
+                    <!-- STATUS -->
+                    <div class="sheet-section">
+                        <p id="editorStatus"></p>
+                    </div>
+
+                </div><!-- /.sheet-inner -->
+            </div><!-- /#editor -->
+
+        </div><!-- /.page-wrap -->
+    </div><!-- /#app-content -->
+
     <script type="module" src="modules/app.js"></script>
 
 </body>
