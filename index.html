@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grimoire — Character Sheet Manager</title>
+    <title>Grimoire - Character Sheet Manager</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -11,11 +11,10 @@
 </head>
 <body>
 
-    <!-- SITE HEADER -->
     <header class="site-header">
         <h1>Grimoire</h1>
         <p class="subtitle">Character Sheet Manager</p>
-        <div class="header-ornament">
+        <div class="header-ornament" aria-hidden="true">
             <div class="line"></div>
             <div class="diamond"></div>
             <div class="diamond"></div>
@@ -27,7 +26,6 @@
         </div>
     </header>
 
-    <!-- AUTH -->
     <div id="auth-ui">
         <h2>Enter the Grimoire</h2>
         <div class="auth-field">
@@ -36,7 +34,7 @@
         </div>
         <div class="auth-field">
             <label>Password</label>
-            <input type="password" id="passwordInput" placeholder="••••••••">
+            <input type="password" id="passwordInput" placeholder="password">
         </div>
         <div class="auth-buttons">
             <button id="signUpButton" class="btn-secondary">Create Account</button>
@@ -45,42 +43,30 @@
         <p id="userStatus"></p>
     </div>
 
-    <!-- APP -->
     <div id="app-content" style="display:none;">
         <div class="page-wrap">
-
-            <!-- CHARACTER ROSTER -->
             <div id="characterListView">
                 <div class="roster-header">
                     <h2>Your Characters</h2>
                     <div class="create-char-row">
-                        <input id="charNameInput" placeholder="New character name…">
+                        <input id="charNameInput" placeholder="New character name...">
                         <button id="createCharButton" class="btn-primary">+ Create</button>
                     </div>
                 </div>
                 <div id="characterList" class="char-card-grid"></div>
             </div>
 
-            <!-- CHARACTER SHEET EDITOR -->
             <div id="editor" style="display:none;" class="sheet">
-                <img src="images/CornerOrnaments.png" class="corner-ornament top-left"     alt="">
-                <img src="images/CornerOrnaments.png" class="corner-ornament top-right"    alt="">
-                <img src="images/CornerOrnaments.png" class="corner-ornament bottom-left"  alt="">
-                <img src="images/CornerOrnaments.png" class="corner-ornament bottom-right" alt="">
-
                 <div class="sheet-header-bar">
-                    <button id="backButton">← Roster</button>
+                    <button id="backButton">&larr; Roster</button>
                     <h2 id="editorTitle">Character Sheet</h2>
                     <div style="width:80px;"></div>
                 </div>
 
                 <div class="sheet-inner">
-
-                    <!-- All stat blocks rendered here by sheet.js -->
                     <div id="sheetBlocks"></div>
 
-                    <!-- INVENTORY (special system, not a stat block) -->
-                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
+                    <div class="section-divider" aria-hidden="true"></div>
                     <div class="sheet-section">
                         <h3>Inventory</h3>
                         <div id="inventoryContainer"></div>
@@ -96,24 +82,22 @@
                         </div>
                     </div>
 
-                    <!-- SYSTEM TESTS -->
-                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
+                    <div class="section-divider" aria-hidden="true"></div>
                     <div class="sheet-section" id="systemTestsSection">
                         <h3>System Tests</h3>
                         <div class="test-controls">
-                            <button id="runAllTests">▶ Run All Tests</button>
+                            <button id="runAllTests">Run All Tests</button>
                             <label class="test-auto-label">
                                 <input type="checkbox" id="autoRunTests"> Auto-run after rerender
                             </label>
                         </div>
                         <div id="testResults"></div>
                     </div>
+                </div>
+            </div>
 
-                </div><!-- /.sheet-inner -->
-            </div><!-- /#editor -->
-
-        </div><!-- /.page-wrap -->
-    </div><!-- /#app-content -->
+        </div>
+    </div>
 
     <script type="module" src="modules/app.js"></script>
 </body>
