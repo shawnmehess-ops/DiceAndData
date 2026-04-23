@@ -11,12 +11,9 @@ export function debounce(fn, delay = 500) {
 }
 
 // ---- Auth UI ----
-export const emailInput    = document.getElementById("emailInput");
-export const passwordInput = document.getElementById("passwordInput");
-export const signUpButton  = document.getElementById("signUpButton");
-export const signInButton  = document.getElementById("signInButton");
+// NOTE: most auth DOM refs are local to auth.js
+// Only the always-visible elements that other modules need are exported here
 export const signOutButton = document.getElementById("signOutButton");
-export const userStatus    = document.getElementById("userStatus");
 export const authUiDiv     = document.getElementById("auth-ui");
 export const appContentDiv = document.getElementById("app-content");
 
