@@ -18,12 +18,17 @@ import { setDebouncedSave as sheetSDS,
          setAfterRender }                from "./sheet.js";
 import { setDebouncedSave as charSDS }   from "./character.js";
 import { setDebouncedSave as invSDS }    from "./inventory.js";
+import { setDebouncedSave as shopSDS }   from "./shop.js";
+
+import { initShop }                  from "./shop.js";
+import { initAdmin }                 from "./admin.js";
 
 // ---- Debounced save ----------------------------------------
 const debouncedSave = debounce(saveCharacter);
 sheetSDS(debouncedSave);
 charSDS(debouncedSave);
 invSDS(debouncedSave);
+shopSDS(debouncedSave);
 setAfterRender(() => {
     if (shouldAutoRunTests()) runAllTests();
 });
@@ -33,6 +38,8 @@ initCreateChar();
 initAddItem();
 initTests();
 initAuth();
+initShop();
+initAdmin();
 
 // ---- Navigation --------------------------------------------
 backButton.onclick = () => {

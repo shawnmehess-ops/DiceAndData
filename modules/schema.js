@@ -131,6 +131,20 @@ export const DEFAULT_SCHEMA = [
         ]
     },
 
+    // ---- CURRENCY ----
+    // Field IDs use the f_coin_ prefix so currency.js can find them.
+    {
+        id: "block_currency",
+        label: "Currency",
+        fields: [
+            flat("f_coin_pp", "Platinum (PP)", 0),
+            flat("f_coin_gp", "Gold (GP)",     0),
+            flat("f_coin_ep", "Electrum (EP)", 0),
+            flat("f_coin_sp", "Silver (SP)",   0),
+            flat("f_coin_cp", "Copper (CP)",   0),
+        ]
+    },
+
 ];
 
 // ---- Deep-clone helper used when creating new characters ----
