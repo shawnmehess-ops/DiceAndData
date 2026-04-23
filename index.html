@@ -27,20 +27,101 @@
     </header>
 
     <div id="auth-ui">
-        <h2>Enter the Grimoire</h2>
-        <div class="auth-field">
-            <label>Email</label>
-            <input type="email" id="emailInput" placeholder="your@email.com">
+
+        <!-- Tab switcher -->
+        <div class="auth-tabs" role="tablist">
+            <button class="auth-tab auth-tab--active" id="tabSignIn"
+                    role="tab" aria-selected="true"  aria-controls="panelSignIn">Sign In</button>
+            <button class="auth-tab"                 id="tabSignUp"
+                    role="tab" aria-selected="false" aria-controls="panelSignUp">Create Account</button>
         </div>
-        <div class="auth-field">
-            <label>Password</label>
-            <input type="password" id="passwordInput" placeholder="password">
+
+        <!-- ── SIGN IN PANEL ── -->
+        <div id="panelSignIn" class="auth-panel" role="tabpanel">
+
+            <!-- Hidden inputs so the browser password manager sees a real login form -->
+            <form id="formSignIn" class="auth-form" autocomplete="on" novalidate>
+
+                <div class="auth-field">
+                    <label for="siEmail">Email</label>
+                    <input type="email"    id="siEmail"    name="email"
+                           autocomplete="username"
+                           placeholder="your@email.com">
+                </div>
+
+                <div class="auth-field">
+                    <label for="siPassword">Password</label>
+                    <div class="auth-input-wrap">
+                        <input type="password" id="siPassword" name="password"
+                               autocomplete="current-password"
+                               placeholder="••••••••">
+                        <button type="button" class="auth-eye" aria-label="Show password"
+                                data-target="siPassword">👁</button>
+                    </div>
+                </div>
+
+                <button type="submit" id="signInButton" class="btn-primary auth-submit">
+                    Sign In
+                </button>
+
+            </form>
+
+            <p class="auth-msg" id="siMsg" aria-live="polite"></p>
+
         </div>
-        <div class="auth-buttons">
-            <button id="signUpButton" class="btn-secondary">Create Account</button>
-            <button id="signInButton" class="btn-primary">Sign In</button>
+
+        <!-- ── CREATE ACCOUNT PANEL ── -->
+        <div id="panelSignUp" class="auth-panel auth-panel--hidden" role="tabpanel">
+
+            <form id="formSignUp" class="auth-form" autocomplete="on" novalidate>
+
+                <p class="auth-notice">
+                    Your email is used as your <strong>username only</strong> — it will never
+                    be verified or contacted. A real email address is not required, but the
+                    system does expect the format <em>something@something.something</em>.
+                </p>
+
+                <div class="auth-field">
+                    <label for="suEmail">Email</label>
+                    <input type="email"    id="suEmail"    name="email"
+                           autocomplete="username"
+                           placeholder="anything@works.fine">
+                </div>
+
+                <div class="auth-field">
+                    <label for="suPassword">Password <span class="auth-hint">(min. 6 characters)</span></label>
+                    <div class="auth-input-wrap">
+                        <input type="password" id="suPassword" name="new-password"
+                               autocomplete="new-password"
+                               placeholder="••••••••">
+                        <button type="button" class="auth-eye" aria-label="Show password"
+                                data-target="suPassword">👁</button>
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    <label for="suConfirm">Confirm Password</label>
+                    <div class="auth-input-wrap">
+                        <input type="password" id="suConfirm" name="confirm-password"
+                               autocomplete="new-password"
+                               placeholder="••••••••">
+                        <button type="button" class="auth-eye" aria-label="Show confirm password"
+                                data-target="suConfirm">👁</button>
+                    </div>
+                </div>
+
+                <button type="submit" id="signUpButton" class="btn-primary auth-submit">
+                    Create Account
+                </button>
+
+            </form>
+
+            <p class="auth-msg" id="suMsg" aria-live="polite"></p>
+
         </div>
-        <p id="userStatus"></p>
+
+        <p id="userStatus" style="display:none;"></p>
+
     </div>
 
     <div id="app-content" style="display:none;">
