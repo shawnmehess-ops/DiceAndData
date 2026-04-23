@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grimoire — Character Sheet Manager</title>
-
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-    <!-- ===================== SITE HEADER ===================== -->
+    <!-- SITE HEADER -->
     <header class="site-header">
         <h1>Grimoire</h1>
         <p class="subtitle">Character Sheet Manager</p>
@@ -30,35 +27,30 @@
         </div>
     </header>
 
-    <!-- ===================== AUTH PAGE ===================== -->
+    <!-- AUTH -->
     <div id="auth-ui">
         <h2>Enter the Grimoire</h2>
-
         <div class="auth-field">
             <label>Email</label>
             <input type="email" id="emailInput" placeholder="your@email.com">
         </div>
-
         <div class="auth-field">
             <label>Password</label>
             <input type="password" id="passwordInput" placeholder="••••••••">
         </div>
-
         <div class="auth-buttons">
             <button id="signUpButton" class="btn-secondary">Create Account</button>
             <button id="signInButton" class="btn-primary">Sign In</button>
         </div>
-
         <p id="userStatus"></p>
     </div>
 
-    <!-- ===================== APP CONTENT ===================== -->
+    <!-- APP -->
     <div id="app-content" style="display:none;">
         <div class="page-wrap">
 
-            <!-- ---- CHARACTER ROSTER ---- -->
+            <!-- CHARACTER ROSTER -->
             <div id="characterListView">
-
                 <div class="roster-header">
                     <h2>Your Characters</h2>
                     <div class="create-char-row">
@@ -66,169 +58,29 @@
                         <button id="createCharButton" class="btn-primary">+ Create</button>
                     </div>
                 </div>
-
                 <div id="characterList" class="char-card-grid"></div>
-
             </div>
 
-            <!-- ===================== CHARACTER SHEET EDITOR ===================== -->
+            <!-- CHARACTER SHEET EDITOR -->
             <div id="editor" style="display:none;" class="sheet">
                 <img src="images/CornerOrnaments.png" class="corner-ornament top-left"     alt="">
                 <img src="images/CornerOrnaments.png" class="corner-ornament top-right"    alt="">
                 <img src="images/CornerOrnaments.png" class="corner-ornament bottom-left"  alt="">
                 <img src="images/CornerOrnaments.png" class="corner-ornament bottom-right" alt="">
 
-                <!-- Header bar -->
                 <div class="sheet-header-bar">
                     <button id="backButton">← Roster</button>
                     <h2 id="editorTitle">Character Sheet</h2>
-                    <div style="width:80px;"></div><!-- spacer for centering -->
+                    <div style="width:80px;"></div>
                 </div>
 
                 <div class="sheet-inner">
 
-                    <!-- BASIC INFO -->
-                    <div class="sheet-section">
-                        <h3>Basic Info</h3>
-                        <div class="basic-info-grid">
-                            <div class="field-group">
-                                <label>Name</label>
-                                <input id="editName" placeholder="Character name">
-                            </div>
-                            <div class="field-group">
-                                <label>Race</label>
-                                <input id="editRace" placeholder="Human">
-                            </div>
-                            <div class="field-group">
-                                <label>Class</label>
-                                <input id="editClass" placeholder="Wizard">
-                            </div>
-                            <div class="field-group">
-                                <label>Level</label>
-                                <input id="editLevel" type="number" min="1" placeholder="1">
-                            </div>
-                        </div>
-                    </div>
+                    <!-- All stat blocks rendered here by sheet.js -->
+                    <div id="sheetBlocks"></div>
 
+                    <!-- INVENTORY (special system, not a stat block) -->
                     <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
-                    <!-- COMBAT & RESOURCES -->
-                    <div class="sheet-section">
-                        <h3>Combat &amp; Resources</h3>
-
-                        <!-- Fixed fields: HP and Inspiration stay hardcoded -->
-                        <div class="combat-grid">
-                            <div class="combat-box hp-box">
-                                <div class="hp-segment">
-                                    <label>Current HP</label>
-                                    <input id="editHPCurrent" type="number" min="0">
-                                </div>
-                                <div class="hp-segment">
-                                    <label>Temporary HP</label>
-                                    <input id="editTempHP" type="number" min="0">
-                                </div>
-                                <div class="hp-segment">
-                                    <label>Max HP</label>
-                                    <input id="editHPMax" type="number" min="1">
-                                </div>
-                            </div>
-                            <div class="combat-box">
-                                <label>Inspiration</label>
-                                <input type="checkbox" id="editInspiration">
-                            </div>
-                        </div>
-
-                        <!-- Dynamic combat fields rendered here -->
-                        <div id="combatFieldsContainer" class="combat-grid combat-grid-dynamic"></div>
-
-                        <!-- Add new combat field -->
-                        <div class="section-add-row combat-add-row">
-                            <input id="newCombatLabel" placeholder="Field name (e.g. Stamina)">
-                            <select id="newCombatType">
-                                <option value="manual">Manual number</option>
-                                <option value="derived">Derived (formula)</option>
-                            </select>
-                            <span id="derivedOptions" style="display:none; gap:6px; align-items:center;">
-                                <select id="newCombatFormula">
-                                    <option value="stat_mod">Stat modifier</option>
-                                    <option value="stat_mod_plus_prof">Stat mod + Prof bonus</option>
-                                    <option value="stat_value">Stat score</option>
-                                    <option value="prof_bonus">Proficiency bonus</option>
-                                    <option value="level">Character level</option>
-                                </select>
-                                <select id="newCombatStat" title="Which stat to use"></select>
-                            </span>
-                            <button id="addCombatFieldBtn" class="btn-primary">+ Add</button>
-                        </div>
-                    </div>
-
-                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
-                    <!-- DEATH SAVES -->
-                    <div class="sheet-section">
-                        <h3>Death Saves</h3>
-                        <div class="death-saves">
-                            <div class="death-save-row">
-                                <span class="death-save-label">Successes</span>
-                                <span class="death-save-boxes" id="deathSaveSuccesses">
-                                    <input type="checkbox" class="death-save-check" data-type="success" data-index="0">
-                                    <input type="checkbox" class="death-save-check" data-type="success" data-index="1">
-                                    <input type="checkbox" class="death-save-check" data-type="success" data-index="2">
-                                </span>
-                            </div>
-                            <div class="death-save-row">
-                                <span class="death-save-label">Failures</span>
-                                <span class="death-save-boxes" id="deathSaveFailures">
-                                    <input type="checkbox" class="death-save-check" data-type="failure" data-index="0">
-                                    <input type="checkbox" class="death-save-check" data-type="failure" data-index="1">
-                                    <input type="checkbox" class="death-save-check" data-type="failure" data-index="2">
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
-                    <!-- SAVING THROWS + PASSIVE SCORES side by side -->
-                    <div class="two-col-row">
-                        <div class="sheet-section">
-                            <h3>Saving Throws</h3>
-                            <div id="savingThrows"></div>
-                        </div>
-                        <div class="sheet-section">
-                            <h3>Passive Scores</h3>
-                            <div id="passivesContainer"></div>
-                            <div class="section-add-row">
-                                <input id="newPassiveLabel" placeholder="Label (e.g. Perception)">
-                                <input id="newPassiveSkill" placeholder="Skill name" list="passiveSkillList">
-                                <datalist id="passiveSkillList"></datalist>
-                                <button id="addPassiveBtn" class="btn-primary">+ Add</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
-                    <!-- ABILITIES -->
-                    <div class="sheet-section">
-                        <h3>Ability Scores</h3>
-                        <div id="statsContainer" class="stat-grid"></div>
-                        <div class="section-add-row">
-                            <input id="newStatName" placeholder="New stat (e.g. LCK)">
-                            <button id="addStatButton" class="btn-primary">+ Add</button>
-                        </div>
-                    </div>
-
-                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
-                    <!-- SKILLS -->
-                    <div class="sheet-section">
-                        <h3>Skills</h3>
-                        <div id="skillsContainer"></div>
-                        <div class="section-add-row">
-                            <input id="newSkillName" placeholder="New skill name">
-                            <select id="newSkillStat"></select>
-                            <button id="addSkillButton" class="btn-primary">+ Add</button>
-                        </div>
-                    </div>
-
-                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
-                    <!-- INVENTORY -->
                     <div class="sheet-section">
                         <h3>Inventory</h3>
                         <div id="inventoryContainer"></div>
@@ -244,8 +96,8 @@
                         </div>
                     </div>
 
-                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
                     <!-- SYSTEM TESTS -->
+                    <img src="images/HorizontalDivider.png" class="section-divider-img" alt="">
                     <div class="sheet-section" id="systemTestsSection">
                         <h3>System Tests</h3>
                         <div class="test-controls">
@@ -257,11 +109,6 @@
                         <div id="testResults"></div>
                     </div>
 
-                    <!-- STATUS -->
-                    <div class="sheet-section">
-                        <p id="editorStatus"></p>
-                    </div>
-
                 </div><!-- /.sheet-inner -->
             </div><!-- /#editor -->
 
@@ -269,6 +116,5 @@
     </div><!-- /#app-content -->
 
     <script type="module" src="modules/app.js"></script>
-
 </body>
 </html>

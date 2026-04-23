@@ -1,37 +1,34 @@
 /* ============================================================
    GRIMOIRE — Character Sheet Manager
-   Aesthetic: Dark codex / illuminated manuscript
-   Fonts: Cinzel (display), Crimson Text (body)
+   Fonts: Cinzel (display) + Crimson Text (body)
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 
-/* ---- CSS VARIABLES ---- */
+/* ---- VARIABLES ---- */
 :root {
-    --ink:         #1a1108;
-    --ink-soft:    #3d2e1a;
-    --ink-muted:   #6b5740;
-    --gold:        #c9a84c;
-    --gold-light:  #e8c97a;
-    --gold-dark:   #8a6a1e;
-    --crimson:     #7a1c2e;
-    --crimson-mid: #9e2a3f;
-    --crimson-soft:#c04a5e;
-    --parchment:   #f5f0e4;
-    --parchment-dark: #ede5cc;
-    --parchment-mid:  #e8dfc8;
-    --vellum:      #fdf8ee;
-    --border:      #c4a86a;
-    --border-light:#ddd0aa;
-    --border-dark: #8a6a2a;
-    --shadow:      rgba(26,17,8,0.18);
-    --shadow-deep: rgba(26,17,8,0.38);
-    --green-hp:    #2d6a3f;
-    --blue-temp:   #1a4a7a;
-    --section-head-bg: url("images/SectionHeaderBackground.png");
+    --ink:          #1a1108;
+    --ink-soft:     #3d2e1a;
+    --ink-muted:    #6b5740;
+    --gold:         #c9a84c;
+    --gold-light:   #e8c97a;
+    --gold-dark:    #8a6a1e;
+    --crimson:      #7a1c2e;
+    --crimson-soft: #c04a5e;
+    --parchment:    #f5f0e4;
+    --parchment-dk: #ede5cc;
+    --vellum:       #fdf8ee;
+    --border:       #c4a86a;
+    --border-lt:    #ddd0aa;
+    --border-dk:    #8a6a2a;
+    --shadow:       rgba(26,17,8,0.18);
+    --shadow-deep:  rgba(26,17,8,0.38);
+    --green:        #2d6a3f;
+    --blue:         #1a4a7a;
+    --head-bg:      url("images/SectionHeaderBackground.png");
 }
 
-/* ---- RESET & BASE ---- */
+/* ---- RESET ---- */
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
@@ -40,11 +37,9 @@ body {
     background-color: #1a1108;
     background-image: url("images/PageBackgroundTexture.png");
     background-repeat: repeat;
-    background-size: auto;
     color: var(--ink);
     min-height: 100vh;
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
 }
 
 /* ============================================================
@@ -53,10 +48,9 @@ body {
 .site-header {
     background-color: #0d0803;
     background-image:
-        linear-gradient(180deg, rgba(13,8,3,0.92) 0%, rgba(30,16,8,0.85) 40%, rgba(42,24,8,0.82) 100%),
+        linear-gradient(180deg, rgba(13,8,3,0.92) 0%, rgba(42,24,8,0.82) 100%),
         url("images/PageBackgroundTexture.png");
     background-repeat: repeat;
-    background-size: auto;
     border-bottom: 2px solid var(--gold-dark);
     padding: 28px 40px 20px;
     text-align: center;
@@ -89,36 +83,18 @@ body {
     gap: 12px;
     margin-top: 14px;
 }
-
-.header-ornament .line {
-    height: 1px;
-    width: 80px;
-    background: linear-gradient(90deg, transparent, var(--gold-dark));
-}
-
-.header-ornament .line.right {
-    background: linear-gradient(90deg, var(--gold-dark), transparent);
-}
-
-.header-ornament .diamond {
-    width: 6px;
-    height: 6px;
-    background: var(--gold);
-    transform: rotate(45deg);
-}
+.header-ornament .line       { height: 1px; width: 80px; background: linear-gradient(90deg, transparent, var(--gold-dark)); }
+.header-ornament .line.right { background: linear-gradient(90deg, var(--gold-dark), transparent); }
+.header-ornament .diamond    { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
 
 .header-user-bar {
     position: absolute;
-    top: 50%;
-    right: 32px;
+    top: 50%; right: 32px;
     transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
 /* ============================================================
-   PAGE WRAPPER
+   PAGE WRAP
    ============================================================ */
 .page-wrap {
     max-width: 960px;
@@ -127,14 +103,13 @@ body {
 }
 
 /* ============================================================
-   AUTH PAGE
+   AUTH
    ============================================================ */
 #auth-ui {
     max-width: 400px;
     margin: 60px auto;
     background: var(--parchment);
     border: 1px solid var(--border);
-    border-radius: 2px;
     padding: 48px 40px 40px;
     box-shadow: 0 8px 40px var(--shadow-deep), inset 0 1px 0 rgba(255,255,255,0.6);
     position: relative;
@@ -143,29 +118,24 @@ body {
 #auth-ui::before {
     content: '✦';
     position: absolute;
-    top: -13px;
-    left: 50%;
+    top: -13px; left: 50%;
     transform: translateX(-50%);
     background: var(--parchment);
     color: var(--gold);
     font-size: 18px;
     padding: 0 10px;
-    line-height: 1;
 }
 
 #auth-ui h2 {
     font-family: 'Cinzel', serif;
     font-size: 1.2rem;
-    font-weight: 600;
     color: var(--crimson);
     text-align: center;
     margin: 0 0 28px;
     letter-spacing: 0.08em;
 }
 
-.auth-field {
-    margin-bottom: 16px;
-}
+.auth-field { margin-bottom: 16px; }
 
 .auth-field label {
     display: block;
@@ -182,7 +152,6 @@ body {
     padding: 10px 14px;
     background: var(--vellum);
     border: 1px solid var(--border);
-    border-radius: 1px;
     font-family: 'Crimson Text', serif;
     font-size: 1rem;
     color: var(--ink);
@@ -257,22 +226,6 @@ button {
     color: var(--ink);
 }
 
-.btn-danger {
-    background: transparent;
-    color: #aaa;
-    border: 1px solid #ddd;
-    padding: 4px 10px;
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.btn-danger:hover {
-    background: rgba(122,28,46,0.08);
-    border-color: var(--crimson-soft);
-    color: var(--crimson);
-}
-
 #signOutButton {
     background: transparent;
     color: rgba(201,168,76,0.6);
@@ -292,9 +245,7 @@ button {
 /* ============================================================
    CHARACTER ROSTER
    ============================================================ */
-#characterListView {
-    animation: fadeUp 0.4s ease both;
-}
+#characterListView { animation: fadeUp 0.4s ease both; }
 
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
@@ -319,17 +270,12 @@ button {
     letter-spacing: 0.1em;
 }
 
-.create-char-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
+.create-char-row { display: flex; gap: 10px; align-items: center; }
 
 .create-char-row input {
     padding: 9px 14px;
     background: rgba(245,240,228,0.08);
     border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 1px;
     font-family: 'Crimson Text', serif;
     font-size: 1rem;
     color: var(--parchment);
@@ -339,7 +285,6 @@ button {
 }
 
 .create-char-row input::placeholder { color: rgba(245,240,228,0.35); }
-
 .create-char-row input:focus {
     border-color: var(--gold-dark);
     background: rgba(245,240,228,0.12);
@@ -359,7 +304,7 @@ button {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     box-shadow: 0 4px 16px var(--shadow);
 }
 
@@ -372,7 +317,7 @@ button {
 .char-card-portrait {
     width: 100%;
     aspect-ratio: 3 / 4;
-    background: linear-gradient(160deg, #2a1808 0%, #1a0e04 60%, #0d0803 100%);
+    background: linear-gradient(160deg, #2a1808 0%, #0d0803 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -390,12 +335,7 @@ button {
     opacity: 0.35;
 }
 
-.portrait-placeholder svg {
-    width: 72px;
-    height: 72px;
-    fill: var(--gold);
-}
-
+.portrait-placeholder svg  { width: 72px; height: 72px; fill: var(--gold); }
 .portrait-placeholder span {
     font-family: 'Cinzel', serif;
     font-size: 0.58rem;
@@ -404,17 +344,11 @@ button {
     text-transform: uppercase;
 }
 
-.char-card-portrait img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+.char-card-portrait img { width: 100%; height: 100%; object-fit: cover; }
 
 .char-card-portrait-upload {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
     padding: 24px 10px 8px;
     font-family: 'Cinzel', serif;
@@ -431,38 +365,11 @@ button {
 .char-card:hover .char-card-portrait-upload { opacity: 1; }
 .char-card-portrait-upload input[type="file"] { display: none; }
 
-.char-card-info {
-    padding: 14px 16px 10px;
-    flex: 1;
-}
+.char-card-info    { padding: 14px 16px 10px; flex: 1; }
+.char-card-name    { font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.char-card-meta    { font-family: 'Crimson Text', serif; font-size: 0.88rem; font-style: italic; color: var(--ink-muted); }
 
-.char-card-name {
-    font-family: 'Cinzel', serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    letter-spacing: 0.04em;
-}
-
-.char-card-meta {
-    font-family: 'Crimson Text', serif;
-    font-size: 0.88rem;
-    font-style: italic;
-    color: var(--ink-muted);
-    line-height: 1.4;
-}
-
-.char-card-footer {
-    border-top: 1px solid var(--border-light);
-    padding: 7px 12px;
-    background: var(--parchment-dark);
-    display: flex;
-    justify-content: flex-end;
-}
+.char-card-footer  { border-top: 1px solid var(--border-lt); padding: 7px 12px; background: var(--parchment-dk); display: flex; justify-content: flex-end; }
 
 .char-card-delete {
     font-family: 'Cinzel', serif;
@@ -472,7 +379,6 @@ button {
     color: #bbb;
     background: none;
     border: 1px solid #ddd;
-    border-radius: 1px;
     padding: 3px 10px;
     cursor: pointer;
     transition: all 0.15s;
@@ -485,44 +391,31 @@ button {
 }
 
 /* ============================================================
-   CHARACTER SHEET (editor)
+   CHARACTER SHEET
    ============================================================ */
 .sheet {
     background-color: var(--parchment);
     background-image: url("images/SheetInnerParchment.png");
     background-repeat: repeat;
-    background-size: auto;
     max-width: 780px;
     margin: 0 auto;
-    border: 1px solid var(--border-dark);
-    box-shadow:
-        0 0 0 4px var(--parchment),
-        0 0 0 5px var(--border),
-        0 20px 60px var(--shadow-deep);
+    border: 1px solid var(--border-dk);
+    box-shadow: 0 0 0 4px var(--parchment), 0 0 0 5px var(--border), 0 20px 60px var(--shadow-deep);
     animation: fadeUp 0.35s ease both;
     position: relative;
 }
 
 .sheet::before, .sheet::after { content: none; }
 
-/* Corner ornament images — added via HTML */
-.corner-ornament {
-    position: absolute;
-    width: 72px;
-    height: 72px;
-    pointer-events: none;
-    z-index: 3;
-    opacity: 0.85;
-}
-
-.corner-ornament.top-left     { top: 0;    left: 0;    transform: rotate(0deg); }
-.corner-ornament.top-right    { top: 0;    right: 0;   transform: rotate(90deg); }
+/* corner ornaments */
+.corner-ornament { position: absolute; width: 72px; height: 72px; pointer-events: none; z-index: 3; opacity: 0.85; }
+.corner-ornament.top-left     { top: 0;    left: 0;    transform: rotate(0deg);   }
+.corner-ornament.top-right    { top: 0;    right: 0;   transform: rotate(90deg);  }
 .corner-ornament.bottom-left  { bottom: 0; left: 0;    transform: rotate(270deg); }
 .corner-ornament.bottom-right { bottom: 0; right: 0;   transform: rotate(180deg); }
 
-/* sheet header bar */
 .sheet-header-bar {
-    background: var(--section-head-bg);
+    background: var(--head-bg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -558,22 +451,19 @@ button {
     background: rgba(201,168,76,0.08);
 }
 
-.sheet-inner {
-    padding: 0 28px 28px;
-}
+.sheet-inner { padding: 0 28px 28px; }
 
-/* sections */
+/* ============================================================
+   SHEET SECTIONS
+   ============================================================ */
 .sheet-section {
     margin: 18px 0 0;
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--border-lt);
     background-color: var(--vellum);
     background-image: url("images/SheetInnerParchment.png");
     background-repeat: repeat;
-    background-size: auto;
     overflow: hidden;
 }
-
-.sheet-section:last-child { margin-bottom: 0; }
 
 .sheet-section h3 {
     font-family: 'Cinzel', serif;
@@ -582,7 +472,7 @@ button {
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--gold-light);
-    background: var(--section-head-bg);
+    background: var(--head-bg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -600,54 +490,24 @@ button {
     color: rgba(201,168,76,0.35);
 }
 
-/* ---- basic info ---- */
-.basic-info-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 0.7fr;
-    gap: 0;
-}
-
-.field-group {
-    padding: 14px 16px;
-    border-right: 1px solid var(--border-light);
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.field-group:last-child { border-right: none; }
-
-.field-group label {
-    font-family: 'Cinzel', serif;
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-}
-
-.field-group input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--border-light);
-    padding: 3px 0;
-    font-family: 'Crimson Text', serif;
-    font-size: 1.1rem;
-    color: var(--ink);
-    outline: none;
+/* section divider image */
+.section-divider-img {
+    display: block;
     width: 100%;
-    transition: border-color 0.2s;
+    max-width: 680px;
+    margin: 10px auto 0;
+    opacity: 0.7;
+    pointer-events: none;
 }
 
-.field-group input:focus { border-bottom-color: var(--gold-dark); }
-
-/* add row */
+/* add-row at bottom of a section */
 .section-add-row {
     display: flex;
     gap: 8px;
     align-items: center;
     padding: 10px 14px;
     background: rgba(0,0,0,0.025);
-    border-top: 1px solid var(--border-light);
+    border-top: 1px solid var(--border-lt);
 }
 
 .section-add-row input,
@@ -655,442 +515,150 @@ button {
     flex: 1;
     padding: 5px 10px;
     background: var(--vellum);
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--border-lt);
     font-family: 'Crimson Text', serif;
     font-size: 0.9rem;
     color: var(--ink);
     outline: none;
     transition: border-color 0.2s;
-    border-radius: 1px;
     min-width: 0;
 }
 
 .section-add-row input:focus,
 .section-add-row select:focus { border-color: var(--gold-dark); }
-
 .section-add-row select { flex: 0 0 auto; cursor: pointer; }
 
 /* ============================================================
-   COMBAT & RESOURCES
+   FIELD GRID LAYOUTS
    ============================================================ */
-.combat-grid {
+
+/* Grid layout: for blocks that are all stats/computed (no text fields) */
+.fields-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 10px;
     padding: 14px;
 }
 
-.combat-box {
-    background: var(--parchment);
-    border: 1px solid var(--border-light);
-    padding: 12px 10px 10px;
-    text-align: center;
-    border-radius: 1px;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.combat-box:hover {
-    border-color: var(--border);
-    box-shadow: 0 2px 8px var(--shadow);
-}
-
-.combat-box label {
-    display: block;
-    font-family: 'Cinzel', serif;
-    font-size: 0.56rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin-bottom: 8px;
-}
-
-.combat-box input,
-.combat-box .value {
-    font-family: 'Cinzel', serif;
-    font-size: 1.65rem;
-    font-weight: 700;
-    color: var(--ink);
-    width: 100%;
-    text-align: center;
-    background: transparent;
-    border: none;
-    border-bottom: 1px dashed var(--border-light);
-    outline: none;
-    padding: 0 0 2px;
-    transition: border-color 0.2s;
-}
-
-.combat-box input:focus { border-bottom-color: var(--gold-dark); }
-.combat-box .value { border-bottom: none; color: var(--ink-soft); }
-
-.combat-box input[type="checkbox"]#editInspiration {
-    width: 22px;
-    height: 22px;
-    border: none;
-    border-bottom: none;
-    margin: 4px auto 0;
-    display: block;
-    accent-color: var(--gold-dark);
-    cursor: pointer;
-    transform: scale(1.3);
-}
-
-/* HP */
-.hp-box {
-    grid-column: span 3;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    background: transparent;
-    border: none;
-    padding: 0;
-}
-
-.hp-box:hover { box-shadow: none; }
-
-.hp-segment {
-    background: var(--parchment);
-    border: 1px solid var(--border-light);
-    border-radius: 1px;
-    padding: 12px 10px 10px;
-    text-align: center;
-    transition: border-color 0.15s;
-}
-
-.hp-segment:hover { border-color: var(--border); }
-
-.hp-segment label {
-    display: block;
-    font-family: 'Cinzel', serif;
-    font-size: 0.56rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin-bottom: 8px;
-}
-
-.hp-segment input {
-    font-family: 'Cinzel', serif;
-    font-size: 1.65rem;
-    font-weight: 700;
-    width: 100%;
-    text-align: center;
-    background: transparent;
-    border: none;
-    border-bottom: 1px dashed var(--border-light);
-    outline: none;
-    padding: 0 0 2px;
-    color: var(--ink);
-    transition: border-color 0.2s;
-}
-
-#editHPCurrent { color: var(--green-hp); }
-#editTempHP    { color: var(--blue-temp); }
-.hp-segment input:focus { border-bottom-color: var(--gold-dark); }
-
-/* ============================================================
-   DEATH SAVES
-   ============================================================ */
-.death-saves {
-    padding: 12px 14px;
+/* List layout: for blocks with text fields or mixed */
+.fields-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-}
-
-.death-save-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.death-save-label {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    width: 80px;
-    flex-shrink: 0;
-}
-
-.death-save-boxes { display: flex; gap: 12px; }
-
-.death-save-check {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-#deathSaveSuccesses .death-save-check { accent-color: var(--green-hp); }
-#deathSaveFailures  .death-save-check { accent-color: var(--crimson); }
-
-/* ============================================================
-   TWO-COLUMN ROW
-   ============================================================ */
-.two-col-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 18px 0 0;
-}
-
-.two-col-row .sheet-section {
-    margin: 0;
-    border-radius: 0;
-}
-
-.two-col-row .sheet-section:first-child { border-right: none; }
-.two-col-row .sheet-section:last-child  {
-    border-left: 1px solid var(--border-light);
 }
 
 /* ============================================================
-   SAVING THROWS
+   FIELD TYPES — unified base
    ============================================================ */
-.save-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 14px;
-    transition: background 0.12s;
-}
-
-.save-row:hover { background: rgba(201,168,76,0.07); }
-.save-row:nth-child(even) { background: rgba(0,0,0,0.025); }
-.save-row:nth-child(even):hover { background: rgba(201,168,76,0.07); }
-
-.save-prof-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
-    color: var(--ink-soft);
-}
-
-.save-prof-check {
-    accent-color: var(--gold-dark);
-    width: 13px;
-    height: 13px;
-    cursor: pointer;
-}
-
-.save-total {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 0.82rem;
-    color: var(--ink);
-    min-width: 34px;
-    text-align: right;
-}
-
-/* ============================================================
-   PASSIVE SCORES
-   ============================================================ */
-.passive-scores {
-    padding: 8px 14px;
-}
-
-.passive-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px dotted var(--border-light);
-    font-family: 'Crimson Text', serif;
-    font-size: 0.9rem;
-    color: var(--ink-soft);
-}
-
-.passive-row:last-child { border-bottom: none; }
-
-.passive-label { font-style: italic; }
-
-.passive-value {
-    font-family: 'Cinzel', serif;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--ink);
-    background: var(--parchment-dark);
-    border: 1px solid var(--border-light);
-    min-width: 30px;
-    height: 26px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 6px;
-    border-radius: 1px;
-}
-
-/* ============================================================
-   ABILITY SCORES / STATS
-   ============================================================ */
-.stat-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    padding: 14px;
-}
-
-.stat {
+.field {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    background: var(--parchment);
-    border: 1px solid var(--border-light);
-    border-radius: 1px;
-    padding: 10px 8px 10px;
-    position: relative;
-    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.stat:hover {
-    border-color: var(--border);
-    box-shadow: 0 2px 8px var(--shadow);
-}
-
-.stat label {
+.field-label {
     font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
+    font-size: 0.58rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--ink-muted);
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 }
 
-.stat input {
+/* ---- TextField ---- */
+.field-text {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-lt);
+}
+
+.field-text:last-child { border-bottom: none; }
+
+.field-input-text {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-lt);
+    padding: 3px 0;
+    font-family: 'Crimson Text', serif;
+    font-size: 1.05rem;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+.field-input-text:focus { border-bottom-color: var(--gold-dark); }
+
+/* ---- FlatStat ---- */
+.field-flat {
+    background: var(--parchment);
+    border: 1px solid var(--border-lt);
+    padding: 10px 8px;
+    text-align: center;
+    align-items: center;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field-flat:hover {
+    border-color: var(--border);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.field-input-number {
     font-family: 'Cinzel', serif;
     font-size: 1.5rem;
     font-weight: 700;
     text-align: center;
-    width: 64px;
+    width: 80px;
     background: transparent;
     border: none;
-    border-bottom: 1px dashed var(--border-light);
+    border-bottom: 1px dashed var(--border-lt);
     color: var(--ink);
     outline: none;
     padding: 0 0 2px;
     transition: border-color 0.2s;
 }
 
-.stat input:focus { border-bottom-color: var(--gold-dark); }
+.field-input-number:focus { border-bottom-color: var(--gold-dark); }
 
-.modifier {
-    font-family: 'Cinzel', serif;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--crimson);
-    background: var(--parchment-dark);
-    border: 1px solid var(--border-light);
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 8px;
-}
+/* Special HP coloring */
+.field[data-field-id="f_hp_cur"]  .field-input-number { color: var(--green); }
+.field[data-field-id="f_hp_tmp"]  .field-input-number { color: var(--blue);  }
 
-.stat-delete {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 18px;
-    height: 18px;
-    padding: 0;
-    font-size: 10px;
-    background: none;
-    border: 1px solid transparent;
-    color: transparent;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: all 0.15s;
-    line-height: 16px;
-    text-align: center;
-}
-
-.stat:hover .stat-delete { color: #ccc; border-color: #ddd; }
-
-.stat-delete:hover {
-    background: rgba(122,28,46,0.1) !important;
-    border-color: var(--crimson-soft) !important;
-    color: var(--crimson) !important;
-}
-
-/* ============================================================
-   SKILLS
-   ============================================================ */
-.skills-body { padding: 2px 0 0; }
-
-.skill-header,
-.skill {
+/* ---- ComputedStat ---- */
+.field-computed {
     display: grid;
-    grid-template-columns: 1fr 76px 44px 26px;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
+    gap: 8px;
     padding: 5px 14px;
+    transition: background 0.12s;
 }
 
-.skill-header {
-    font-family: 'Cinzel', serif;
-    font-size: 0.56rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 6px;
-}
+.field-computed:hover { background: rgba(201,168,76,0.06); }
+.field-computed:nth-child(even) { background: rgba(0,0,0,0.025); }
+.field-computed:nth-child(even):hover { background: rgba(201,168,76,0.06); }
 
-.skill { transition: background 0.1s; }
-.skill:nth-child(even)  { background: rgba(0,0,0,0.025); }
-.skill:hover            { background: rgba(201,168,76,0.07); }
-
-.skill-name {
-    font-family: 'Crimson Text', serif;
-    font-size: 0.92rem;
+.field-computed .field-label {
+    margin: 0;
+    font-size: 0.7rem;
+    text-transform: none;
+    letter-spacing: 0.04em;
     color: var(--ink-soft);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-family: 'Crimson Text', serif;
 }
 
-.skill-total {
+.field-computed-value {
     font-family: 'Cinzel', serif;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    text-align: right;
     color: var(--ink);
+    text-align: right;
+    min-width: 34px;
 }
 
-.skill-delete {
-    width: 20px;
-    height: 18px;
-    padding: 0;
-    font-size: 10px;
-    background: none;
-    border: 1px solid transparent;
-    color: transparent;
-    cursor: pointer;
-    border-radius: 1px;
-    transition: all 0.15s;
-}
-
-.skill:hover .skill-delete { color: #ccc; border-color: #ddd; }
-
-.skill-delete:hover {
-    background: rgba(122,28,46,0.08) !important;
-    border-color: var(--crimson-soft) !important;
-    color: var(--crimson) !important;
-}
-
-/* proficiency dots */
+/* proficiency radio dots */
 .prof-group {
-    display: grid;
-    grid-template-columns: repeat(4, 14px);
+    display: flex;
     gap: 3px;
-    justify-items: center;
+    align-items: center;
 }
 
 .prof-group input[type="radio"] {
@@ -1101,17 +669,48 @@ button {
     border: 1.5px solid #ccc;
     cursor: pointer;
     transition: all 0.12s;
+    margin: 0;
 }
 
-.prof-group label:nth-child(1) input { border-color: #ccc; }
-.prof-group label:nth-child(2) input { border-color: #6aa6ff; }
-.prof-group label:nth-child(3) input { border-color: #4caf50; }
-.prof-group label:nth-child(4) input { border-color: #d4af37; }
+.prof-group label:nth-child(1) input                { border-color: #ccc; }
+.prof-group label:nth-child(2) input                { border-color: #4caf50; }
+.prof-group label:nth-child(3) input                { border-color: #d4af37; }
+.prof-group label:nth-child(1) input:checked        { background: #bbb;    border-color: #bbb;    }
+.prof-group label:nth-child(2) input:checked        { background: #4caf50; border-color: #4caf50; }
+.prof-group label:nth-child(3) input:checked        { background: #d4af37; border-color: #d4af37; }
 
-.prof-group label:nth-child(1) input:checked { background: #bbb;    border-color: #bbb; }
-.prof-group label:nth-child(2) input:checked { background: #6aa6ff; border-color: #6aa6ff; }
-.prof-group label:nth-child(3) input:checked { background: #4caf50; border-color: #4caf50; }
-.prof-group label:nth-child(4) input:checked { background: #d4af37; border-color: #d4af37; }
+/* ---- CheckboxGroup ---- */
+.field-checks {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    text-align: center;
+    flex-direction: row;
+    justify-content: center;
+}
+
+/* In a grid context keep them stacked */
+.fields-grid .field-checks {
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field-checks .field-label { margin: 0; }
+
+.check-boxes { display: flex; gap: 10px; align-items: center; }
+
+.check-box {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--gold-dark);
+}
+
+/* Death save specific coloring */
+.field[data-field-id="f_ds_success"] .check-box { accent-color: var(--green); }
+.field[data-field-id="f_ds_failure"] .check-box { accent-color: var(--crimson); }
+.field[data-field-id="f_insp"]       .check-box { accent-color: var(--gold-dark); }
 
 /* ============================================================
    INVENTORY
@@ -1124,12 +723,9 @@ button {
     text-transform: uppercase;
     color: var(--gold-dark);
     padding: 7px 14px 4px;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-lt);
     background: rgba(201,168,76,0.04);
-    margin-top: 4px;
 }
-
-.inventory-group-heading:first-child { margin-top: 0; }
 
 .inventory-item {
     display: grid;
@@ -1143,316 +739,63 @@ button {
 .inventory-item:nth-child(even) { background: rgba(0,0,0,0.025); }
 .inventory-item:hover           { background: rgba(201,168,76,0.07); }
 
-.inventory-item-name {
-    font-family: 'Crimson Text', serif;
-    font-size: 0.92rem;
-    font-weight: 600;
-    color: var(--ink-soft);
-}
-
-.inventory-item-summary {
-    font-family: 'Crimson Text', serif;
-    font-size: 0.82rem;
-    font-style: italic;
-    color: var(--ink-muted);
-    white-space: nowrap;
-}
+.inventory-item-name    { font-family: 'Crimson Text', serif; font-size: 0.92rem; font-weight: 600; color: var(--ink-soft); }
+.inventory-item-summary { font-family: 'Crimson Text', serif; font-size: 0.82rem; font-style: italic; color: var(--ink-muted); white-space: nowrap; }
 
 .inventory-delete {
-    width: 20px;
-    height: 18px;
-    padding: 0;
-    font-size: 10px;
-    background: none;
-    border: 1px solid transparent;
-    color: transparent;
-    cursor: pointer;
-    border-radius: 1px;
-    transition: all 0.15s;
+    width: 20px; height: 18px; padding: 0;
+    font-size: 10px; background: none;
+    border: 1px solid transparent; color: transparent;
+    cursor: pointer; transition: all 0.15s;
 }
 
 .inventory-item:hover .inventory-delete { color: #ccc; border-color: #ddd; }
-
-.inventory-delete:hover {
-    background: rgba(122,28,46,0.08) !important;
-    border-color: var(--crimson-soft) !important;
-    color: var(--crimson) !important;
-}
+.inventory-delete:hover { background: rgba(122,28,46,0.08) !important; border-color: var(--crimson-soft) !important; color: var(--crimson) !important; }
 
 /* ============================================================
    SYSTEM TESTS
    ============================================================ */
-#systemTestsSection {
-    background: #141010;
-    border-color: #2a2020;
-}
+#systemTestsSection { background: #141010; border-color: #2a2020; }
 
 #systemTestsSection h3 {
     background: #0d0a0a;
+    background-image: none;
     border-bottom-color: #2a2020;
     color: #8fa876;
 }
 
 #systemTestsSection h3::after { display: none; }
 
-.test-controls {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 14px 6px;
-}
+.test-controls { display: flex; align-items: center; gap: 16px; padding: 12px 14px 6px; }
 
 #runAllTests {
-    background: #1a3a1a;
-    color: #7ac47a;
+    background: #1a3a1a; color: #7ac47a;
     border: 1px solid #2a5a2a;
-    padding: 6px 16px;
-    font-family: monospace;
-    font-size: 11px;
-    cursor: pointer;
-    border-radius: 2px;
-    letter-spacing: 0.04em;
-    transition: all 0.15s;
+    padding: 6px 16px; font-family: monospace; font-size: 11px;
+    cursor: pointer; border-radius: 2px; letter-spacing: 0.04em; transition: all 0.15s;
 }
 
 #runAllTests:hover { background: #204a20; border-color: #3a6a3a; }
 
-.test-auto-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: monospace;
-    font-size: 11px;
-    color: #555;
-    cursor: pointer;
-}
+.test-auto-label { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 11px; color: #555; cursor: pointer; }
 
-#testResults {
-    font-family: monospace;
-    font-size: 11px;
-    line-height: 1.65;
-    max-height: 260px;
-    overflow-y: auto;
-    padding: 4px 14px 12px;
-}
+#testResults { font-family: monospace; font-size: 11px; line-height: 1.65; max-height: 260px; overflow-y: auto; padding: 4px 14px 12px; }
 
-.test-group-header {
-    color: #4a7aaa;
-    margin-top: 8px;
-    margin-bottom: 1px;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-}
-
-.test-row {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 1px 0;
-}
-
-.test-badge {
-    font-size: 9px;
-    font-weight: bold;
-    padding: 1px 5px;
-    border-radius: 2px;
-    flex-shrink: 0;
-    letter-spacing: 0.04em;
-}
-
+.test-group-header { color: #4a7aaa; margin-top: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.test-row { display: flex; align-items: baseline; gap: 8px; padding: 1px 0; }
+.test-badge { font-size: 9px; font-weight: bold; padding: 1px 5px; border-radius: 2px; flex-shrink: 0; letter-spacing: 0.04em; }
 .test-badge.pass { background: #152015; color: #5aaa5a; border: 1px solid #254525; }
 .test-badge.fail { background: #201515; color: #e05050; border: 1px solid #452525; }
-
 .test-name { color: #aaa; font-size: 11px; }
 .test-msg  { color: #555; font-size: 10px; }
-
-.test-summary {
-    margin-top: 8px;
-    padding: 6px 0 2px;
-    border-top: 1px solid #222;
-    font-size: 11px;
-}
-
+.test-summary { margin-top: 8px; padding: 6px 0 2px; border-top: 1px solid #222; font-size: 11px; }
 .test-summary.all-pass { color: #5aaa5a; }
 .test-summary.has-fail { color: #e05050; }
 
 /* ============================================================
-   SECTION DIVIDER IMAGE
-   ============================================================ */
-.section-divider-img {
-    display: block;
-    width: 100%;
-    max-width: 680px;
-    margin: 10px auto 0;
-    opacity: 0.7;
-    pointer-events: none;
-    user-select: none;
-}
-
-/* ============================================================
-   EDITOR STATUS
-   ============================================================ */
-#editorStatus {
-    font-family: 'Cinzel', serif;
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-align: center;
-    color: var(--ink-muted);
-    min-height: 16px;
-    padding: 10px 14px;
-    margin: 0;
-}
-
-/* ============================================================
    SCROLLBAR
    ============================================================ */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.45); }
-
-/* ============================================================
-   DYNAMIC COMBAT FIELDS
-   ============================================================ */
-
-.combat-grid-dynamic {
-    padding: 14px;
-    border-top: 1px solid var(--border-light);
-}
-
-.combat-box-dynamic {
-    position: relative;
-}
-
-.combat-field-delete {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 18px;
-    height: 18px;
-    padding: 0;
-    font-size: 10px;
-    background: none;
-    border: 1px solid transparent;
-    color: transparent;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: all 0.15s;
-    line-height: 16px;
-    text-align: center;
-}
-
-.combat-box-dynamic:hover .combat-field-delete {
-    color: #ccc;
-    border-color: #ddd;
-}
-
-.combat-field-delete:hover {
-    background: rgba(122,28,46,0.1) !important;
-    border-color: var(--crimson-soft) !important;
-    color: var(--crimson) !important;
-}
-
-.combat-formula-hint {
-    font-family: 'Cinzel', serif;
-    font-size: 0.52rem;
-    letter-spacing: 0.08em;
-    color: var(--gold-dark);
-    text-transform: uppercase;
-    margin-top: 4px;
-    opacity: 0.7;
-}
-
-/* Add combat field row */
-.combat-add-row {
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.combat-add-row select {
-    flex: 0 0 auto;
-    padding: 5px 8px;
-    background: var(--vellum);
-    border: 1px solid var(--border-light);
-    font-family: 'Crimson Text', serif;
-    font-size: 0.9rem;
-    color: var(--ink);
-    outline: none;
-    border-radius: 1px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-.combat-add-row select:focus { border-color: var(--gold-dark); }
-
-#derivedOptions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
-/* ============================================================
-   DYNAMIC PASSIVE SCORES
-   ============================================================ */
-
-/* Override passive-row to add a skill hint and delete button */
-#passivesContainer .passive-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto auto;
-    gap: 8px;
-    align-items: center;
-    padding: 5px 14px;
-    border-bottom: 1px dotted var(--border-light);
-    transition: background 0.12s;
-}
-
-#passivesContainer .passive-row:last-child { border-bottom: none; }
-#passivesContainer .passive-row:hover { background: rgba(201,168,76,0.06); }
-
-.passive-skill-hint {
-    font-family: 'Crimson Text', serif;
-    font-size: 0.78rem;
-    font-style: italic;
-    color: var(--ink-muted);
-    opacity: 0.7;
-    white-space: nowrap;
-}
-
-.passive-delete {
-    width: 20px;
-    height: 18px;
-    padding: 0;
-    font-size: 10px;
-    background: none;
-    border: 1px solid transparent;
-    color: transparent;
-    cursor: pointer;
-    border-radius: 1px;
-    transition: all 0.15s;
-}
-
-#passivesContainer .passive-row:hover .passive-delete {
-    color: #ccc;
-    border-color: #ddd;
-}
-
-.passive-delete:hover {
-    background: rgba(122,28,46,0.08) !important;
-    border-color: var(--crimson-soft) !important;
-    color: var(--crimson) !important;
-}
-
-/* Passive scores add-row sits inside the two-col-row panel */
-.two-col-row .section-add-row {
-    flex-wrap: wrap;
-    padding: 8px 10px;
-}
-
-.two-col-row .section-add-row input {
-    min-width: 0;
-    flex: 1 1 80px;
-    font-size: 0.82rem;
-    padding: 4px 8px;
-}
