@@ -55,14 +55,14 @@ function friendlyError(code, context) {
         case "auth/invalid-credential":
         case "auth/wrong-password":
             return context === "signin"
-                ? "Incorrect email or password. Remember: password must be at least 6 characters."
+                ? "Incorrect email or password. Remember: password must be at least 6 characters and has no other requirements."
                 : "Incorrect credentials.";
         case "auth/invalid-email":
             return "That doesn't look like a valid email format (e.g. name@domain.ext).";
         case "auth/too-many-requests":
             return "Too many failed attempts. Please wait a moment before trying again.";
         case "auth/user-disabled":
-            return "This account has been disabled. Please contact support.";
+            return "This account has been disabled. Please contact Shawn.";
 
         // Sign-up errors
         case "auth/email-already-in-use":
