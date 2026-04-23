@@ -45,7 +45,7 @@ body {
     padding: 30px 40px 22px;
     text-align: center;
     border-bottom: 2px solid var(--gold-dark);
-    background: linear-gradient(180deg, rgba(8, 5, 2, 0.98) 0%, rgba(37, 22, 10, 0.96) 100%);
+    background: linear-gradient(180deg, rgba(8, 5, 2, 0.98) 0%, rgba(37, 23, 10, 0.96) 100%);
     box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
 }
 
