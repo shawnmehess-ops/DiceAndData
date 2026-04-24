@@ -131,17 +131,7 @@ export function renderFlatStat(field, onChange) {
     input.type      = "number";
     input.value     = field.value ?? 0;
     input.oninput   = () => {
-        const parsed = parseInt(input.value);
-        if (!isNaN(parsed)) {
-            field.value = parsed;
-            onChange();
-        }
-    };
-    // Catch final value on blur (e.g. user clears the field → treat as 0)
-    input.onblur = () => {
-        const parsed = parseInt(input.value);
-        field.value  = isNaN(parsed) ? 0 : parsed;
-        input.value  = field.value;
+        field.value = parseInt(input.value) || 0;
         onChange();
     };
 

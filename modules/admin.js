@@ -18,7 +18,7 @@ import { db, auth } from "./firebase.js";
 // ---- Set your Firebase UID here to get admin access --------
 // Find your UID in the Firebase console under Authentication.
 const ADMIN_UIDS = [
-    "Xh7I67tJ20bxV9SPbwFJ9BH0EO43",
+    // "PASTE_YOUR_UID_HERE",
 ];
 
 export function isAdmin() {
