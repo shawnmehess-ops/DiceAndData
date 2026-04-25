@@ -22,6 +22,27 @@ function resolveValue(id) {
     return 0;
 }
 
+// Map ability abbreviations (as a player would type them) to field IDs.
+// Case-insensitive — "int", "INT", "Int" all work.
+const ABILITY_TO_FIELD = {
+    str: "f_str", strength:     "f_str",
+    dex: "f_dex", dexterity:    "f_dex",
+    con: "f_con", constitution: "f_con",
+    int: "f_int", intelligence: "f_int",
+    wis: "f_wis", wisdom:       "f_wis",
+    cha: "f_cha", charisma:     "f_cha",
+};
+
+// Read the spellcasting ability text field and return the modifier
+// for whichever ability score it names. Falls back to INT if blank/unknown.
+function spellcastingMod() {
+    const abilityField = getFieldById("f_spell_ability");
+    const raw          = (abilityField?.value ?? "").trim().toLowerCase();
+    const fieldId      = ABILITY_TO_FIELD[raw] ?? "f_int";
+    const score        = resolveValue(fieldId);
+    return Math.floor((score - 10) / 2);
+}
+
 export function evalFormula(field) {
     const srcs = (field.sources || []).map(resolveValue);
 
@@ -68,13 +89,23 @@ export function evalFormula(field) {
             return base;                                          // none
         }
 
-        // Spell attack bonus: spellcasting mod + prof
+        // Static spell attack bonus: spellcasting mod (from sources) + prof
+        // Used when the source ability is hardwired in the schema.
         case "spell_attack":
             return (srcs[0] ?? 0) + profBonus();
 
-        // Spell save DC: 8 + spellcasting mod + prof
+        // Static spell save DC: 8 + spellcasting mod (from sources) + prof
         case "spell_save_dc":
             return 8 + (srcs[0] ?? 0) + profBonus();
+
+        // Dynamic spell attack bonus: reads f_spell_ability text field at runtime.
+        // No sources needed — the ability is resolved from the text field.
+        case "spell_attack_dynamic":
+            return spellcastingMod() + profBonus();
+
+        // Dynamic spell save DC: 8 + dynamic spellcasting mod + prof
+        case "spell_save_dc_dynamic":
+            return 8 + spellcastingMod() + profBonus();
 
         default:
             return 0;
@@ -87,7 +118,8 @@ function fmtMod(n) { return n >= 0 ? `+${n}` : `${n}`; }
 // Whether a formula result should be shown with a +/- sign
 const SIGNED_FORMULAS = new Set([
     "modifier", "add_prof", "half_prof", "double_prof",
-    "add_prof_if_checked", "spell_attack", "prof_bonus"
+    "add_prof_if_checked", "spell_attack", "prof_bonus",
+    "spell_attack_dynamic",
 ]);
 
 export function formatValue(field) {
@@ -113,7 +145,12 @@ export function renderTextField(field, onChange) {
     input.type        = "text";
     input.value       = field.value ?? "";
     input.placeholder = field.placeholder ?? "";
-    input.oninput = () => { field.value = input.value; onChange(); };
+    input.oninput = () => {
+        field.value = input.value;
+        // Spellcasting ability drives dynamic computed fields — refresh them live.
+        if (field.id === "f_spell_ability") refreshComputedDisplays();
+        onChange();
+    };
 
     wrap.appendChild(input);
     return wrap;
@@ -131,17 +168,7 @@ export function renderFlatStat(field, onChange) {
     input.type      = "number";
     input.value     = field.value ?? 0;
     input.oninput   = () => {
-        const parsed = parseInt(input.value);
-        if (!isNaN(parsed)) {
-            field.value = parsed;
-            onChange();
-        }
-    };
-    // Catch final value on blur (e.g. user clears the field → treat as 0)
-    input.onblur = () => {
-        const parsed = parseInt(input.value);
-        field.value  = isNaN(parsed) ? 0 : parsed;
-        input.value  = field.value;
+        field.value = parseInt(input.value) || 0;
         onChange();
     };
 
