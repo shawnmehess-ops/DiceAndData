@@ -145,6 +145,21 @@ export const DEFAULT_SCHEMA = [
         ]
     },
 
+    // ---- SPELLCASTING ----
+    // Spell Attack Bonus and Spell Save DC use the *_dynamic formulas,
+    // which read f_spell_ability at runtime instead of a fixed source field.
+    // Type your ability as: INT, WIS, CHA (or full name like Intelligence).
+    {
+        id: "block_spellcasting",
+        label: "Spellcasting",
+        fields: [
+            text("f_spell_class",   "Spellcasting Class",   "e.g. Wizard"),
+            text("f_spell_ability", "Spellcasting Ability", "e.g. INT, WIS, CHA"),
+            computed("f_spell_attack", "Spell Attack Bonus", "spell_attack_dynamic",  []),
+            computed("f_spell_dc",     "Spell Save DC",      "spell_save_dc_dynamic", []),
+        ]
+    },
+
 ];
 
 // ---- Deep-clone helper used when creating new characters ----
