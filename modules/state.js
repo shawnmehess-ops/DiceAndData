@@ -22,14 +22,24 @@ export const DEFAULT_ITEMS = [
 
 export const state = {
     currentCharId: null,
-    blocks:  [],
-    items:   [],
+    blocks:      [],
+    items:       [],
+    spells:      [],   // [{ id, sourceSpellId, name, level, prepared, learnedAt }]
+    spellSlots:  {},   // { 1: { max: 0, used: 0 }, ... 9: { max: 0, used: 0 } }
 };
+
+export function defaultSpellSlots() {
+    const slots = {};
+    for (let i = 1; i <= 9; i++) slots[i] = { max: 0, used: 0 };
+    return slots;
+}
 
 export function resetState() {
     state.currentCharId = null;
-    state.blocks = cloneSchema();
-    state.items  = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+    state.blocks     = cloneSchema();
+    state.items      = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+    state.spells     = [];
+    state.spellSlots = defaultSpellSlots();
 }
 
 export function getFieldById(id) {

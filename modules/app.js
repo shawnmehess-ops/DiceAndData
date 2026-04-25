@@ -19,9 +19,12 @@ import { setDebouncedSave as sheetSDS,
 import { setDebouncedSave as charSDS }   from "./character.js";
 import { setDebouncedSave as invSDS }    from "./inventory.js";
 import { setDebouncedSave as shopSDS }   from "./shop.js";
+import { setDebouncedSave as spellsSDS } from "./spells.js";
+import { setDebouncedSave as sbSDS }     from "./spellbook.js";
 
-import { initShop }                  from "./shop.js";
-import { initAdmin }                 from "./admin.js";
+import { initShop }        from "./shop.js";
+import { initAdmin }       from "./admin.js";
+import { initSpellModal }  from "./spells.js";
 
 // ---- Debounced save ----------------------------------------
 const debouncedSave = debounce(saveCharacter);
@@ -29,6 +32,9 @@ sheetSDS(debouncedSave);
 charSDS(debouncedSave);
 invSDS(debouncedSave);
 shopSDS(debouncedSave);
+spellsSDS(debouncedSave);
+sbSDS(debouncedSave);
+
 setAfterRender(() => {
     if (shouldAutoRunTests()) runAllTests();
 });
@@ -40,6 +46,7 @@ initTests();
 initAuth();
 initShop();
 initAdmin();
+initSpellModal();
 
 // ---- Navigation --------------------------------------------
 backButton.onclick = () => {

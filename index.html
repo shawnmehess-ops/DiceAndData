@@ -122,7 +122,7 @@
                 <div class="sheet-header-bar">
                     <button id="backButton">&larr; Roster</button>
                     <h2 id="editorTitle">Character Sheet</h2>
-                    <button id="openShopButton" class="btn-shop">⚔ Shop</button>
+                    <div style="width:80px;"></div>
                 </div>
 
                 <div class="sheet-inner">
@@ -130,7 +130,10 @@
 
                     <div class="section-divider" aria-hidden="true"></div>
                     <div class="sheet-section">
-                        <h3>Inventory</h3>
+                        <div class="inventory-section-header">
+                            <h3>Inventory</h3>
+                            <button id="openShopButton" class="btn-shop">⚔ Open Shop</button>
+                        </div>
                         <div id="inventoryContainer"></div>
                         <div class="section-add-row">
                             <input id="newItemName" placeholder="Item name">
@@ -142,6 +145,23 @@
                             </select>
                             <button id="addItemButton" class="btn-primary">+ Add</button>
                         </div>
+                    </div>
+
+                    <div class="section-divider" aria-hidden="true"></div>
+                    <div class="sheet-section">
+                        <div class="inventory-section-header">
+                            <h3>Spell Slots</h3>
+                        </div>
+                        <div id="spellSlotsContainer" class="spell-slots-container"></div>
+                    </div>
+
+                    <div class="section-divider" aria-hidden="true"></div>
+                    <div class="sheet-section">
+                        <div class="inventory-section-header">
+                            <h3>Spellbook</h3>
+                            <button id="openSpellbookButton" class="btn-shop">✦ Learn Spells</button>
+                        </div>
+                        <div id="spellbookContainer"></div>
                     </div>
 
                     <div class="section-divider" aria-hidden="true"></div>
@@ -196,8 +216,13 @@
             <!-- Status message -->
             <p id="shopStatusMsg" class="shop-msg" aria-live="polite"></p>
 
-            <!-- Item grid (main content area) -->
-            <div id="shopItemGrid" class="shop-item-grid"></div>
+            <!-- Item table (main content area) -->
+            <div class="shop-table-wrap">
+                <table class="shop-table" id="shopTable">
+                    <thead id="shopTableHead"></thead>
+                    <tbody id="shopTableBody"></tbody>
+                </table>
+            </div>
 
             <!-- Admin panel (hidden unless admin tab active) -->
             <div id="adminPanel" class="admin-panel" style="display:none;">
@@ -310,6 +335,185 @@
         </div>
     </div>
 
+    <!-- ======================================================
+         SPELL MODAL
+    ====================================================== -->
+    <div id="spellModal" class="shop-modal" role="dialog" aria-modal="true" aria-label="Spellbook">
+
+        <div class="shop-modal-inner">
+
+            <!-- Header -->
+            <div class="shop-modal-header">
+                <h2 class="shop-title">✦ The Spellbook</h2>
+                <button id="spellModalCloseBtn" class="shop-close-btn" aria-label="Close spellbook">✕</button>
+            </div>
+
+            <!-- Level filter tabs -->
+            <div class="shop-tabs" role="tablist">
+                <button class="spell-level-tab shop-cat-tab shop-cat-tab--active" data-level="all">All</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="0">Cantrip</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="1">1st</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="2">2nd</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="3">3rd</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="4">4th</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="5">5th</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="6">6th</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="7">7th</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="8">8th</button>
+                <button class="spell-level-tab shop-cat-tab" data-level="9">9th</button>
+                <!-- Admin-only tab; hidden by default, shown by admin.js -->
+                <button class="spell-level-tab shop-cat-tab shop-cat-tab--admin"
+                        id="spellAdminTab" data-level="admin"
+                        style="display:none;">⚙ Admin</button>
+            </div>
+
+            <!-- School filter + search row -->
+            <div class="shop-search-wrap spell-filter-row">
+                <select id="spellSchoolFilter" class="spell-school-select">
+                    <option value="all">All Schools</option>
+                    <option value="Abjuration">Abjuration</option>
+                    <option value="Conjuration">Conjuration</option>
+                    <option value="Divination">Divination</option>
+                    <option value="Enchantment">Enchantment</option>
+                    <option value="Evocation">Evocation</option>
+                    <option value="Illusion">Illusion</option>
+                    <option value="Necromancy">Necromancy</option>
+                    <option value="Transmutation">Transmutation</option>
+                </select>
+                <input id="spellSearch" type="search" placeholder="Search spells…" class="shop-search">
+            </div>
+
+            <!-- Status message -->
+            <p id="spellStatusMsg" class="shop-msg" aria-live="polite"></p>
+
+            <!-- Spell table -->
+            <div class="shop-table-wrap spell-table-wrap">
+                <table class="shop-table" id="spellTable">
+                    <thead id="spellTableHead"></thead>
+                    <tbody id="spellTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Spell admin panel (admin only) -->
+            <div id="spellAdminPanel" class="admin-panel" style="display:none;">
+                <div class="admin-panel-header">
+                    <h3>Admin: Spell Management</h3>
+                    <button id="spellAdminRefreshBtn" class="admin-btn admin-btn--approve">↻ Refresh</button>
+                </div>
+                <div id="spellAdminPanelContent"></div>
+            </div>
+
+            <!-- Submit new spell -->
+            <div class="shop-submit-section">
+                <button id="spellSubmitToggle" class="shop-submit-toggle">
+                    + Submit a Spell for Approval
+                </button>
+
+                <div id="spellSubmitPanel" class="shop-submit-panel">
+                    <h4>Propose a New Spell</h4>
+                    <p class="shop-submit-notice">
+                        Submitted spells are reviewed by the admin before appearing in the spellbook.
+                    </p>
+
+                    <form id="spellSubmitForm" class="shop-submit-form" novalidate>
+
+                        <div class="submit-row">
+                            <label>Spell Name *
+                                <input type="text" name="name" required placeholder="e.g. Fireball">
+                            </label>
+                            <label>Level
+                                <select name="level">
+                                    <option value="0">Cantrip</option>
+                                    <option value="1">1st</option>
+                                    <option value="2">2nd</option>
+                                    <option value="3" selected>3rd</option>
+                                    <option value="4">4th</option>
+                                    <option value="5">5th</option>
+                                    <option value="6">6th</option>
+                                    <option value="7">7th</option>
+                                    <option value="8">8th</option>
+                                    <option value="9">9th</option>
+                                </select>
+                            </label>
+                            <label>School
+                                <select name="school">
+                                    <option value="Abjuration">Abjuration</option>
+                                    <option value="Conjuration">Conjuration</option>
+                                    <option value="Divination">Divination</option>
+                                    <option value="Enchantment">Enchantment</option>
+                                    <option value="Evocation" selected>Evocation</option>
+                                    <option value="Illusion">Illusion</option>
+                                    <option value="Necromancy">Necromancy</option>
+                                    <option value="Transmutation">Transmutation</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="submit-row">
+                            <label>Casting Time
+                                <input type="text" name="castingTime" placeholder="e.g. 1 action">
+                            </label>
+                            <label>Range
+                                <input type="text" name="range" placeholder="e.g. 150 ft">
+                            </label>
+                            <label>Duration
+                                <input type="text" name="duration" placeholder="e.g. Instantaneous">
+                            </label>
+                        </div>
+
+                        <fieldset class="submit-cost-fieldset">
+                            <legend>Components</legend>
+                            <div class="submit-row submit-row--checks">
+                                <label class="submit-check-label">
+                                    <input type="checkbox" name="comp_v"> Verbal
+                                </label>
+                                <label class="submit-check-label">
+                                    <input type="checkbox" name="comp_s"> Somatic
+                                </label>
+                                <label class="submit-check-label">
+                                    <input type="checkbox" name="comp_m"> Material
+                                </label>
+                                <label class="submit-check-label">
+                                    <input type="checkbox" name="concentration"> Concentration
+                                </label>
+                                <label class="submit-check-label">
+                                    <input type="checkbox" name="ritual"> Ritual
+                                </label>
+                            </div>
+                            <label>Material components (if any)
+                                <input type="text" name="materials" placeholder="e.g. a tiny ball of bat guano and sulfur">
+                            </label>
+                        </fieldset>
+
+                        <label>Description *
+                            <textarea name="description" rows="3"
+                                      placeholder="What the spell does…"></textarea>
+                        </label>
+
+                        <!-- Requirements -->
+                        <fieldset class="submit-cost-fieldset" id="spellReqFieldset">
+                            <legend>Requirements <span class="auth-hint">(optional — any field ID + minimum value)</span></legend>
+                            <div id="spellReqRows">
+                                <div class="spell-req-row">
+                                    <input type="text" name="req_stat[]" placeholder="Field ID, e.g. f_level" class="req-stat-input">
+                                    <span class="req-sep">≥</span>
+                                    <input type="number" name="req_min[]" placeholder="Min" min="0" class="req-min-input">
+                                    <button type="button" class="req-remove-btn">✕</button>
+                                </div>
+                            </div>
+                            <button type="button" id="addReqRowBtn" class="shop-submit-toggle" style="margin-top:6px;">+ Add Requirement</button>
+                        </fieldset>
+
+                        <button type="submit" class="btn-primary">Submit for Approval</button>
+                        <p id="spellSubmitMsg" class="shop-submit-msg"></p>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script type="module" src="modules/app.js"></script>
 
     <!-- Switch stat fields when category changes in submit form -->
@@ -320,13 +524,42 @@
             });
         });
 
-        // Admin tab logic (show/hide admin panel vs item grid)
+        // Admin tab logic (show/hide admin panel vs item table)
         document.querySelectorAll(".shop-cat-tab").forEach(btn => {
             btn.addEventListener("click", () => {
                 const isAdmin = btn.dataset.cat === "admin";
-                const grid    = document.getElementById("shopItemGrid");
+                const table   = document.querySelector(".shop-table-wrap");
                 const panel   = document.getElementById("adminPanel");
-                if (grid)  grid.style.display  = isAdmin ? "none"  : "";
+                if (table) table.style.display = isAdmin ? "none"  : "";
+                if (panel) panel.style.display = isAdmin ? "block" : "none";
+            });
+        });
+
+        // Spell requirement rows — add/remove
+        document.getElementById("addReqRowBtn")?.addEventListener("click", function () {
+            const container = document.getElementById("spellReqRows");
+            const row = document.createElement("div");
+            row.className = "spell-req-row";
+            row.innerHTML = `
+                <input type="text" name="req_stat[]" placeholder="Field ID, e.g. f_level" class="req-stat-input">
+                <span class="req-sep">≥</span>
+                <input type="number" name="req_min[]" placeholder="Min" min="0" class="req-min-input">
+                <button type="button" class="req-remove-btn">✕</button>
+            `;
+            container.appendChild(row);
+        });
+
+        document.getElementById("spellReqRows")?.addEventListener("click", function (e) {
+            if (e.target.classList.contains("req-remove-btn")) {
+                const rows = document.querySelectorAll(".spell-req-row");
+                if (rows.length > 1) e.target.closest(".spell-req-row").remove();
+            }
+        });
+            btn.addEventListener("click", () => {
+                const isAdmin = btn.dataset.level === "admin";
+                const table   = document.querySelector(".spell-table-wrap");
+                const panel   = document.getElementById("spellAdminPanel");
+                if (table) table.style.display = isAdmin ? "none"  : "";
                 if (panel) panel.style.display = isAdmin ? "block" : "none";
             });
         });

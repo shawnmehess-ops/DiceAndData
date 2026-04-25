@@ -14,6 +14,8 @@ import {
 } from "./ui.js";
 import { renderSheet }           from "./sheet.js";
 import { renderInventory }       from "./inventory.js";
+import { renderSpellbook }       from "./spellbook.js";
+import { defaultSpellSlots }     from "./state.js";
 
 let debouncedSave = () => {};
 export function setDebouncedSave(fn) { debouncedSave = fn; }
@@ -28,8 +30,10 @@ export async function saveCharacter() {
     if (!user || !state.currentCharId) return;
 
     await setDoc(doc(db, "users", user.uid, "characters", state.currentCharId), {
-        blocks: state.blocks,
-        items: state.items,
+        blocks:      state.blocks,
+        items:       state.items,
+        spells:      state.spells,
+        spellSlots:  state.spellSlots,
     }, { merge: true });
 }
 
@@ -124,6 +128,14 @@ export function openCharacter(id, data) {
         ? JSON.parse(JSON.stringify(data.items))
         : cloneDefaultItems();
 
+    state.spells = Array.isArray(data.spells)
+        ? JSON.parse(JSON.stringify(data.spells))
+        : [];
+
+    state.spellSlots = (data.spellSlots && typeof data.spellSlots === "object")
+        ? JSON.parse(JSON.stringify(data.spellSlots))
+        : defaultSpellSlots();
+
     characterListView.style.display = "none";
     editor.style.display = "block";
 
@@ -133,4 +145,5 @@ export function openCharacter(id, data) {
 
     renderSheet();
     renderInventory();
+    renderSpellbook();
 }
