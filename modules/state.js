@@ -26,6 +26,7 @@ export const state = {
     items:       [],
     spells:      [],   // [{ id, sourceSpellId, name, level, prepared, learnedAt }]
     spellSlots:  {},   // { 1: { max: 0, used: 0 }, ... 9: { max: 0, used: 0 } }
+    classData:   null, // { classId, subclassId, languages, feats }
 };
 
 export function defaultSpellSlots() {
@@ -40,6 +41,7 @@ export function resetState() {
     state.items      = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
     state.spells     = [];
     state.spellSlots = defaultSpellSlots();
+    state.classData  = null;
 }
 
 export function getFieldById(id) {
