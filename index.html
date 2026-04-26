@@ -555,6 +555,9 @@
                 if (rows.length > 1) e.target.closest(".spell-req-row").remove();
             }
         });
+
+        // Spell admin tab logic (show/hide spell admin panel vs spell table)
+        document.querySelectorAll(".spell-level-tab").forEach(btn => {
             btn.addEventListener("click", () => {
                 const isAdmin = btn.dataset.level === "admin";
                 const table   = document.querySelector(".spell-table-wrap");
