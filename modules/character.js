@@ -16,6 +16,8 @@ import { renderSheet }           from "./sheet.js";
 import { renderInventory }       from "./inventory.js";
 import { renderSpellbook }       from "./spellbook.js";
 import { loadSpells }            from "./spells.js";
+import { defaultClassData,
+         renderClassPanel }        from "./classes.js";
 import { defaultSpellSlots }     from "./state.js";
 
 let debouncedSave = () => {};
@@ -35,6 +37,7 @@ export async function saveCharacter() {
         items:       state.items,
         spells:      state.spells,
         spellSlots:  state.spellSlots,
+        classData:   state.classData ?? defaultClassData(),
     }, { merge: true });
 }
 
@@ -137,6 +140,10 @@ export function openCharacter(id, data) {
         ? JSON.parse(JSON.stringify(data.spellSlots))
         : defaultSpellSlots();
 
+    state.classData = (data.classData && typeof data.classData === "object")
+        ? JSON.parse(JSON.stringify(data.classData))
+        : defaultClassData();
+
     characterListView.style.display = "none";
     editor.style.display = "block";
 
@@ -146,6 +153,7 @@ export function openCharacter(id, data) {
 
     renderSheet();
     renderInventory();
+    renderClassPanel();
     // Load the spell DB cache before rendering the spellbook so known spells
     // are always matched correctly, even on a hard refresh.
     loadSpells().then(() => renderSpellbook()).catch(() => renderSpellbook());
