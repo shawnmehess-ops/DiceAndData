@@ -21,6 +21,24 @@
             <div class="diamond"></div>
             <div class="line right"></div>
         </div>
+        <div class="header-theme-toggle">
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle night mode" title="Toggle night mode">
+                <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.8"/>
+                    <line x1="12" y1="2"  x2="12" y2="4"  stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <line x1="12" y1="20" x2="12" y2="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <line x1="4.22" y1="4.22"  x2="5.64" y2="5.64"  stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <line x1="2"  y1="12" x2="4"  y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <line x1="20" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"  stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
         <div class="header-user-bar">
             <button id="signOutButton">Sign Out</button>
         </div>
@@ -555,9 +573,6 @@
                 if (rows.length > 1) e.target.closest(".spell-req-row").remove();
             }
         });
-
-        // Spell admin tab logic (show/hide spell admin panel vs spell table)
-        document.querySelectorAll(".spell-level-tab").forEach(btn => {
             btn.addEventListener("click", () => {
                 const isAdmin = btn.dataset.level === "admin";
                 const table   = document.querySelector(".spell-table-wrap");
@@ -568,5 +583,28 @@
         });
     </script>
 
+    <script>
+        // ---- Theme toggle (night mode) ----------------------
+        (function () {
+            const btn  = document.getElementById("themeToggle");
+            const key  = "grimoire-theme";
+            const NIGHT = "night";
+
+            function apply(theme) {
+                document.body.classList.toggle(NIGHT, theme === NIGHT);
+                btn.setAttribute("aria-label", theme === NIGHT ? "Switch to day mode" : "Switch to night mode");
+                btn.setAttribute("title",      theme === NIGHT ? "Switch to day mode" : "Switch to night mode");
+            }
+
+            // Restore saved preference
+            apply(localStorage.getItem(key) || "day");
+
+            btn.addEventListener("click", function () {
+                const next = document.body.classList.contains(NIGHT) ? "day" : NIGHT;
+                localStorage.setItem(key, next);
+                apply(next);
+            });
+        })();
+    </script>
 </body>
 </html>
