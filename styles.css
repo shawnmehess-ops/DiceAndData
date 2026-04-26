@@ -2693,3 +2693,294 @@ body.night .create-char-row input {
         margin-top: 14px;
     }
 }
+
+/* ============================================================
+   ABILITY SCORE MODIFIER BADGES
+   Small signed modifier shown below each ability score input
+   ============================================================ */
+.field-flat {
+    position: relative;
+}
+
+.ability-mod {
+    display: block;
+    margin-top: 4px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--gold-dark);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    pointer-events: none;
+    transition: color 0.15s;
+}
+
+/* Negative modifier goes crimson */
+.ability-mod[data-negative="true"] {
+    color: var(--crimson-soft);
+}
+
+/* ============================================================
+   CLASS & FEATURES PANEL
+   ============================================================ */
+#classPanelContent {
+    padding: 10px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* ---- Class / subclass selector rows ---- */
+.class-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.class-field-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    min-width: 72px;
+}
+
+.class-select {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid var(--border-lt);
+    border-radius: 2px;
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+
+.class-select:focus {
+    border-color: var(--gold-dark);
+}
+
+/* ---- Class summary grid ---- */
+.class-summary {
+    border: 1px solid var(--border-lt);
+    border-radius: 2px;
+    background: rgba(201, 168, 76, 0.04);
+    padding: 10px 14px;
+}
+
+.class-summary-grid {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 4px 8px;
+    align-items: baseline;
+}
+
+.cs-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+}
+
+.cs-val {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+}
+
+/* ---- Subclass description ---- */
+.class-subclass-desc {
+    margin: 0;
+    font-family: 'Crimson Text', serif;
+    font-size: 0.92rem;
+    font-style: italic;
+    color: var(--ink-muted);
+    line-height: 1.5;
+    padding: 0 2px;
+}
+
+/* ---- Subclass stat bonus pills ---- */
+.class-bonus-stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.class-bonus-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(201, 168, 76, 0.12);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--gold-dark);
+}
+
+/* ---- Sub-section heading ---- */
+.class-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.class-section-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    border-bottom: 1px solid var(--border-lt);
+    padding-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.class-section-count {
+    font-size: 0.68rem;
+    color: var(--gold-dark);
+    font-weight: 700;
+}
+
+/* ---- Languages ---- */
+.class-lang-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.class-lang-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+
+.class-lang-badge--fixed {
+    background: rgba(60, 100, 60, 0.15);
+    border: 1px solid rgba(60, 138, 82, 0.35);
+    color: var(--green);
+}
+
+.class-lang-select {
+    padding: 4px 8px;
+    border: 1px solid var(--border-lt);
+    border-radius: 10px;
+    background: var(--parchment);
+    color: var(--ink-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.class-lang-select:focus {
+    border-color: var(--gold-dark);
+}
+
+/* ---- Feats ---- */
+.class-feat-row {
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 8px;
+    row-gap: 2px;
+    padding: 8px 10px;
+    border-radius: 2px;
+    border-left: 2px solid rgba(201, 168, 76, 0.3);
+    background: rgba(201, 168, 76, 0.03);
+    transition: background 0.15s;
+}
+
+.class-feat-row:hover {
+    background: rgba(201, 168, 76, 0.07);
+}
+
+.class-feat-row--locked {
+    opacity: 0.45;
+    border-left-color: var(--border-lt);
+    background: transparent;
+}
+
+.class-feat-lock {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.class-feat-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+}
+
+.class-feat-level {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+    white-space: nowrap;
+}
+
+.class-feat-desc {
+    grid-column: 2 / 4;
+    grid-row: 2;
+    margin: 0;
+    font-family: 'Crimson Text', serif;
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+    font-style: italic;
+}
+
+/* ---- Night mode overrides for class panel ---- */
+body.night .class-select,
+body.night .class-lang-select {
+    background: #22242e;
+    border-color: var(--border);
+    color: var(--ink);
+}
+
+body.night .class-summary {
+    background: rgba(201, 168, 76, 0.03);
+    border-color: var(--border);
+}
+
+body.night .class-feat-row {
+    background: rgba(201, 168, 76, 0.02);
+}
+
+body.night .class-feat-row:hover {
+    background: rgba(201, 168, 76, 0.06);
+}
