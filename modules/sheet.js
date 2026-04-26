@@ -2,6 +2,7 @@
 // SHEET.JS - Block rendering and sheet orchestration
 // ============================================================
 import { state } from "./state.js";
+import { renderFeatsOnSheet } from "./classes.js";
 import { renderField, refreshComputedDisplays } from "./fields.js";
 
 let debouncedSave = () => {};
@@ -87,5 +88,7 @@ export function renderSheet() {
     const last = container.lastElementChild;
     if (last?.className === "section-divider") container.removeChild(last);
 
+    // Feats live on the sheet tab but are driven by classData
+    renderFeatsOnSheet();
     afterRender();
 }
