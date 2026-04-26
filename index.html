@@ -183,6 +183,14 @@
                     </div>
 
                     <div class="section-divider" aria-hidden="true"></div>
+                    <div class="sheet-section" id="classFeaturesSection">
+                        <div class="inventory-section-header">
+                            <h3>Class &amp; Features</h3>
+                        </div>
+                        <div id="classPanelContent"></div>
+                    </div>
+
+                    <div class="section-divider" aria-hidden="true"></div>
                     <div class="sheet-section" id="systemTestsSection">
                         <h3>System Tests</h3>
                         <div class="test-controls">
@@ -573,6 +581,9 @@
                 if (rows.length > 1) e.target.closest(".spell-req-row").remove();
             }
         });
+
+        // Spell level tab logic — show/hide spell admin panel vs spell table
+        document.querySelectorAll(".spell-level-tab").forEach(btn => {
             btn.addEventListener("click", () => {
                 const isAdmin = btn.dataset.level === "admin";
                 const table   = document.querySelector(".spell-table-wrap");
