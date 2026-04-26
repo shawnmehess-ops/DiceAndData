@@ -156,6 +156,14 @@ export function renderTextField(field, onChange) {
     return wrap;
 }
 
+// Ability score field IDs that should show a live modifier badge
+const ABILITY_IDS = new Set(["f_str","f_dex","f_con","f_int","f_wis","f_cha"]);
+
+function calcMod(score) {
+    const n = Math.floor((score - 10) / 2);
+    return n >= 0 ? `+${n}` : String(n);
+}
+
 // -- FlatStat --
 export function renderFlatStat(field, onChange) {
     const wrap = document.createElement("div");
@@ -167,12 +175,33 @@ export function renderFlatStat(field, onChange) {
     input.className = "field-input-number";
     input.type      = "number";
     input.value     = field.value ?? 0;
-    input.oninput   = () => {
+
+    // Ability scores get a live modifier badge
+    const isAbility = ABILITY_IDS.has(field.id);
+    let modSpan = null;
+    if (isAbility) {
+        modSpan = document.createElement("span");
+        modSpan.className        = "ability-mod";
+        modSpan.dataset.modFor   = field.id;
+        modSpan.textContent      = calcMod(parseInt(input.value) || 0);
+    }
+
+    function updateMod(val) {
+        if (!modSpan) return;
+        modSpan.textContent = calcMod(val);
+        modSpan.dataset.negative = val < 10 ? "true" : "false";
+    }
+    // Set initial negative state
+    if (modSpan) modSpan.dataset.negative = (parseInt(input.value) || 0) < 10 ? "true" : "false";
+
+    input.oninput = () => {
         field.value = parseInt(input.value) || 0;
+        updateMod(field.value);
         onChange();
     };
 
     wrap.appendChild(input);
+    if (modSpan) wrap.appendChild(modSpan);
     return wrap;
 }
 
