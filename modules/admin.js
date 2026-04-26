@@ -220,8 +220,7 @@ export async function adminAddSpell(spellData) {
 
 // ---- Load all spells (admin sees all statuses) -------------
 async function loadAllSpells() {
-    const q    = query(collection(db, "spells"), orderBy("level"), orderBy("name"));
-    const snap = await getDocs(q);
+    const snap = await getDocs(collection(db, "spells"));
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
