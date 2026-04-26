@@ -44,13 +44,18 @@ function renderBlock(block) {
     const hasStat = block.fields.some(f => f.type === "flat" || f.type === "computed");
     const hasText = block.fields.some(f => f.type === "text");
 
-    if (hasStat && !hasText) {
+    // Skills always render as a compact list — too many fields for a grid.
+    // Saving throws are forced to exactly 3 columns so they never overflow.
+    const forceList = block.id === "block_skills";
+    const forceCols = block.id === "block_saves" ? 3 : null;
+
+    if (!forceList && hasStat && !hasText) {
         fieldWrap.className = "fields-grid";
-        const cols = balancedCols(block.fields.length);
+        const cols = forceCols ?? balancedCols(block.fields.length);
         fieldWrap.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         fieldWrap.style.justifyItems = "stretch";
     } else {
-        fieldWrap.className = "fields-list";
+        fieldWrap.className = forceList ? "fields-list fields-list--skills" : "fields-list";
     }
 
     block.fields.forEach(field => {
