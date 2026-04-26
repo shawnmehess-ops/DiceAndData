@@ -1,0 +1,111 @@
+# Grimoire — Spell Upload Tool
+
+Upload spells to Firestore and remove duplicates.
+
+---
+
+## Setup (one time)
+
+### 1. Install Node dependencies
+```bash
+npm install firebase-admin
+```
+
+### 2. Get your service account key
+1. Go to the [Firebase Console](https://console.firebase.google.com)
+2. Select your project → **Project Settings** → **Service Accounts**
+3. Click **Generate new private key** → **Generate Key**
+4. Save the downloaded file as **`serviceAccountKey.json`** in the same folder as `upload-spells.js`
+
+> ⚠️ Never commit `serviceAccountKey.json` to Git. Add it to `.gitignore`.
+
+---
+
+## Usage
+
+```bash
+# Upload spells.json (default)
+node upload-spells.js
+
+# Upload a custom file
+node upload-spells.js my-spells.json
+
+# Only remove duplicates, skip upload
+node upload-spells.js --dedup-only
+
+# Preview what would happen without writing anything
+node upload-spells.js --dry-run
+node upload-spells.js my-spells.json --dry-run
+```
+
+---
+
+## What it does
+
+**On every run:**
+- Loads all existing spells from Firestore
+- Finds duplicates (matched by name, case-insensitive) and deletes all but the first
+
+**On upload:**
+- Reads spells from your JSON file
+- Skips any spell whose name already exists in Firestore
+- Uploads new spells with `status: "approved"` so they appear immediately
+
+---
+
+## Spell JSON format
+
+Each spell is an object in an array. All fields are optional except `name`.
+
+```json
+[
+  {
+    "name": "Fireball",
+    "level": 3,
+    "school": "Evocation",
+    "castingTime": "1 action",
+    "range": "150 ft",
+    "duration": "Instantaneous",
+    "components": {
+      "verbal": true,
+      "somatic": true,
+      "material": true,
+      "materials": "a tiny ball of bat guano and sulfur"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A bright streak flashes from your pointing finger...",
+    "requirements": [
+      { "stat": "f_level", "min": 5 }
+    ]
+  }
+]
+```
+
+### Requirements
+The `requirements` array can use **any field ID** from the character sheet:
+
+| Example | Meaning |
+|---|---|
+| `{ "stat": "f_level", "min": 5 }` | Character must be level 5+ |
+| `{ "stat": "f_int", "min": 16 }` | INT score must be 16+ |
+| `{ "stat": "f_wis", "min": 13 }` | WIS score must be 13+ |
+
+Multiple requirements are all checked (AND logic). Leave the array empty `[]` for no requirements.
+
+### Valid schools
+`Abjuration`, `Conjuration`, `Divination`, `Enchantment`,
+`Evocation`, `Illusion`, `Necromancy`, `Transmutation`
+
+### Spell levels
+`0` = Cantrip, `1`–`9` = spell levels
+
+---
+
+## Included example file
+
+`spells.json` contains **36 spells** covering:
+- All 10 levels (Cantrip through 9th)
+- All 8 schools
+- A mix of damage, utility, control, and healing spells
+- Level requirements scaled to D&D 5e progression

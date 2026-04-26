@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grimoire — Admin Tools</title>
+
+<style>
+body {
+    font-family: monospace;
+    background: #111;
+    color: #ccc;
+    padding: 2rem;
+    max-width: 1000px;
+}
+
+h1 { color: #c9a84c; }
+h2 { color: #e0c36a; margin-top: 2rem; }
+
+.section {
+    border: 1px solid #333;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    background: #161616;
+}
+
+pre {
+    background: #1a1a1a;
+    padding: 1rem;
+    border-radius: 6px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+button {
+    background: #c9a84c;
+    color: #111;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: monospace;
+}
+
+button:disabled {
+    background: #555;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.danger {
+    background: #7a2020;
+    color: #eb8080;
+}
+
+.danger:hover:not(:disabled) {
+    background: #9a2828;
+}
+
+.ok   { color: #6fcf97; }
+.warn { color: #e0a040; }
+.err  { color: #eb5757; }
+.dim  { color: #666; }
+</style>
+</head>
+
+<body>
+
+<h1>Grimoire — Admin Tools</h1>
+
+<!-- ====================================================== -->
+<!-- DUPLICATE CLEANER -->
+<!-- ====================================================== -->
+<div class="section">
+<h2>Item Deduplicator</h2>
+
+<div class="controls">
+    <button id="scanBtn">Scan for Duplicates</button>
+    <button id="deleteBtn" class="danger" disabled>Delete Duplicates</button>
+</div>
+
+<pre id="dedupeLog">Press Scan to begin…</pre>
+</div>
+
+<!-- ====================================================== -->
+<!-- SEEDER -->
+<!-- ====================================================== -->
+<div class="section">
+<h2>Item Seeder</h2>
+
+<p><strong>Run once only.</strong></p>
+
+<button id="seedBtn">Seed Items</button>
+<pre id="seedLog">Press the button to begin…</pre>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc }
+    from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+// ======================================================
+// FIREBASE INIT (SHARED)
+// ======================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyBYYgS04lxcbeawj7WDahEN7SbzYgVGLjE",
+    authDomain: "diceanddata-81ebe.firebaseapp.com",
+    projectId: "diceanddata-81ebe",
+    storageBucket: "diceanddata-81ebe.firebasestorage.app",
+    messagingSenderId: "547850961878",
+    appId: "1:547850961878:web:8b2a99076d66c0ab451a77",
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ======================================================
+// LOG HELPERS
+// ======================================================
+function makeLogger(el) {
+    return (msg, cls="") => {
+        el.innerHTML += `<span class="${cls}">${msg}</span>\n`;
+    };
+}
+
+const dedupeLog = makeLogger(document.getElementById("dedupeLog"));
+const seedLog   = makeLogger(document.getElementById("seedLog"));
+
+// ======================================================
+// DEDUPLICATOR
+// ======================================================
+const scanBtn   = document.getElementById("scanBtn");
+const deleteBtn = document.getElementById("deleteBtn");
+
+let duplicateIds = [];
+
+function canonicaliseObject(obj) {
+    if (typeof obj !== "object" || obj === null) return obj;
+    return Object.fromEntries(
+        Object.entries(obj)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([k, v]) => [k, canonicaliseObject(v)])
+    );
+}
+
+function fingerprint(item) {
+    return JSON.stringify({
+        name: (item.name ?? "").trim().toLowerCase(),
+        category: (item.category ?? "").trim().toLowerCase(),
+        description: (item.description ?? "").trim().toLowerCase(),
+        cost: canonicaliseObject(item.cost ?? {}),
+        stats: canonicaliseObject(item.stats ?? {}),
+    });
+}
+
+scanBtn.onclick = async () => {
+    scanBtn.disabled = true;
+    deleteBtn.disabled = true;
+    duplicateIds = [];
+    document.getElementById("dedupeLog").innerHTML = "";
+
+    const user = auth.currentUser;
+    if (!user) {
+        dedupeLog("Not signed in.", "err");
+        scanBtn.disabled = false;
+        return;
+    }
+
+    dedupeLog(`Signed in as ${user.uid}`, "dim");
+
+    const snap = await getDocs(collection(db, "items"));
+    const items = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
+
+    const groups = new Map();
+    items.forEach(i => {
+        const fp = fingerprint(i);
+        if (!groups.has(fp)) groups.set(fp, []);
+        groups.get(fp).push(i);
+    });
+
+    let dupGroups = 0;
+
+    groups.forEach(group => {
+        if (group.length < 2) return;
+        dupGroups++;
+
+        group.sort((a,b)=>(a.submittedAt??0)-(b.submittedAt??0));
+        const keeper = group[0];
+        const extras = group.slice(1);
+
+        dedupeLog(`Duplicate: ${keeper.name}`, "warn");
+
+        extras.forEach(e => {
+            dedupeLog(`  Delete: ${e._id}`, "err");
+            duplicateIds.push(e._id);
+        });
+    });
+
+    if (!duplicateIds.length) {
+        dedupeLog("No duplicates found.", "ok");
+    } else {
+        dedupeLog(`Found ${duplicateIds.length} duplicates.`, "warn");
+        deleteBtn.disabled = false;
+    }
+
+    scanBtn.disabled = false;
+};
+
+deleteBtn.onclick = async () => {
+    if (!duplicateIds.length) return;
+    if (!confirm(`Delete ${duplicateIds.length} items?`)) return;
+
+    deleteBtn.disabled = true;
+
+    for (const id of duplicateIds) {
+        try {
+            await deleteDoc(doc(db, "items", id));
+            dedupeLog(`Deleted ${id}`, "ok");
+        } catch (e) {
+            dedupeLog(`Failed ${id}`, "err");
+        }
+    }
+
+    duplicateIds = [];
+    scanBtn.disabled = false;
+};
+
+// ======================================================
+// SEEDER
+// ======================================================
+const seedBtn = document.getElementById("seedBtn");
+
+const ITEMS = [/* (same array you already wrote — unchanged) */];
+
+seedBtn.onclick = async () => {
+    seedBtn.disabled = true;
+    document.getElementById("seedLog").innerHTML = "";
+
+    const user = auth.currentUser;
+    if (!user) {
+        seedLog("Not signed in.", "err");
+        seedBtn.disabled = false;
+        return;
+    }
+
+    for (const item of ITEMS) {
+        try {
+            await addDoc(collection(db, "items"), {
+                ...item,
+                status: "approved",
+                submittedBy: user.uid,
+                submittedAt: Date.now(),
+                approvedBy: user.uid,
+                approvedAt: Date.now(),
+            });
+            seedLog(`Added ${item.name}`, "ok");
+        } catch (e) {
+            seedLog(`Failed ${item.name}`, "err");
+        }
+    }
+
+    seedLog("Done.", "ok");
+};
+
+// ======================================================
+// AUTH STATE
+// ======================================================
+onAuthStateChanged(auth, user => {
+    if (user) {
+        dedupeLog(`Auth: ${user.email ?? user.uid}`, "ok");
+        seedLog(`Auth: ${user.email ?? user.uid}`, "ok");
+    } else {
+        dedupeLog("Not signed in.", "err");
+        seedLog("Not signed in.", "err");
+    }
+});
+</script>
+
+</body>
+</html>
