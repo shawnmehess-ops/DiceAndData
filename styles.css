@@ -2450,3 +2450,246 @@ body.modal-open   { overflow: hidden; }
     font-size: 0.95rem;
     min-width: 36px;
 }
+
+/* ============================================================
+   NIGHT MODE
+   Toggled by adding class "night" to <body>.
+   The header and modals are already dark — night mode darkens
+   the sheet (parchment → slate) and the page background.
+   ============================================================ */
+
+/* ---- Toggle button --------------------------------------- */
+.header-theme-toggle {
+    position: absolute;
+    top: 50%;
+    left: 32px;
+    transform: translateY(-50%);
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid rgba(201, 168, 76, 0.28);
+    border-radius: 50%;
+    color: rgba(241, 216, 143, 0.7);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.35s ease;
+}
+
+.theme-toggle:hover {
+    border-color: var(--gold-dark);
+    color: var(--gold-light);
+    background: rgba(201, 168, 76, 0.08);
+}
+
+.theme-toggle:active {
+    transform: translateY(-50%) scale(0.92) rotate(20deg);
+}
+
+.theme-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transition: opacity 0.2s, transform 0.35s ease;
+}
+
+/* Day mode: show moon, hide sun */
+.theme-icon--moon { display: block; }
+.theme-icon--sun  { display: none;  }
+
+/* Night mode: show sun (to switch back), hide moon */
+body.night .theme-icon--moon { display: none;  }
+body.night .theme-icon--sun  { display: block; }
+
+/* Spin the icon when switching */
+@keyframes iconSpin {
+    from { transform: rotate(-30deg) scale(0.8); opacity: 0; }
+    to   { transform: rotate(0deg)   scale(1);   opacity: 1; }
+}
+body.night .theme-icon--sun,
+body:not(.night) .theme-icon--moon {
+    animation: iconSpin 0.32s ease both;
+}
+
+/* ---- Night mode variable overrides ----------------------- */
+body.night {
+    /* Sheet surface: warm parchment → deep charcoal with a hint of slate */
+    --parchment:    #1e2028;
+    --parchment-dk: #181a20;
+    --vellum:       #22242e;
+
+    /* Ink: flip to light */
+    --ink:          #d8cfb8;
+    --ink-soft:     #b8a888;
+    --ink-muted:    #7a6e5a;
+
+    /* Borders: softer, dark-adjusted */
+    --border:       #3a3828;
+    --border-lt:    #2e2c22;
+    --border-dk:    #4a4430;
+
+    /* Shadows stay dark but tone down */
+    --shadow:       rgba(0, 0, 0, 0.35);
+    --shadow-deep:  rgba(0, 0, 0, 0.55);
+
+    /* Gold stays gold — it looks great on dark */
+    /* Green and blue stay, just slightly lighter */
+    --green:        #3d8a52;
+    --blue:         #2a5a8a;
+
+    /* Page background: even darker, cooler night sky */
+    background:
+        radial-gradient(circle at top, rgba(80, 60, 140, 0.12), transparent 30%),
+        linear-gradient(180deg, #0a0c14 0%, #060810 100%);
+}
+
+/* Sheet surface in night mode */
+body.night .sheet {
+    background: linear-gradient(180deg, rgba(30, 32, 40, 0.99), rgba(24, 26, 32, 0.99));
+    box-shadow: 0 0 0 4px #1a1c24, 0 0 0 5px #2e2c22, 0 20px 60px rgba(0,0,0,0.7);
+}
+
+/* Sheet sections */
+body.night .sheet-section {
+    background: linear-gradient(180deg, rgba(32, 34, 44, 0.98), rgba(26, 28, 36, 0.98));
+    border-color: var(--border);
+}
+
+/* Auth panel stays light (it's on a dark bg anyway — no change needed) */
+
+/* Character cards */
+body.night .char-card {
+    background: linear-gradient(180deg, #24262e, #1c1e26);
+    border-color: var(--border);
+}
+
+body.night .char-card-crest {
+    background:
+        radial-gradient(circle at 50% 24%, rgba(80, 60, 140, 0.22), transparent 36%),
+        linear-gradient(160deg, #14161e 0%, #0a0c12 100%);
+}
+
+body.night .char-card-footer {
+    background: #181a20;
+    border-top-color: var(--border);
+}
+
+body.night .char-card-name  { color: var(--ink); }
+body.night .char-card-meta  { color: var(--ink-soft); }
+
+body.night .char-card-delete {
+    border-color: #3a3828;
+    color: var(--ink-muted);
+}
+
+/* Field inputs */
+body.night .field-flat {
+    background: #22242e;
+    border-color: var(--border);
+}
+
+body.night .field-input-text,
+body.night .field-input-number {
+    color: var(--ink);
+}
+
+body.night .field-input-text {
+    border-bottom-color: var(--border);
+}
+
+/* Inventory */
+body.night .inventory-group-heading {
+    background: rgba(201, 168, 76, 0.04);
+    border-bottom-color: var(--border);
+    color: var(--ink-soft);
+}
+
+body.night .inventory-item:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+body.night .inventory-item:hover {
+    background: rgba(201, 168, 76, 0.06);
+}
+
+/* Spell slots */
+body.night .spell-slot-stepper {
+    background: #22242e;
+    border-color: var(--border);
+}
+
+body.night .spell-slot-step {
+    background: rgba(201, 168, 76, 0.06);
+    color: var(--ink-muted);
+}
+
+body.night .spell-slot-step:hover {
+    background: rgba(201, 168, 76, 0.16);
+    color: var(--ink);
+}
+
+body.night .spell-slot-step--minus,
+body.night .spell-slot-step--plus {
+    border-color: var(--border);
+}
+
+body.night .spell-slot-max {
+    color: var(--ink);
+}
+
+body.night .spell-slot-checkbox {
+    background: #22242e;
+    border-color: var(--border);
+}
+
+/* Section add row inputs */
+body.night .section-add-row input,
+body.night .section-add-row select {
+    background: #22242e;
+    border-color: var(--border);
+    color: var(--ink);
+}
+
+/* Proficiency radio buttons */
+body.night .prof-group input[type="radio"] {
+    border-color: #4a4838;
+    background: #22242e;
+}
+
+/* Spellbook container headings */
+body.night #spellbookContainer .inventory-group-heading {
+    background: linear-gradient(90deg, rgba(80, 50, 130, 0.1), rgba(201, 168, 76, 0.03));
+    border-left-color: rgba(120, 80, 180, 0.4);
+}
+
+body.night #spellbookContainer .inventory-group-heading:first-child {
+    background: linear-gradient(90deg, rgba(201, 168, 76, 0.08), transparent);
+    border-left-color: var(--gold-dark);
+}
+
+/* Roster header border */
+body.night .roster-header {
+    border-bottom-color: rgba(201, 168, 76, 0.18);
+}
+
+/* Create char input */
+body.night .create-char-row input {
+    border-color: rgba(201, 168, 76, 0.28);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile: move toggle so it doesn't overlap on small screens */
+@media (max-width: 760px) {
+    .header-theme-toggle {
+        position: static;
+        transform: none;
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 14px;
+    }
+}
