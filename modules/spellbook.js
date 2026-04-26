@@ -125,35 +125,38 @@ function renderSpellSlots() {
         label.textContent = `${LEVEL_LABELS[lvl]}`;
         row.appendChild(label);
 
-        // Max input
-        const maxInput = document.createElement("input");
-        maxInput.type      = "number";
-        maxInput.className = "spell-slot-max";
-        maxInput.value     = max;
-        maxInput.min       = 0;
-        maxInput.max       = 9;
-        maxInput.title     = "Max slots";
-        maxInput.oninput = () => {
-            const parsed = parseInt(maxInput.value);
-            if (!isNaN(parsed) && parsed >= 0) {
-                if (!state.spellSlots[lvl]) state.spellSlots[lvl] = { max: 0, used: 0 };
-                state.spellSlots[lvl].max = parsed;
-                // Clamp used to new max
-                if (state.spellSlots[lvl].used > parsed) state.spellSlots[lvl].used = parsed;
-                renderSpellSlots();
-                debouncedSave();
-            }
-        };
-        maxInput.onblur = () => {
-            const parsed = parseInt(maxInput.value);
-            if (isNaN(parsed) || parsed < 0) {
-                maxInput.value = 0;
-                if (!state.spellSlots[lvl]) state.spellSlots[lvl] = { max: 0, used: 0 };
-                state.spellSlots[lvl].max = 0;
-                debouncedSave();
-            }
-        };
-        row.appendChild(maxInput);
+        // Max stepper: − [value] +
+        function setMax(newMax) {
+            newMax = Math.max(0, Math.min(9, newMax));
+            if (!state.spellSlots[lvl]) state.spellSlots[lvl] = { max: 0, used: 0 };
+            state.spellSlots[lvl].max = newMax;
+            if (state.spellSlots[lvl].used > newMax) state.spellSlots[lvl].used = newMax;
+            renderSpellSlots();
+            debouncedSave();
+        }
+
+        const stepper = document.createElement("div");
+        stepper.className = "spell-slot-stepper";
+
+        const minusBtn = document.createElement("button");
+        minusBtn.className   = "spell-slot-step spell-slot-step--minus";
+        minusBtn.textContent = "−";
+        minusBtn.title       = "Remove a slot";
+        minusBtn.onclick = (e) => { e.stopPropagation(); setMax(max - 1); };
+
+        const maxDisplay = document.createElement("span");
+        maxDisplay.className   = "spell-slot-max";
+        maxDisplay.textContent = max;
+        maxDisplay.title       = "Max slots";
+
+        const plusBtn = document.createElement("button");
+        plusBtn.className   = "spell-slot-step spell-slot-step--plus";
+        plusBtn.textContent = "+";
+        plusBtn.title       = "Add a slot";
+        plusBtn.onclick = (e) => { e.stopPropagation(); setMax(max + 1); };
+
+        stepper.append(minusBtn, maxDisplay, plusBtn);
+        row.appendChild(stepper);
 
         // Checkboxes (up to max)
         const boxWrap = document.createElement("div");
