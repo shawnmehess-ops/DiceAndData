@@ -2428,3 +2428,25 @@ body.modal-open   { overflow: hidden; }
     font-size: 0.88rem;
     color: #d0c090;
 }
+
+/* ---- Skills — compact list layout ------------------------ */
+/* Skills render as fields-list, not a grid, to stay compact.
+   Rows are tighter than the default computed row padding.    */
+.fields-list--skills .field-computed {
+    padding: 4px 14px;
+    border-bottom: 1px solid rgba(196, 168, 106, 0.1);
+}
+
+.fields-list--skills .field-computed:last-child {
+    border-bottom: none;
+}
+
+/* Slightly smaller label text so long skill names fit neatly */
+.fields-list--skills .field-computed .field-label {
+    font-size: 0.88rem;
+}
+
+.fields-list--skills .field-computed-value {
+    font-size: 0.95rem;
+    min-width: 36px;
+}
