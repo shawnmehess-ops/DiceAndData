@@ -143,7 +143,14 @@
                     <div style="width:80px;"></div>
                 </div>
 
-                <div class="sheet-inner">
+                <!-- Sheet tabs -->
+                <div class="sheet-tabs">
+                    <button class="sheet-tab sheet-tab--active" data-tab="sheet">Character Sheet</button>
+                    <button class="sheet-tab" data-tab="class">Class &amp; Features</button>
+                </div>
+
+                <!-- TAB: Character Sheet -->
+                <div class="sheet-inner sheet-tab-panel" id="tabPanel-sheet">
                     <div id="sheetBlocks"></div>
 
                     <div class="section-divider" aria-hidden="true"></div>
@@ -183,11 +190,11 @@
                     </div>
 
                     <div class="section-divider" aria-hidden="true"></div>
-                    <div class="sheet-section" id="classFeaturesSection">
+                    <div class="sheet-section">
                         <div class="inventory-section-header">
-                            <h3>Class &amp; Features</h3>
+                            <h3>Class Feats</h3>
                         </div>
-                        <div id="classPanelContent"></div>
+                        <div id="classFeatsList" style="padding: 10px 14px;"></div>
                     </div>
 
                     <div class="section-divider" aria-hidden="true"></div>
@@ -201,8 +208,19 @@
                         </div>
                         <div id="testResults"></div>
                     </div>
-                </div>
-            </div>
+                </div><!-- /tabPanel-sheet -->
+
+                <!-- TAB: Class & Features -->
+                <div class="sheet-inner sheet-tab-panel" id="tabPanel-class" style="display:none;">
+                    <div class="sheet-section">
+                        <div class="inventory-section-header">
+                            <h3>Class &amp; Features</h3>
+                        </div>
+                        <div id="classPanelContent"></div>
+                    </div>
+                </div><!-- /tabPanel-class -->
+
+            </div><!-- /editor -->
 
         </div>
     </div>
@@ -590,6 +608,19 @@
                 const panel   = document.getElementById("spellAdminPanel");
                 if (table) table.style.display = isAdmin ? "none"  : "";
                 if (panel) panel.style.display = isAdmin ? "block" : "none";
+            });
+        });
+    </script>
+
+    <script>
+        // ---- Sheet tab switching ----------------------------
+        document.querySelectorAll(".sheet-tab").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const target = btn.dataset.tab;
+                document.querySelectorAll(".sheet-tab").forEach(b =>
+                    b.classList.toggle("sheet-tab--active", b.dataset.tab === target));
+                document.querySelectorAll(".sheet-tab-panel").forEach(p =>
+                    p.style.display = p.id === "tabPanel-" + target ? "" : "none");
             });
         });
     </script>
