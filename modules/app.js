@@ -21,6 +21,8 @@ import { setDebouncedSave as invSDS }    from "./inventory.js";
 import { setDebouncedSave as shopSDS }   from "./shop.js";
 import { setDebouncedSave as spellsSDS } from "./spells.js";
 import { setDebouncedSave as sbSDS }     from "./spellbook.js";
+import { setDebouncedSave as classSDS,
+         renderClassPanel }              from "./classes.js";
 
 import { initShop }        from "./shop.js";
 import { initAdmin }       from "./admin.js";
@@ -34,6 +36,7 @@ invSDS(debouncedSave);
 shopSDS(debouncedSave);
 spellsSDS(debouncedSave);
 sbSDS(debouncedSave);
+classSDS(debouncedSave);
 
 setAfterRender(() => {
     if (shouldAutoRunTests()) runAllTests();
