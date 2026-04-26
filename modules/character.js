@@ -17,7 +17,10 @@ import { renderInventory }       from "./inventory.js";
 import { renderSpellbook }       from "./spellbook.js";
 import { loadSpells }            from "./spells.js";
 import { defaultClassData,
-         renderClassPanel }        from "./classes.js";
+         renderClassPanel,
+         renderFeatsOnSheet,
+         applyStatBonuses,
+         applySkillProficiencies }  from "./classes.js";
 import { defaultSpellSlots }     from "./state.js";
 
 let debouncedSave = () => {};
@@ -151,9 +154,13 @@ export function openCharacter(id, data) {
     const titleEl = document.getElementById("editorTitle");
     if (titleEl) titleEl.textContent = nameField?.value || "Character Sheet";
 
+    // Re-apply class stats and skills so the sheet reflects saved classData
+    // (state.classData.appliedStatKey tracks what's already baked in —
+    //  pass null as oldCd so nothing is subtracted, values are already stored)
     renderSheet();
     renderInventory();
     renderClassPanel();
+    renderFeatsOnSheet();
     // Load the spell DB cache before rendering the spellbook so known spells
     // are always matched correctly, even on a hard refresh.
     loadSpells().then(() => renderSpellbook()).catch(() => renderSpellbook());
