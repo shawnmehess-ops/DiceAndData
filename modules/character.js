@@ -15,6 +15,7 @@ import {
 import { renderSheet }           from "./sheet.js";
 import { renderInventory }       from "./inventory.js";
 import { renderSpellbook }       from "./spellbook.js";
+import { loadSpells }            from "./spells.js";
 import { defaultSpellSlots }     from "./state.js";
 
 let debouncedSave = () => {};
@@ -145,5 +146,7 @@ export function openCharacter(id, data) {
 
     renderSheet();
     renderInventory();
-    renderSpellbook();
+    // Load the spell DB cache before rendering the spellbook so known spells
+    // are always matched correctly, even on a hard refresh.
+    loadSpells().then(() => renderSpellbook()).catch(() => renderSpellbook());
 }
