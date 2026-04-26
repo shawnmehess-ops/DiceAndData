@@ -141,12 +141,14 @@ function normalizeSpell(raw) {
 }
 
 // ---- Load from Firestore -----------------------------------
+// NOTE: orderBy is intentionally omitted. Combining where("status")
+// with orderBy("level") requires a composite Firestore index that may
+// not exist, silently returning nothing. Sorting is handled client-side
+// by filteredSorted() instead.
 export async function loadSpells() {
     const q = query(
         collection(db, "spells"),
-        where("status", "==", "approved"),
-        orderBy("level"),
-        orderBy("name")
+        where("status", "==", "approved")
     );
     const snap = await getDocs(q);
     allSpells = snap.docs.map(d => normalizeSpell({ id: d.id, ...d.data() }));
