@@ -2984,3 +2984,129 @@ body.night .class-feat-row {
 body.night .class-feat-row:hover {
     background: rgba(201, 168, 76, 0.06);
 }
+
+/* ============================================================
+   SHEET TABS (Character Sheet | Class & Features)
+   ============================================================ */
+.sheet-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border-lt);
+    margin: 0;
+    padding: 0 20px;
+    background: linear-gradient(180deg, rgba(201,168,76,0.04), transparent);
+}
+
+.sheet-tab {
+    padding: 12px 22px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    background: none;
+    color: var(--ink-muted);
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.18s, border-color 0.18s;
+}
+
+.sheet-tab:hover {
+    color: var(--ink-soft);
+}
+
+.sheet-tab--active {
+    color: var(--gold-dark);
+    border-bottom-color: var(--gold-dark);
+}
+
+body.night .sheet-tabs {
+    border-bottom-color: var(--border);
+    background: linear-gradient(180deg, rgba(201,168,76,0.03), transparent);
+}
+
+/* ============================================================
+   SKILL CHOICE BADGES (class tab)
+   ============================================================ */
+.class-skill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 4px 2px;
+}
+
+.class-skill-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
+    border-radius: 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    border: 1px solid transparent;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+    user-select: none;
+}
+
+/* Fixed — always proficient, shown in green */
+.class-skill-badge--fixed {
+    background: rgba(60, 138, 82, 0.14);
+    border-color: rgba(60, 138, 82, 0.35);
+    color: var(--green);
+    cursor: default;
+}
+
+/* Choosable — neutral, clickable */
+.class-skill-badge--choice {
+    background: rgba(201, 168, 76, 0.06);
+    border-color: var(--border-lt);
+    color: var(--ink-muted);
+    cursor: pointer;
+}
+
+.class-skill-badge--choice:hover {
+    background: rgba(201, 168, 76, 0.14);
+    border-color: var(--gold-dark);
+    color: var(--ink);
+}
+
+/* Chosen — gold fill */
+.class-skill-badge--chosen {
+    background: rgba(201, 168, 76, 0.18);
+    border-color: var(--gold-dark);
+    color: var(--gold-dark);
+    cursor: pointer;
+}
+
+.class-skill-badge--chosen:hover {
+    background: rgba(201, 168, 76, 0.28);
+}
+
+/* At limit — dimmed, no pointer */
+.class-skill-badge--disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* No-class message */
+.class-no-class-msg {
+    padding: 16px;
+    font-family: 'Crimson Text', serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--ink-muted);
+    text-align: center;
+}
+
+/* Night mode skill badges */
+body.night .class-skill-badge--choice {
+    background: rgba(201,168,76,0.04);
+    border-color: var(--border);
+    color: var(--ink-muted);
+}
+body.night .class-skill-badge--chosen {
+    background: rgba(201,168,76,0.12);
+}
