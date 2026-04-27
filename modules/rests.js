@@ -61,15 +61,28 @@ export function longRest() {
     const insp = getFieldById("f_insp");
     if (insp?.values) insp.values = insp.values.map(() => false);
 
+    // Reset short rest counter
+    if (!state.restData) state.restData = { shortRestsUsed: 0 };
+    state.restData.shortRestsUsed = 0;
+    _updateShortRestPips();
+
     renderSpellbook();
     renderSheet();
     debouncedSave();
 
-    _flashRestBanner("Long Rest complete — HP restored, all spell slots recovered.", "long");
+    _flashRestBanner("Long Rest complete — HP restored, all spell slots recovered, short rests reset.", "long");
 }
 
 // ---- Short Rest --------------------------------------------
+const MAX_SHORT_RESTS = 2;
+
 export function shortRest() {
+    if (!state.restData) state.restData = { shortRestsUsed: 0 };
+    if (state.restData.shortRestsUsed >= MAX_SHORT_RESTS) {
+        _flashRestBanner("No short rests remaining — take a long rest first.", "blocked");
+        return;
+    }
+
     const cd = getClassData();
 
     // Warlocks recover all spell slots on a short rest
@@ -83,7 +96,6 @@ export function shortRest() {
     const conMod = Math.floor(((parseInt(getFieldById("f_con")?.value) || 10) - 10) / 2);
 
     if (hpCur < hpMax) {
-        // Determine hit die from class
         const HIT_DICE = {
             barbarian:8, bard:8, cleric:8, druid:8, fighter:10,
             monk:8, paladin:10, ranger:10, rogue:8, sorcerer:6,
@@ -96,20 +108,23 @@ export function shortRest() {
         ));
         if (!isNaN(dice) && dice > 0) {
             const clampedDice = Math.min(dice, level);
-            // Roll average (floor(hitDie/2)+1) per die + CON mod per die
             const hpGained = clampedDice * (Math.floor(hitDie / 2) + 1 + conMod);
             const hpField  = getFieldById("f_hp_cur");
             if (hpField) hpField.value = Math.min(hpMax, hpCur + Math.max(1, hpGained));
         }
     }
 
+    state.restData.shortRestsUsed++;
+    _updateShortRestPips();
+
     renderSpellbook();
     renderSheet();
     debouncedSave();
 
+    const remaining = MAX_SHORT_RESTS - state.restData.shortRestsUsed;
     const msg = isWarlock
-        ? "Short Rest complete — Pact Magic slots recovered. HP rolled."
-        : "Short Rest complete — HP rolled.";
+        ? `Short Rest complete — Pact Magic slots recovered. HP rolled. (${remaining} rest${remaining !== 1 ? "s" : ""} remaining)`
+        : `Short Rest complete — HP rolled. (${remaining} rest${remaining !== 1 ? "s" : ""} remaining)`;
     _flashRestBanner(msg, "short");
 }
 
@@ -139,6 +154,23 @@ export function suggestHP() {
     }
 }
 
+// ---- Short rest pip indicator -----------------------------
+function _updateShortRestPips() {
+    const el = document.getElementById("shortRestPips");
+    if (!el) return;
+    const used = state.restData?.shortRestsUsed ?? 0;
+    el.innerHTML = "";
+    for (let i = 0; i < MAX_SHORT_RESTS; i++) {
+        const pip = document.createElement("span");
+        pip.className = `rest-pip${i < used ? " rest-pip--used" : ""}`;
+        pip.title     = i < used ? "Short rest used" : "Short rest available";
+        el.appendChild(pip);
+    }
+    // Dim the button itself when exhausted
+    const btn = document.getElementById("shortRestBtn");
+    if (btn) btn.disabled = used >= MAX_SHORT_RESTS;
+}
+
 // ---- Banner flash ------------------------------------------
 function _flashRestBanner(message, type) {
     let banner = document.getElementById("restBanner");
@@ -157,6 +189,7 @@ function _flashRestBanner(message, type) {
 }
 
 // ---- Init --------------------------------------------------
+export function updateShortRestPips() { _updateShortRestPips(); }
 export function initRests() {
     document.getElementById("shortRestBtn")
         ?.addEventListener("click", shortRest);
@@ -164,4 +197,8 @@ export function initRests() {
         ?.addEventListener("click", longRest);
     document.getElementById("suggestHPBtn")
         ?.addEventListener("click", suggestHP);
+    _updateShortRestPips();
+    // Expose on window so character.js can call without a circular import
+    window.__grimoire__ = window.__grimoire__ ?? {};
+    window.__grimoire__.updateShortRestPips = _updateShortRestPips;
 }

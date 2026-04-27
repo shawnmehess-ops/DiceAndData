@@ -50,6 +50,7 @@ export async function saveCharacter() {
         classData:      state.classData      ?? defaultClassData(),
         raceData:       state.raceData       ?? defaultRaceData(),
         backgroundData: state.backgroundData ?? defaultBackgroundData(),
+        restData:       state.restData       ?? { shortRestsUsed: 0 },
     }, { merge: true });
 }
 
@@ -187,6 +188,10 @@ export async function openCharacter(id) {
         ? JSON.parse(JSON.stringify(data.backgroundData))
         : defaultBackgroundData();
 
+    state.restData = (data.restData && typeof data.restData === "object")
+        ? JSON.parse(JSON.stringify(data.restData))
+        : { shortRestsUsed: 0 };
+
     const nameField = state.blocks.flatMap(b => b.fields).find(f => f.id === "f_name");
     const titleEl = document.getElementById("editorTitle");
     if (titleEl) titleEl.textContent = nameField?.value || "Character Sheet";
@@ -197,5 +202,6 @@ export async function openCharacter(id) {
     renderRacePanel();
     renderBackgroundPanel();
     renderFeatsOnSheet();
+    window.__grimoire__?.updateShortRestPips?.();
     loadSpells().then(() => renderSpellbook()).catch(() => renderSpellbook());
 }

@@ -29,6 +29,7 @@ export const state = {
     classData:      null,
     raceData:       null,
     backgroundData: null,
+    restData:       { shortRestsUsed: 0 },  // resets on long rest
 };
 
 export function defaultSpellSlots() {
@@ -51,6 +52,7 @@ export function resetState() {
     state.classData      = null;
     state.raceData       = null;
     state.backgroundData = null;
+    state.restData       = { shortRestsUsed: 0 };
 }
 
 export function getFieldById(id) {

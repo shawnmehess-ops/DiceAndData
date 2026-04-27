@@ -532,12 +532,32 @@ button {
 }
 
 .sheet-header-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 32px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: start;
+    padding: 16px 32px 14px;
     border-bottom: 2px solid var(--gold-dark);
     background: linear-gradient(180deg, #1d1208 0%, #2f1c0b 100%);
+}
+
+.sheet-header-left {
+    display: flex;
+    align-items: flex-start;
+    padding-top: 4px;
+}
+
+.sheet-header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.sheet-header-right {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-top: 4px;
 }
 
 #editorTitle {
@@ -551,6 +571,11 @@ button {
 
 .sheet-inner {
     padding: 0 28px 28px;
+}
+
+/* Class tab doesn't need the full bottom padding — avoids large empty gap */
+#tabPanel-class.sheet-inner {
+    padding-bottom: 8px;
 }
 
 .sheet-section {
@@ -3116,8 +3141,43 @@ body.night .class-skill-badge--chosen {
    ============================================================ */
 .sheet-rest-buttons {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
+    justify-content: center;
+}
+
+/* Short rest pip indicator */
+.short-rest-pips-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.short-rest-pips {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.rest-pip {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(96, 144, 200, 0.7);
+    border: 1px solid rgba(96, 144, 200, 0.9);
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.rest-pip--used {
+    background: rgba(96, 144, 200, 0.15);
+    border-color: rgba(96, 144, 200, 0.3);
+}
+
+/* Disabled short rest button state */
+#shortRestBtn:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
 }
 
 .btn-rest {
@@ -3206,11 +3266,25 @@ body.night .btn-rest--hp    { background: rgba(60,138,82,0.08); }
 body.night .btn-rest--short { background: rgba(50,90,160,0.08); }
 body.night .btn-rest--long  { background: rgba(90,50,140,0.08); }
 
-/* Mobile: stack rest buttons below title */
+/* Blocked rest banner (no rests remaining) */
+.rest-banner--blocked {
+    background: linear-gradient(135deg, #2a1818, #1a1010);
+    border: 1px solid rgba(180, 60, 60, 0.4);
+    color: #e08080;
+}
+
+/* Mobile: collapse header to single column */
 @media (max-width: 760px) {
-    .sheet-rest-buttons {
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 6px;
+    .sheet-header-bar {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
     }
+    .sheet-header-left  { grid-column: 1; grid-row: 1; }
+    .sheet-header-right { grid-column: 2; grid-row: 1; justify-content: flex-end; }
+    .sheet-header-center {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        padding-top: 8px;
+    }
+    .sheet-rest-buttons { flex-wrap: wrap; }
 }

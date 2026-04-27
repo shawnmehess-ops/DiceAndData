@@ -138,12 +138,21 @@
             <!-- EDITOR / CHARACTER SHEET -->
             <div id="editor" style="display:none;" class="sheet">
                 <div class="sheet-header-bar">
-                    <button id="backButton">&larr; Roster</button>
-                    <h2 id="editorTitle">Character Sheet</h2>
-                    <div class="sheet-rest-buttons">
-                        <button id="suggestHPBtn" class="btn-rest btn-rest--hp" title="Calculate suggested max HP from class, level, and CON">⚕ Suggest HP</button>
-                        <button id="shortRestBtn" class="btn-rest btn-rest--short" title="Short Rest: spend hit dice, warlocks recover spell slots">☽ Short Rest</button>
-                        <button id="longRestBtn"  class="btn-rest btn-rest--long"  title="Long Rest: restore HP, all spell slots, clear death saves">★ Long Rest</button>
+                    <div class="sheet-header-left">
+                        <button id="backButton">&larr; Roster</button>
+                    </div>
+                    <div class="sheet-header-center">
+                        <h2 id="editorTitle">Character Sheet</h2>
+                        <div class="sheet-rest-buttons">
+                            <button id="shortRestBtn" class="btn-rest btn-rest--short" title="Short Rest: spend hit dice, warlocks recover spell slots">☽ Short Rest</button>
+                            <div class="short-rest-pips-wrap">
+                                <div id="shortRestPips" class="short-rest-pips"></div>
+                            </div>
+                            <button id="longRestBtn" class="btn-rest btn-rest--long" title="Long Rest: restore HP, all spell slots, clear death saves">★ Long Rest</button>
+                        </div>
+                    </div>
+                    <div class="sheet-header-right">
+                        <button id="suggestHPBtn" class="btn-rest btn-rest--hp" title="Calculate suggested max HP from class, level, and CON">⚕ HP</button>
                     </div>
                 </div>
 
