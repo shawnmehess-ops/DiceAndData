@@ -158,9 +158,17 @@ export async function openCharacter(id) {
     state.spellSlots = (data.spellSlots && typeof data.spellSlots === "object")
         ? JSON.parse(JSON.stringify(data.spellSlots))
         : defaultSpellSlots();
-    state.classData = (data.classData && typeof data.classData === "object")
+    const rawClassData = (data.classData && typeof data.classData === "object")
         ? JSON.parse(JSON.stringify(data.classData))
         : defaultClassData();
+    // Migrate old "classId:subclassId" appliedStatKey format to "classId||subclassId"
+    if (rawClassData.appliedStatKey && rawClassData.appliedStatKey.includes(":") && !rawClassData.appliedStatKey.includes("||")) {
+        const colonIdx = rawClassData.appliedStatKey.indexOf(":");
+        rawClassData.appliedStatKey = rawClassData.appliedStatKey.slice(0, colonIdx) + "||" + rawClassData.appliedStatKey.slice(colonIdx + 1);
+    }
+    // Ensure baseStats exists (may be missing on older saves)
+    if (!rawClassData.baseStats) rawClassData.baseStats = {};
+    state.classData = rawClassData;
 
     const nameField = state.blocks.flatMap(b => b.fields).find(f => f.id === "f_name");
     const titleEl = document.getElementById("editorTitle");
