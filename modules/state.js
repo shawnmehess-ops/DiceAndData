@@ -26,7 +26,7 @@ export const state = {
     items:       [],
     spells:      [],   // [{ id, sourceSpellId, name, level, prepared, learnedAt }]
     spellSlots:  {},   // { 1: { max: 0, used: 0 }, ... 9: { max: 0, used: 0 } }
-    classData:   null, // { classId, subclassId, languages, feats }
+    classData:   null, // { classId, subclassId, languages, chosenSkills, appliedStatKey, baseStats }
 };
 
 export function defaultSpellSlots() {
