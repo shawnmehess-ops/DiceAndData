@@ -149,8 +149,29 @@ export function renderTextField(field, onChange) {
         field.value = input.value;
         // Spellcasting ability drives dynamic computed fields — refresh them live.
         if (field.id === "f_spell_ability") refreshComputedDisplays();
+        // Character name updates the editor title live and the roster card on blur.
+        if (field.id === "f_name") {
+            const titleEl = document.getElementById("editorTitle");
+            if (titleEl) titleEl.textContent = input.value.trim() || "Character Sheet";
+        }
         onChange();
     };
+
+    // On blur, sync the roster card name + crest initial (user has finished typing).
+    if (field.id === "f_name") {
+        input.addEventListener("blur", () => {
+            const { state } = window.__grimoire__ ?? {};
+            const charId = state?.currentCharId;
+            if (!charId) return;
+            const card = document.querySelector(`.char-card[data-char-id="${charId}"]`);
+            if (!card) return;
+            const trimmed = input.value.trim() || "Unnamed";
+            const nameEl  = card.querySelector(".char-card-name");
+            const crest   = card.querySelector(".char-card-crest");
+            if (nameEl) nameEl.textContent = trimmed;
+            if (crest)  crest.textContent  = trimmed[0].toUpperCase();
+        });
+    }
 
     wrap.appendChild(input);
     return wrap;
