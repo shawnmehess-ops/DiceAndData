@@ -68,7 +68,7 @@ export const CLASSES = {
         extraLanguages:0, spellcasting:null,
         statBonus:{ str:1, con:1 },
         fixedSkills:[],
-        skillChoices:{ count:2, pool:["acrobatics","animal_handling","athletics","history","insight","intimidation","perception","survival"] },
+        skillChoices:{ count:2, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             champion:{ name:"Champion",
                 description:"Dedicated to raw physical excellence, the Champion improves critical hits and athletic abilities.",
@@ -114,7 +114,7 @@ export const CLASSES = {
         extraLanguages:2, spellcasting:"int",
         statBonus:{ int:2 },
         fixedSkills:[],
-        skillChoices:{ count:2, pool:["arcana","history","insight","investigation","medicine","religion"] },
+        skillChoices:{ count:2, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             evocation:{ name:"School of Evocation",
                 description:"Shapes destructive magical energy, protecting allies caught in blasts.",
@@ -169,7 +169,7 @@ export const CLASSES = {
         extraLanguages:1, spellcasting:null,
         statBonus:{ dex:2 },
         fixedSkills:["stealth"],
-        skillChoices:{ count:3, pool:["acrobatics","athletics","deception","insight","intimidation","investigation","perception","performance","persuasion","sleight_of_hand","stealth"] },
+        skillChoices:{ count:3, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             thief:{ name:"Thief",
                 description:"Hones skills of stealth and thievery into a fine art.",
@@ -216,7 +216,7 @@ export const CLASSES = {
         extraLanguages:1, spellcasting:"wis",
         statBonus:{ wis:2 },
         fixedSkills:["religion"],
-        skillChoices:{ count:1, pool:["history","insight","medicine","persuasion","religion"] },
+        skillChoices:{ count:1, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             life:{ name:"Life Domain",
                 description:"Channels divine energy to heal and protect.",
@@ -271,7 +271,7 @@ export const CLASSES = {
         extraLanguages:1, spellcasting:"wis",
         statBonus:{ dex:1, wis:1 },
         fixedSkills:["survival","perception"],
-        skillChoices:{ count:1, pool:["animal_handling","athletics","insight","investigation","nature","perception","stealth","survival"] },
+        skillChoices:{ count:1, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             hunter:{ name:"Hunter",
                 description:"Learns techniques to hunt the most dangerous prey.",
@@ -309,7 +309,7 @@ export const CLASSES = {
         extraLanguages:3, spellcasting:"cha",
         statBonus:{ cha:2 },
         fixedSkills:["performance"],
-        skillChoices:{ count:2, pool:["acrobatics","animal_handling","arcana","athletics","deception","history","insight","intimidation","investigation","medicine","nature","perception","performance","persuasion","religion","sleight_of_hand","stealth","survival"] },
+        skillChoices:{ count:2, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             lore:{ name:"College of Lore",
                 description:"Plumbs the depths of magical knowledge, cutting down foes with razor wit.",
@@ -347,7 +347,7 @@ export const CLASSES = {
         extraLanguages:0, spellcasting:"cha",
         statBonus:{ str:1, cha:1 },
         fixedSkills:["religion"],
-        skillChoices:{ count:1, pool:["athletics","insight","intimidation","medicine","persuasion","religion"] },
+        skillChoices:{ count:1, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             devotion:{ name:"Oath of Devotion",
                 description:"Upholds the highest ideals of justice and order.",
@@ -394,7 +394,7 @@ export const CLASSES = {
         extraLanguages:1, spellcasting:"wis",
         statBonus:{ wis:2 },
         fixedSkills:["nature"],
-        skillChoices:{ count:1, pool:["arcana","animal_handling","insight","medicine","nature","perception","religion","survival"] },
+        skillChoices:{ count:1, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             land:{ name:"Circle of the Land",
                 description:"Draws power from a specific natural environment.",
@@ -430,7 +430,7 @@ export const CLASSES = {
         extraLanguages:0, spellcasting:"cha",
         statBonus:{ cha:2 },
         fixedSkills:[],
-        skillChoices:{ count:2, pool:["arcana","deception","insight","intimidation","persuasion","religion"] },
+        skillChoices:{ count:2, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             draconic:{ name:"Draconic Bloodline",
                 description:"Power surges from a dragon ancestor, granting resilience and elemental affinity.",
@@ -466,7 +466,7 @@ export const CLASSES = {
         extraLanguages:1, spellcasting:"cha",
         statBonus:{ cha:2 },
         fixedSkills:[],
-        skillChoices:{ count:2, pool:["arcana","deception","history","intimidation","investigation","nature","religion"] },
+        skillChoices:{ count:2, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             fiend:{ name:"The Fiend",
                 description:"Pact forged with a powerful devil or demon, granting dark powers.",
@@ -512,7 +512,7 @@ export const CLASSES = {
         extraLanguages:0, spellcasting:null,
         statBonus:{ dex:1, wis:1 },
         fixedSkills:[],
-        skillChoices:{ count:2, pool:["acrobatics","athletics","history","insight","religion","stealth"] },
+        skillChoices:{ count:2, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             open_hand:{ name:"Way of the Open Hand",
                 description:"Masters the art of unarmed combat with stunning technique.",
@@ -558,7 +558,7 @@ export const CLASSES = {
         extraLanguages:0, spellcasting:null,
         statBonus:{ str:2 },
         fixedSkills:[],
-        skillChoices:{ count:2, pool:["animal_handling","athletics","intimidation","nature","perception","survival"] },
+        skillChoices:{ count:2, pool:["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"] },
         subclasses:{
             berserker:{ name:"Path of the Berserker",
                 description:"Channels rage into a murderous frenzy.",
