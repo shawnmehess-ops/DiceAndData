@@ -157,20 +157,10 @@ export function renderTextField(field, onChange) {
         onChange();
     };
 
-    // On blur, sync the roster card name + crest initial (user has finished typing).
-    if (field.id === "f_name") {
-        input.addEventListener("blur", () => {
-            const { state } = window.__grimoire__ ?? {};
-            const charId = state?.currentCharId;
-            if (!charId) return;
-            const card = document.querySelector(`.char-card[data-char-id="${charId}"]`);
-            if (!card) return;
-            const trimmed = input.value.trim() || "Unnamed";
-            const nameEl  = card.querySelector(".char-card-name");
-            const crest   = card.querySelector(".char-card-crest");
-            if (nameEl) nameEl.textContent = trimmed;
-            if (crest)  crest.textContent  = trimmed[0].toUpperCase();
-        });
+    // On blur, sync the roster card for any of the four visible card fields.
+    const ROSTER_FIELDS = new Set(["f_name", "f_race", "f_class", "f_level"]);
+    if (ROSTER_FIELDS.has(field.id)) {
+        input.addEventListener("blur", () => _syncRosterCard());
     }
 
     wrap.appendChild(input);
@@ -183,6 +173,36 @@ const ABILITY_IDS = new Set(["f_str","f_dex","f_con","f_int","f_wis","f_cha"]);
 function calcMod(score) {
     const n = Math.floor((score - 10) / 2);
     return n >= 0 ? `+${n}` : String(n);
+}
+
+// ---- Roster card sync -------------------------------------
+// Reads live values from state and updates the matching roster
+// card without a full list reload. Called on blur from any of
+// the four fields that appear on the card.
+function _syncRosterCard() {
+    const { state } = window.__grimoire__ ?? {};
+    const charId = state?.currentCharId;
+    if (!charId) return;
+    const card = document.querySelector(`.char-card[data-char-id="${charId}"]`);
+    if (!card) return;
+
+    // Read current values straight from state.blocks
+    const allFields = (state.blocks ?? []).flatMap(b => b.fields ?? []);
+    const get = id => allFields.find(f => f.id === id)?.value ?? "";
+
+    const name  = String(get("f_name")).trim()  || "Unnamed";
+    const race  = String(get("f_race")).trim()  || "";
+    const cls   = String(get("f_class")).trim() || "";
+    const level = get("f_level") || 1;
+    const meta  = [race, cls].filter(Boolean).join(" – ");
+
+    const crest  = card.querySelector(".char-card-crest");
+    const nameEl = card.querySelector(".char-card-name");
+    const metaEl = card.querySelector(".char-card-meta");
+
+    if (crest)  crest.textContent  = name[0].toUpperCase();
+    if (nameEl) nameEl.textContent = name;
+    if (metaEl) metaEl.textContent = `Level ${level}${meta ? " – " + meta : ""}`;
 }
 
 // -- FlatStat --
@@ -220,6 +240,11 @@ export function renderFlatStat(field, onChange) {
         updateMod(field.value);
         onChange();
     };
+
+    // Level changes should sync the roster card on blur
+    if (field.id === "f_level") {
+        input.addEventListener("blur", () => _syncRosterCard());
+    }
 
     wrap.appendChild(input);
     if (modSpan) wrap.appendChild(modSpan);
