@@ -610,6 +610,10 @@ export function defaultClassData() {
         languages:      ["Common"],
         chosenSkills:   [],
         appliedStatKey: null,
+        // baseStats captures the raw field values at the moment a class is first
+        // applied, so we can restore them exactly when the class is removed or
+        // changed — no drift from manual edits made after class selection.
+        baseStats:      {},
     };
 }
 
@@ -626,60 +630,98 @@ const STAT_TO_FIELD = {
     int:"f_int", wis:"f_wis", cha:"f_cha",
 };
 
-export function applyStatBonuses(cd, oldCd) {
-    // Remove old bonuses
-    if (oldCd?.appliedStatKey) {
-        const parts = oldCd.appliedStatKey.split(":");
-        const oldClassId    = parts[0];
-        const oldSubclassId = parts[1] === "null" ? null : parts[1];
-        const oldCls = CLASSES[oldClassId];
-        if (oldCls) {
-            _addStats(oldCls.statBonus ?? {}, -1);
-            if (oldSubclassId) {
-                _addStats(oldCls.subclasses[oldSubclassId]?.statBonus ?? {}, -1);
-            }
-        }
+// Collect all stats that will be modified by a class+subclass combo
+function _affectedStats(classId, subclassId) {
+    const cls = CLASSES[classId];
+    if (!cls) return {};
+    const combined = { ...cls.statBonus };
+    if (subclassId) {
+        Object.entries(cls.subclasses[subclassId]?.statBonus ?? {}).forEach(([k,v]) => {
+            combined[k] = (combined[k] ?? 0) + v;
+        });
     }
-    // Apply new bonuses
-    const cls = cd.classId ? CLASSES[cd.classId] : null;
-    if (!cls) { cd.appliedStatKey = null; return; }
-    _addStats(cls.statBonus ?? {}, +1);
-    if (cd.subclassId) {
-        _addStats(cls.subclasses[cd.subclassId]?.statBonus ?? {}, +1);
-    }
-    cd.appliedStatKey = `${cd.classId}:${cd.subclassId}`;
+    return combined;
 }
 
-function _addStats(bonusObj, sign) {
-    Object.entries(bonusObj).forEach(([stat, val]) => {
+export function applyStatBonuses(cd, oldCd) {
+    // ── Step 1: Restore base stats from the OLD class ──────
+    // We stored the exact pre-bonus values in oldCd.baseStats, so we
+    // restore them directly — no arithmetic drift from manual edits.
+    if (oldCd?.appliedStatKey && oldCd.baseStats) {
+        Object.entries(oldCd.baseStats).forEach(([stat, baseVal]) => {
+            const field = getFieldById(STAT_TO_FIELD[stat]);
+            if (field) field.value = baseVal;
+        });
+    }
+
+    // ── Step 2: Snapshot current values as the new base ────
+    // Do this AFTER restoring the old base, so the snapshot reflects the
+    // player's manually-chosen stats, not any leftover bonus values.
+    const cls = cd.classId ? CLASSES[cd.classId] : null;
+    if (!cls) {
+        cd.appliedStatKey = null;
+        cd.baseStats      = {};
+        return;
+    }
+
+    const affected = _affectedStats(cd.classId, cd.subclassId);
+    cd.baseStats = {};
+    Object.keys(affected).forEach(stat => {
         const field = getFieldById(STAT_TO_FIELD[stat]);
-        if (field) field.value = Math.max(1, (field.value ?? 10) + sign * val);
+        if (field) cd.baseStats[stat] = field.value ?? 10;
+    });
+
+    // ── Step 3: Apply the new bonuses on top of the snapshot ─
+    Object.entries(affected).forEach(([stat, bonus]) => {
+        const field = getFieldById(STAT_TO_FIELD[stat]);
+        if (field) field.value = Math.max(1, (cd.baseStats[stat] ?? 10) + bonus);
+    });
+
+    cd.appliedStatKey = `${cd.classId}||${cd.subclassId}`;
+}
+
+// ============================================================
+// SAVING THROW + SKILL APPLICATION
+// ============================================================
+const SAVE_FIELD = {
+    str:"f_save_str", dex:"f_save_dex", con:"f_save_con",
+    int:"f_save_int", wis:"f_save_wis", cha:"f_save_cha",
+};
+
+// Apply (or remove) saving throw proficiencies from class definition
+function _applySavingThrows(classId, profValue) {
+    const cls = CLASSES[classId];
+    if (!cls) return;
+    (cls.savingThrows ?? []).forEach(save => {
+        const f = getFieldById(SAVE_FIELD[save]);
+        if (f) f.proficient = profValue;
     });
 }
 
-// ============================================================
-// SKILL APPLICATION
-// ============================================================
 export function applySkillProficiencies(cd, oldCd) {
-    // Clear skills set by old class
+    // ── Clear old class skills + saving throws ──────────────
     if (oldCd?.classId) {
         const oldCls = CLASSES[oldCd.classId];
         if (oldCls) {
+            // Skills
             const oldFixed  = oldCls.fixedSkills ?? [];
             const oldChosen = oldCd.chosenSkills ?? [];
             [...oldFixed, ...oldChosen].forEach(sk => {
                 const f = getFieldById(SKILL_FIELD[sk]);
                 if (f && f.proficient === 1) f.proficient = 0;
             });
+            // Saving throws
+            _applySavingThrows(oldCd.classId, 0);
         }
     }
-    // Apply new class skills
+    // ── Apply new class skills + saving throws ──────────────
     const cls = cd.classId ? CLASSES[cd.classId] : null;
     if (!cls) return;
     [...new Set([...(cls.fixedSkills ?? []), ...(cd.chosenSkills ?? [])])].forEach(sk => {
         const f = getFieldById(SKILL_FIELD[sk]);
         if (f) f.proficient = 1;
     });
+    _applySavingThrows(cd.classId, 1);
 }
 
 // ============================================================
