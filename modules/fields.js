@@ -292,15 +292,28 @@ export function renderField(field, onChange) {
 }
 
 // ---- Refresh all computed values in the DOM ---------------
-// Called after any flat stat changes. Instead of re-rendering
-// entire blocks, just updates the displayed value spans.
+// Called after any flat stat or proficiency change.
+// Updates both the displayed value span AND the proficiency radio
+// buttons, so changes made programmatically (e.g. from the Class tab)
+// are immediately reflected on the character sheet without a full re-render.
 export function refreshComputedDisplays() {
     document.querySelectorAll(".field-computed").forEach(el => {
         const id = el.dataset.fieldId;
         if (!id) return;
         const field = getFieldById(id);
         if (!field) return;
+
+        // Update displayed value
         const span = el.querySelector(".field-computed-value");
         if (span) span.textContent = formatValue(field);
+
+        // Sync proficiency radio buttons to match field.proficient in state.
+        // This is what makes Class tab skill choices reflect on the sheet.
+        if (field.formula === "add_prof_if_checked") {
+            const currentProf = field.proficient ?? 0;
+            el.querySelectorAll(`input[name="prof_${field.id}"]`).forEach(r => {
+                r.checked = parseInt(r.value) === currentProf;
+            });
+        }
     });
 }
