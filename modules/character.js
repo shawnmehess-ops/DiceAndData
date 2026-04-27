@@ -2,7 +2,7 @@
 // CHARACTER.JS - Firestore CRUD, character load/save
 // ============================================================
 import {
-    doc, setDoc, getDocs, addDoc, collection, deleteDoc
+    doc, setDoc, getDoc, getDocs, addDoc, collection, deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import { auth, db }              from "./firebase.js";
@@ -94,11 +94,11 @@ export async function loadCharacters() {
         const crest = document.createElement("div");
         crest.className = "char-card-crest";
         crest.textContent = (name.trim()[0] || "?").toUpperCase();
-        crest.onclick = () => openCharacter(id, data);
+        crest.onclick = () => openCharacter(id);
 
         const info = document.createElement("div");
         info.className = "char-card-info";
-        info.onclick = () => openCharacter(id, data);
+        info.onclick = () => openCharacter(id);
         const meta = [race, cls].filter(Boolean).join(" - ");
         info.innerHTML = `
             <div class="char-card-name">${name}</div>
@@ -126,42 +126,48 @@ export async function loadCharacters() {
 }
 
 // ---- OPEN --------------------------------------------------
-export function openCharacter(id, data) {
+// Always fetches fresh data from Firestore so re-opening a character
+// mid-session always shows the latest saved state.
+export async function openCharacter(id) {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    // Show the editor immediately with a loading state
     state.currentCharId = id;
+    characterListView.style.display = "none";
+    editor.style.display = "block";
+
+    let data = {};
+    try {
+        const snap = await getDoc(doc(db, "users", user.uid, "characters", id));
+        if (snap.exists()) data = snap.data();
+    } catch (e) {
+        console.error("Failed to fetch character:", e);
+    }
+
     state.blocks = data.blocks && data.blocks.length
         ? JSON.parse(JSON.stringify(data.blocks))
         : cloneSchema();
     state.items = Array.isArray(data.items)
         ? JSON.parse(JSON.stringify(data.items))
         : cloneDefaultItems();
-
     state.spells = Array.isArray(data.spells)
         ? JSON.parse(JSON.stringify(data.spells))
         : [];
-
     state.spellSlots = (data.spellSlots && typeof data.spellSlots === "object")
         ? JSON.parse(JSON.stringify(data.spellSlots))
         : defaultSpellSlots();
-
     state.classData = (data.classData && typeof data.classData === "object")
         ? JSON.parse(JSON.stringify(data.classData))
         : defaultClassData();
-
-    characterListView.style.display = "none";
-    editor.style.display = "block";
 
     const nameField = state.blocks.flatMap(b => b.fields).find(f => f.id === "f_name");
     const titleEl = document.getElementById("editorTitle");
     if (titleEl) titleEl.textContent = nameField?.value || "Character Sheet";
 
-    // Re-apply class stats and skills so the sheet reflects saved classData
-    // (state.classData.appliedStatKey tracks what's already baked in —
-    //  pass null as oldCd so nothing is subtracted, values are already stored)
     renderSheet();
     renderInventory();
     renderClassPanel();
     renderFeatsOnSheet();
-    // Load the spell DB cache before rendering the spellbook so known spells
-    // are always matched correctly, even on a hard refresh.
     loadSpells().then(() => renderSpellbook()).catch(() => renderSpellbook());
 }
