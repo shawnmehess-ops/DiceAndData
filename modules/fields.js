@@ -107,6 +107,11 @@ export function evalFormula(field) {
         case "spell_save_dc_dynamic":
             return 8 + spellcastingMod() + profBonus();
 
+        // HP suggestion: hit die average × (level-1) + hit die + CON mod × level
+        // Sources: [0]=hit die size (e.g. 10 for d10), not used directly — handled externally
+        case "hp_auto":
+            return 0; // placeholder — HP suggestion is handled by suggestHP() in sheet.js
+
         default:
             return 0;
     }
