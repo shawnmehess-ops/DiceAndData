@@ -140,7 +140,11 @@
                 <div class="sheet-header-bar">
                     <button id="backButton">&larr; Roster</button>
                     <h2 id="editorTitle">Character Sheet</h2>
-                    <div style="width:80px;"></div>
+                    <div class="sheet-rest-buttons">
+                        <button id="suggestHPBtn" class="btn-rest btn-rest--hp" title="Calculate suggested max HP from class, level, and CON">⚕ Suggest HP</button>
+                        <button id="shortRestBtn" class="btn-rest btn-rest--short" title="Short Rest: spend hit dice, warlocks recover spell slots">☽ Short Rest</button>
+                        <button id="longRestBtn"  class="btn-rest btn-rest--long"  title="Long Rest: restore HP, all spell slots, clear death saves">★ Long Rest</button>
+                    </div>
                 </div>
 
                 <!-- Sheet tabs -->
@@ -212,6 +216,22 @@
 
                 <!-- TAB: Class & Features -->
                 <div class="sheet-inner sheet-tab-panel" id="tabPanel-class" style="display:none;">
+                    <div class="sheet-section">
+                        <div class="inventory-section-header">
+                            <h3>Race</h3>
+                        </div>
+                        <div id="racePanelContent"></div>
+                    </div>
+
+                    <div class="section-divider" aria-hidden="true"></div>
+                    <div class="sheet-section">
+                        <div class="inventory-section-header">
+                            <h3>Background</h3>
+                        </div>
+                        <div id="backgroundPanelContent"></div>
+                    </div>
+
+                    <div class="section-divider" aria-hidden="true"></div>
                     <div class="sheet-section">
                         <div class="inventory-section-header">
                             <h3>Class &amp; Features</h3>
