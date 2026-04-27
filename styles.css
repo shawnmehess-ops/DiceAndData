@@ -3147,26 +3147,22 @@ body.night .class-skill-badge--chosen {
 }
 
 /* Short rest pip indicator */
-.short-rest-pips-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
 .short-rest-pips {
     display: flex;
-    gap: 5px;
+    gap: 4px;
     align-items: center;
+    justify-content: center;
+    margin-top: 4px;
 }
 
 .rest-pip {
-    width: 9px;
-    height: 9px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: rgba(96, 144, 200, 0.7);
+    background: rgba(96, 144, 200, 0.75);
     border: 1px solid rgba(96, 144, 200, 0.9);
     transition: background 0.2s, border-color 0.2s;
+    pointer-events: none;
 }
 
 .rest-pip--used {
@@ -3208,10 +3204,19 @@ body.night .class-skill-badge--chosen {
     background: rgba(50, 90, 160, 0.12);
     border-color: rgba(50, 90, 160, 0.35);
     color: #6090c8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    line-height: 1;
+    padding-bottom: 6px;
 }
 .btn-rest--short:hover {
     background: rgba(50, 90, 160, 0.22);
     border-color: #6090c8;
+}
+.btn-rest-label {
+    display: block;
 }
 
 .btn-rest--long {
