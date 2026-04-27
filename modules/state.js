@@ -35,6 +35,11 @@ export function defaultSpellSlots() {
     return slots;
 }
 
+// Expose state globally so fields.js can read currentCharId
+// without creating a circular import dependency.
+window.__grimoire__ = window.__grimoire__ ?? {};
+window.__grimoire__.state = state;
+
 export function resetState() {
     state.currentCharId = null;
     state.blocks     = cloneSchema();
