@@ -21,12 +21,14 @@ export const DEFAULT_ITEMS = [
 ];
 
 export const state = {
-    currentCharId: null,
-    blocks:      [],
-    items:       [],
-    spells:      [],   // [{ id, sourceSpellId, name, level, prepared, learnedAt }]
-    spellSlots:  {},   // { 1: { max: 0, used: 0 }, ... 9: { max: 0, used: 0 } }
-    classData:   null, // { classId, subclassId, languages, chosenSkills, appliedStatKey, baseStats }
+    currentCharId:  null,
+    blocks:         [],
+    items:          [],
+    spells:         [],
+    spellSlots:     {},
+    classData:      null,
+    raceData:       null,
+    backgroundData: null,
 };
 
 export function defaultSpellSlots() {
@@ -41,12 +43,14 @@ window.__grimoire__ = window.__grimoire__ ?? {};
 window.__grimoire__.state = state;
 
 export function resetState() {
-    state.currentCharId = null;
-    state.blocks     = cloneSchema();
-    state.items      = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
-    state.spells     = [];
-    state.spellSlots = defaultSpellSlots();
-    state.classData  = null;
+    state.currentCharId  = null;
+    state.blocks         = cloneSchema();
+    state.items          = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+    state.spells         = [];
+    state.spellSlots     = defaultSpellSlots();
+    state.classData      = null;
+    state.raceData       = null;
+    state.backgroundData = null;
 }
 
 export function getFieldById(id) {
