@@ -90,6 +90,7 @@ export async function loadCharacters() {
 
         const card = document.createElement("div");
         card.className = "char-card";
+        card.dataset.charId = id;
 
         const crest = document.createElement("div");
         crest.className = "char-card-crest";
