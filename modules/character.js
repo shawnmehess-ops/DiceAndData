@@ -21,6 +21,13 @@ import { defaultClassData,
          renderFeatsOnSheet,
          applyStatBonuses,
          applySkillProficiencies }  from "./classes.js";
+import { defaultRaceData,
+         renderRacePanel,
+         applyRaceStatBonuses,
+         applyRaceSkillProficiencies } from "./races.js";
+import { defaultBackgroundData,
+         renderBackgroundPanel,
+         applyBackgroundSkills }    from "./backgrounds.js";
 import { defaultSpellSlots }     from "./state.js";
 
 let debouncedSave = () => {};
@@ -36,11 +43,13 @@ export async function saveCharacter() {
     if (!user || !state.currentCharId) return;
 
     await setDoc(doc(db, "users", user.uid, "characters", state.currentCharId), {
-        blocks:      state.blocks,
-        items:       state.items,
-        spells:      state.spells,
-        spellSlots:  state.spellSlots,
-        classData:   state.classData ?? defaultClassData(),
+        blocks:         state.blocks,
+        items:          state.items,
+        spells:         state.spells,
+        spellSlots:     state.spellSlots,
+        classData:      state.classData      ?? defaultClassData(),
+        raceData:       state.raceData       ?? defaultRaceData(),
+        backgroundData: state.backgroundData ?? defaultBackgroundData(),
     }, { merge: true });
 }
 
@@ -166,9 +175,17 @@ export async function openCharacter(id) {
         const colonIdx = rawClassData.appliedStatKey.indexOf(":");
         rawClassData.appliedStatKey = rawClassData.appliedStatKey.slice(0, colonIdx) + "||" + rawClassData.appliedStatKey.slice(colonIdx + 1);
     }
-    // Ensure baseStats exists (may be missing on older saves)
     if (!rawClassData.baseStats) rawClassData.baseStats = {};
     state.classData = rawClassData;
+
+    state.raceData = (data.raceData && typeof data.raceData === "object")
+        ? JSON.parse(JSON.stringify(data.raceData))
+        : defaultRaceData();
+    if (!state.raceData.baseStats) state.raceData.baseStats = {};
+
+    state.backgroundData = (data.backgroundData && typeof data.backgroundData === "object")
+        ? JSON.parse(JSON.stringify(data.backgroundData))
+        : defaultBackgroundData();
 
     const nameField = state.blocks.flatMap(b => b.fields).find(f => f.id === "f_name");
     const titleEl = document.getElementById("editorTitle");
@@ -177,6 +194,8 @@ export async function openCharacter(id) {
     renderSheet();
     renderInventory();
     renderClassPanel();
+    renderRacePanel();
+    renderBackgroundPanel();
     renderFeatsOnSheet();
     loadSpells().then(() => renderSpellbook()).catch(() => renderSpellbook());
 }
