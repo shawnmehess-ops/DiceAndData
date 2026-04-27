@@ -23,6 +23,10 @@ import { setDebouncedSave as spellsSDS } from "./spells.js";
 import { setDebouncedSave as sbSDS }     from "./spellbook.js";
 import { setDebouncedSave as classSDS,
          renderClassPanel }              from "./classes.js";
+import { setDebouncedSave as raceSDS }  from "./races.js";
+import { setDebouncedSave as bgSDS }    from "./backgrounds.js";
+import { setDebouncedSave as restSDS,
+         initRests }                     from "./rests.js";
 
 import { initShop }        from "./shop.js";
 import { initAdmin }       from "./admin.js";
@@ -37,6 +41,8 @@ shopSDS(debouncedSave);
 spellsSDS(debouncedSave);
 sbSDS(debouncedSave);
 classSDS(debouncedSave);
+raceSDS(debouncedSave);
+bgSDS(debouncedSave);
 
 setAfterRender(() => {
     if (shouldAutoRunTests()) runAllTests();
@@ -50,6 +56,8 @@ initAuth();
 initShop();
 initAdmin();
 initSpellModal();
+initRests();
+restSDS(debouncedSave);
 
 // ---- Navigation --------------------------------------------
 backButton.onclick = () => {
