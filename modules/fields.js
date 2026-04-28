@@ -327,6 +327,20 @@ export function renderCheckboxGroup(field, onChange) {
     return wrap;
 }
 
+// -- ReadonlyField --
+// Displays a value set programmatically (race, class, background, spell info).
+// Not editable by the player — styled to match computed fields.
+export function renderReadonlyField(field) {
+    const wrap = document.createElement("div");
+    wrap.className = "field field-readonly";
+
+    wrap.innerHTML = `
+        <label class="field-label">${field.label}</label>
+        <span class="field-readonly-value">${field.value || "—"}</span>
+    `;
+    return wrap;
+}
+
 // ---- DISPATCHER -------------------------------------------
 export function renderField(field, onChange) {
     switch (field.type) {
@@ -334,6 +348,7 @@ export function renderField(field, onChange) {
         case "flat":     return renderFlatStat(field, onChange);
         case "computed": return renderComputedStat(field, onChange);
         case "checks":   return renderCheckboxGroup(field, onChange);
+        case "readonly": return renderReadonlyField(field);
         default: {
             const div = document.createElement("div");
             div.textContent = `Unknown field type: ${field.type}`;

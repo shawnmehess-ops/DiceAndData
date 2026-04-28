@@ -33,6 +33,50 @@ import { defaultSpellSlots }     from "./state.js";
 let debouncedSave = () => {};
 export function setDebouncedSave(fn) { debouncedSave = fn; }
 
+// ---- Sync readonly display fields --------------------------
+// Writes race, class, background, and spellcasting info from their
+// respective state objects into the readonly schema fields so they
+// display correctly on the sheet and are saved as part of blocks.
+export function syncDisplayFields() {
+    const setField = (id, value) => {
+        const allFields = state.blocks.flatMap(b => b.fields ?? []);
+        const f = allFields.find(f => f.id === id);
+        if (f) {
+            f.value = value;
+            // Update DOM if already rendered
+            const el = document.querySelector(`[data-field-id="${id}"] .field-readonly-value`);
+            if (el) el.textContent = value || "—";
+        }
+    };
+
+    // Race
+    const rd   = state.raceData;
+    const race = rd?.raceId ? (window.__grimoireRaces__?.[rd.raceId]) : null;
+    const sub  = (race && rd.subraceId) ? race.subraces?.[rd.subraceId] : null;
+    const raceName = sub ? `${race.name} (${sub.name})` : (race?.name ?? "");
+    setField("f_race", raceName);
+
+    // Class
+    const cd   = state.classData;
+    const cls  = cd?.classId ? (window.__grimoireClasses__?.[cd.classId]) : null;
+    const subCls = (cls && cd.subclassId) ? cls.subclasses?.[cd.subclassId] : null;
+    const className = subCls ? `${cls.name} (${subCls.name})` : (cls?.name ?? "");
+    setField("f_class", className);
+
+    // Background
+    const bd  = state.backgroundData;
+    const bg  = bd?.backgroundId ? (window.__grimoireBackgrounds__?.[bd.backgroundId]) : null;
+    setField("f_background", bg?.name ?? "");
+
+    // Spellcasting — derive from class definition
+    const spellAbility = cls?.spellcasting?.toUpperCase() ?? (subCls?.spellcasting?.toUpperCase() ?? "");
+    setField("f_spell_class",   cls?.name ?? "");
+    setField("f_spell_ability", spellAbility);
+
+    // Also sync the roster card meta line
+    window.__grimoire__?.syncRosterCard?.();
+}
+
 function cloneDefaultItems() {
     return JSON.parse(JSON.stringify(DEFAULT_ITEMS));
 }
@@ -196,6 +240,11 @@ export async function openCharacter(id) {
     const titleEl = document.getElementById("editorTitle");
     if (titleEl) titleEl.textContent = nameField?.value || "Character Sheet";
 
+    // Expose syncDisplayFields so other modules can call it without circular imports
+    window.__grimoire__ = window.__grimoire__ ?? {};
+    window.__grimoire__.syncDisplayFields = syncDisplayFields;
+
+    syncDisplayFields();
     renderSheet();
     renderInventory();
     renderClassPanel();

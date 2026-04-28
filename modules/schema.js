@@ -10,6 +10,11 @@
 const text     = (id, label, placeholder = "") =>
     ({ id, label, type: "text",     value: "",  placeholder });
 
+// Read-only display field — value is written programmatically, not by the player.
+// Shows as a styled label rather than an input.
+const readonly = (id, label) =>
+    ({ id, label, type: "readonly", value: "" });
+
 const flat     = (id, label, value = 0) =>
     ({ id, label, type: "flat",     value });
 
@@ -30,10 +35,10 @@ export const DEFAULT_SCHEMA = [
         label: "Basic Info",
         fields: [
             text("f_name",       "Name",            "Character name"),
-            text("f_race",       "Race",             "Human"),
-            text("f_class",      "Class",            "Fighter"),
+            readonly("f_race",       "Race"),
+            readonly("f_class",      "Class"),
             flat("f_level",      "Level",            1),
-            text("f_background", "Background",       "Soldier"),
+            readonly("f_background", "Background"),
             text("f_alignment",  "Alignment",        "Neutral Good"),
             text("f_deity",      "Deity",            ""),
         ]
@@ -153,8 +158,8 @@ export const DEFAULT_SCHEMA = [
         id: "block_spellcasting",
         label: "Spellcasting",
         fields: [
-            text("f_spell_class",   "Spellcasting Class",   "e.g. Wizard"),
-            text("f_spell_ability", "Spellcasting Ability", "e.g. INT, WIS, CHA"),
+            readonly("f_spell_class",   "Spellcasting Class"),
+            readonly("f_spell_ability", "Spellcasting Ability"),
             computed("f_spell_attack", "Spell Attack Bonus", "spell_attack_dynamic",  []),
             computed("f_spell_dc",     "Spell Save DC",      "spell_save_dc_dynamic", []),
         ]

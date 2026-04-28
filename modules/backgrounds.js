@@ -130,6 +130,9 @@ export function getBackgroundData() {
     return state.backgroundData;
 }
 
+// Expose for syncDisplayFields in character.js
+window.__grimoireBackgrounds__ = BACKGROUNDS;
+
 // ============================================================
 // SKILL APPLICATION
 // ============================================================
@@ -197,6 +200,7 @@ export function renderBackgroundPanel() {
         applyBackgroundSkills(bd.backgroundId, oldId);
         refreshComputedDisplays();
         renderBackgroundPanel();
+        window.__grimoire__?.syncDisplayFields?.();
         debouncedSave();
     };
     row.append(lbl, sel);

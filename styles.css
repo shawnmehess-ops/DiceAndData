@@ -2989,6 +2989,35 @@ body.night .create-char-row input {
     font-style: italic;
 }
 
+/* ---- Read-only display fields ---- */
+.field-readonly {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field-readonly-value {
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    padding: 3px 0 2px;
+    border-bottom: 1px dashed var(--border-lt);
+    min-height: 1.4em;
+    line-height: 1.4;
+}
+
+/* Empty placeholder dash is muted */
+.field-readonly-value:empty::after,
+.field-readonly-value:contains("—") {
+    color: var(--ink-muted);
+}
+
+body.night .field-readonly-value {
+    color: var(--ink-soft);
+    border-bottom-color: var(--border);
+}
+
 /* ---- Night mode overrides for class panel ---- */
 body.night .class-select,
 body.night .class-lang-select {

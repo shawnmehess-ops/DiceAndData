@@ -249,6 +249,9 @@ export function getRaceData() {
     return state.raceData;
 }
 
+// Expose for syncDisplayFields in character.js
+window.__grimoireRaces__ = RACES;
+
 // ============================================================
 // STAT APPLICATION
 // ============================================================
@@ -394,6 +397,7 @@ export function renderRacePanel() {
         refreshComputedDisplays();
         renderSheet();
         renderRacePanel();
+        window.__grimoire__?.syncDisplayFields?.();
         debouncedSave();
     };
     raceRow.append(raceLabel, raceSel);
@@ -444,6 +448,7 @@ export function renderRacePanel() {
             refreshComputedDisplays();
             renderSheet();
             renderRacePanel();
+            window.__grimoire__?.syncDisplayFields?.();
             debouncedSave();
         };
         subRow.append(subLabel, subSel);
