@@ -6,6 +6,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 import { auth, db }              from "./firebase.js";
+import { registry }              from "./registry.js";
 import { state, DEFAULT_ITEMS }  from "./state.js";
 import { cloneSchema }           from "./schema.js";
 import {
@@ -51,21 +52,21 @@ export function syncDisplayFields() {
 
     // Race
     const rd   = state.raceData;
-    const race = rd?.raceId ? (window.__grimoireRaces__?.[rd.raceId]) : null;
+    const race = rd?.raceId ? (registry.get("RACES")?.[rd.raceId] ?? null) : null;
     const sub  = (race && rd.subraceId) ? race.subraces?.[rd.subraceId] : null;
     const raceName = sub ? `${race.name} (${sub.name})` : (race?.name ?? "");
     setField("f_race", raceName);
 
     // Class
     const cd   = state.classData;
-    const cls  = cd?.classId ? (window.__grimoireClasses__?.[cd.classId]) : null;
+    const cls  = cd?.classId ? (registry.get("CLASSES")?.[cd.classId] ?? null) : null;
     const subCls = (cls && cd.subclassId) ? cls.subclasses?.[cd.subclassId] : null;
     const className = subCls ? `${cls.name} (${subCls.name})` : (cls?.name ?? "");
     setField("f_class", className);
 
     // Background
     const bd  = state.backgroundData;
-    const bg  = bd?.backgroundId ? (window.__grimoireBackgrounds__?.[bd.backgroundId]) : null;
+    const bg  = bd?.backgroundId ? (registry.get("BACKGROUNDS")?.[bd.backgroundId] ?? null) : null;
     setField("f_background", bg?.name ?? "");
 
     // Spellcasting — derive from class definition
@@ -74,7 +75,7 @@ export function syncDisplayFields() {
     setField("f_spell_ability", spellAbility);
 
     // Also sync the roster card meta line
-    window.__grimoire__?.syncRosterCard?.();
+    registry.call("syncRosterCard");
 }
 
 function cloneDefaultItems() {
@@ -240,9 +241,7 @@ export async function openCharacter(id) {
     const titleEl = document.getElementById("editorTitle");
     if (titleEl) titleEl.textContent = nameField?.value || "Character Sheet";
 
-    // Expose syncDisplayFields so other modules can call it without circular imports
-    window.__grimoire__ = window.__grimoire__ ?? {};
-    window.__grimoire__.syncDisplayFields = syncDisplayFields;
+    registry.set("syncDisplayFields", syncDisplayFields);
 
     syncDisplayFields();
     renderSheet();
@@ -251,6 +250,6 @@ export async function openCharacter(id) {
     renderRacePanel();
     renderBackgroundPanel();
     renderFeatsOnSheet();
-    window.__grimoire__?.updateShortRestPips?.();
+    registry.call("updateShortRestPips");
     loadSpells().then(() => renderSpellbook()).catch(() => renderSpellbook());
 }

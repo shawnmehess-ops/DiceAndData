@@ -2,6 +2,7 @@
 // FIELDS.JS — Formula engine + per-field-type renderers
 // ============================================================
 import { state, getFieldById } from "./state.js";
+import { registry }             from "./registry.js";
 
 // ---- FORMULA ENGINE ----------------------------------------
 // Returns numeric value for any field (flat or computed).
@@ -172,6 +173,9 @@ export function renderTextField(field, onChange) {
     return wrap;
 }
 
+// Register _syncRosterCard so character.js can call it via registry
+registry.set("syncRosterCard", _syncRosterCard);
+
 // Ability score field IDs that should show a live modifier badge
 const ABILITY_IDS = new Set(["f_str","f_dex","f_con","f_int","f_wis","f_cha"]);
 
@@ -184,8 +188,10 @@ function calcMod(score) {
 // Reads live values from state and updates the matching roster
 // card without a full list reload. Called on blur from any of
 // the four fields that appear on the card.
+// Also registered in the registry so character.js can trigger it
+// from syncDisplayFields without a circular import.
 function _syncRosterCard() {
-    const { state } = window.__grimoire__ ?? {};
+    const state = registry.get("state");
     const charId = state?.currentCharId;
     if (!charId) return;
     const card = document.querySelector(`.char-card[data-char-id="${charId}"]`);

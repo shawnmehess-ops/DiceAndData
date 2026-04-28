@@ -15,6 +15,7 @@
 // ============================================================
 
 import { state, getFieldById } from "./state.js";
+import { registry }             from "./registry.js";
 import { renderSpellbook }     from "./spellbook.js";
 import { renderSheet }         from "./sheet.js";
 import { getClassData }        from "./classes.js";
@@ -198,7 +199,5 @@ export function initRests() {
     document.getElementById("suggestHPBtn")
         ?.addEventListener("click", suggestHP);
     _updateShortRestPips();
-    // Expose on window so character.js can call without a circular import
-    window.__grimoire__ = window.__grimoire__ ?? {};
-    window.__grimoire__.updateShortRestPips = _updateShortRestPips;
+    registry.set("updateShortRestPips", _updateShortRestPips);
 }

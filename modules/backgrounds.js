@@ -5,6 +5,7 @@
 // ============================================================
 
 import { state, getFieldById } from "./state.js";
+import { registry }             from "./registry.js";
 import { refreshComputedDisplays } from "./fields.js";
 import { ALL_LANGUAGES } from "./classes.js";
 
@@ -131,7 +132,7 @@ export function getBackgroundData() {
 }
 
 // Expose for syncDisplayFields in character.js
-window.__grimoireBackgrounds__ = BACKGROUNDS;
+registry.set("BACKGROUNDS", BACKGROUNDS);
 
 // ============================================================
 // SKILL APPLICATION
@@ -200,7 +201,7 @@ export function renderBackgroundPanel() {
         applyBackgroundSkills(bd.backgroundId, oldId);
         refreshComputedDisplays();
         renderBackgroundPanel();
-        window.__grimoire__?.syncDisplayFields?.();
+        registry.call("syncDisplayFields");
         debouncedSave();
     };
     row.append(lbl, sel);

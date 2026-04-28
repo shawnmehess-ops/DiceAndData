@@ -5,6 +5,7 @@
 // ============================================================
 
 import { state, getFieldById } from "./state.js";
+import { registry }             from "./registry.js";
 import { refreshComputedDisplays } from "./fields.js";
 import { renderSheet } from "./sheet.js";
 import { ALL_LANGUAGES } from "./classes.js";
@@ -250,7 +251,7 @@ export function getRaceData() {
 }
 
 // Expose for syncDisplayFields in character.js
-window.__grimoireRaces__ = RACES;
+registry.set("RACES", RACES);
 
 // ============================================================
 // STAT APPLICATION
@@ -397,7 +398,7 @@ export function renderRacePanel() {
         refreshComputedDisplays();
         renderSheet();
         renderRacePanel();
-        window.__grimoire__?.syncDisplayFields?.();
+        registry.call("syncDisplayFields");
         debouncedSave();
     };
     raceRow.append(raceLabel, raceSel);
@@ -448,7 +449,7 @@ export function renderRacePanel() {
             refreshComputedDisplays();
             renderSheet();
             renderRacePanel();
-            window.__grimoire__?.syncDisplayFields?.();
+            registry.call("syncDisplayFields");
             debouncedSave();
         };
         subRow.append(subLabel, subSel);

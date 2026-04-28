@@ -2,6 +2,7 @@
 // STATE.JS — Shared mutable state
 // ============================================================
 import { cloneSchema } from "./schema.js";
+import { registry }    from "./registry.js";
 
 // DEFAULT_ITEMS names match the seeded shop items so inventory.js
 // can link them by name when the shop cache loads.
@@ -38,10 +39,8 @@ export function defaultSpellSlots() {
     return slots;
 }
 
-// Expose state globally so fields.js can read currentCharId
-// without creating a circular import dependency.
-window.__grimoire__ = window.__grimoire__ ?? {};
-window.__grimoire__.state = state;
+// Register state so other modules can access it without circular imports.
+registry.set("state", state);
 
 export function resetState() {
     state.currentCharId  = null;
